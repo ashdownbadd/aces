@@ -81,31 +81,38 @@ function handleAmortizationDashboard($pdo)
 /**
  * Handles creation of a loan request; automatically saves under 'Pending' status
  */
+/**
+ * Handles creation of a loan request; automatically saves under 'Pending' status
+ */
 function handleCreateLoan($pdo)
 {
     checkAuthenticated($pdo);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Extract inputs from the POST body
         $member_id            = intval($_POST['member_id'] ?? 0);
         $loan_type            = trim($_POST['loan_type'] ?? '');
         $collateral           = trim($_POST['collateral'] ?? '');
         $amortization_type    = trim($_POST['amortization_type'] ?? 'Diminishing Balance');
         $principal            = floatval($_POST['principal'] ?? 0);
         $interest_rate        = floatval($_POST['interest_rate'] ?? 0);
-        $term_months          = intval($_POST['term_months'] ?? 0);
-        $repayment_frequency  = trim($_POST['repayment_frequency'] ?? 'Monthly');
-        $release_date         = $_POST['release_date'] ?? date('Y-m-d');
+        $terms                = intval($_POST['terms'] ?? 0);
+        $payment_frequency    = trim($_POST['payment_frequency'] ?? 'Monthly');
+        $start_date           = $_POST['start_date'] ?? date('Y-m-d');
+        $manual_payment       = floatval($_POST['manual_payment'] ?? 0.00);
 
-        if ($member_id <= 0 || empty($loan_type) || $principal <= 0 || $interest_rate < 0 || $term_months <= 0) {
+        // Validation safety checkpoint
+        if ($member_id <= 0 || empty($loan_type) || $principal <= 0 || $interest_rate < 0 || $terms <= 0) {
             die("Validation Error: Please configure all required structural parameters correctly.");
         }
 
         try {
+            // SQL Columns perfectly matched against your loans.sql structure
             $sql = "INSERT INTO loans (
                         member_id, loan_type, collateral, amortization_type, 
-                        principal, interest_rate, term_months, repayment_frequency, 
-                        release_date, loan_status
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";
+                        payment_frequency, principal, interest_rate, terms, 
+                        start_date, manual_payment, loan_status
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -113,11 +120,12 @@ function handleCreateLoan($pdo)
                 $loan_type,
                 $collateral,
                 $amortization_type,
+                $payment_frequency,
                 $principal,
                 $interest_rate,
-                $term_months,
-                $repayment_frequency,
-                $release_date
+                $terms,
+                $start_date,
+                $manual_payment
             ]);
 
             $_SESSION['success_message'] = "Loan profile application successfully staged into the verification queue.";
@@ -132,6 +140,9 @@ function handleCreateLoan($pdo)
     include dirname(__DIR__) . '/views/loan_create.php';
 }
 
+/**
+ * Displays detailed payment scheduling matrix trace metrics
+ */
 /**
  * Displays detailed payment scheduling matrix trace metrics
  */
@@ -161,6 +172,11 @@ function handleViewLoan($pdo)
         $stmtSchedule = $pdo->prepare($sqlSchedule);
         $stmtSchedule->execute([$loan_id]);
         $schedule = $stmtSchedule->fetchAll();
+
+        // --- ALIGN VARIABLE NAMES TO MATCH WHAT views/loan_view.php EXPECTS ---
+        $loanData = $loan;      // view expects $loanData for name, member number, type
+        $rows     = $schedule;  // view expects $rows for the schedule table loops
+        $ledger   = [];         // view expects $ledger for transaction payments history (defaulting to empty array)
 
         include dirname(__DIR__) . '/views/loan_view.php';
     } catch (PDOException $e) {
@@ -339,7 +355,7 @@ function handlePendingLoansQueue($pdo)
             ORDER BY l.id ASC";
 
     $pending_loans = $pdo->query($sql)->fetchAll();
-    include dirname(__DIR__) . '/views/pending_loans_queue.php';
+    include dirname(__DIR__) . '/views/loan_pending.php';
 }
 
 /**
@@ -372,15 +388,17 @@ function handleProcessLoanApproval($pdo)
                 $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Approved' WHERE id = ?");
                 $stmt->execute([$loan_id]);
 
+                // FIXED: Changed keys to match your database schema columns exactly
                 $scheduleRows = AmortizationEngine::generateSchedule([
                     'principal'         => floatval($loan['principal']),
                     'interest_rate'     => floatval($loan['interest_rate']),
-                    'terms'             => intval($loan['term_months']),
-                    'payment_frequency' => $loan['repayment_frequency'],
+                    'terms'             => intval($loan['terms']),
+                    'payment_frequency' => $loan['payment_frequency'],
                     'amortization_type' => $loan['amortization_type'],
-                    'start_date'        => $loan['release_date'],
-                    'loan_type'         => $loan['loan_type'] ?? ''
+                    'start_date'        => $loan['start_date'],
+                    'manual_payment'    => floatval($loan['manual_payment'] ?? 0)
                 ]);
+
                 $sqlInsertSchedule = "INSERT INTO loan_schedules (
                                         loan_id, period, due_date, principal, interest, 
                                         rem_principal, rem_interest, rem_penalty, status, remarks
@@ -400,17 +418,16 @@ function handleProcessLoanApproval($pdo)
                     ]);
                 }
 
-                // SECURITY ACTIVITY TRACKER AUDIT TRIGGER
-                logSystemActivity($pdo, "LOAN_APPROVAL", "Approved and activated loan allocation record #{$loan_id}");
+                // FIXED: Removed backslashes and utilized single quotes for nested parameters
+                logSystemActivity($pdo, 'LOAN_APPROVAL', "Approved and activated loan allocation record #{$loan_id}");
 
                 $_SESSION['success_message'] = "Loan profile allocation approved, activated, and repayment matrix instantiated successfully.";
             } else {
                 $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Rejected' WHERE id = ?");
-                $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Rejected' WHERE id = ?");
                 $stmt->execute([$loan_id]);
 
-                // SECURITY ACTIVITY TRACKER AUDIT TRIGGER
-                logSystemActivity($pdo, "LOAN_REJECTION", "Rejected loan application entry #{$loan_id}");
+                // FIXED: Removed backslashes and utilized single quotes for nested parameters
+                logSystemActivity($pdo, 'LOAN_REJECTION', "Rejected loan application entry #{$loan_id}");
 
                 $_SESSION['success_message'] = "Loan profile application marked as Rejected.";
             }
