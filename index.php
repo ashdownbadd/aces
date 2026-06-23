@@ -27,26 +27,49 @@ function checkAuthenticated($pdo)
         exit;
     }
 
-    // Query the database to check current status
+    // Query the database to check current status in real-time
     $stmt = $pdo->prepare("SELECT status FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
 
-    // Check if the account is currently 'suspended'
-    if (!$user || (isset($user['status']) && $user['status'] === 'suspended')) {
+    // Catch if the account is non-existent, inactive, or suspended
+    if (!$user || (isset($user['status']) && $user['status'] !== 'active')) {
+        session_unset();
         session_destroy();
-        // Redirect with a specific 'error' flag
-        header("Location: index.php?route=login&error=suspended");
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION['error_message'] = "Your operator profile has been suspended or deactivated. Contact an Administrator.";
+        header("Location: index.php?route=login");
         exit;
     }
 }
 
-// 3. Extract requested module route parameter safely
-$route = $_GET['route'] ?? (isset($_SESSION['user_id']) ? 'dashboard' : 'login');
+/**
+ * Global Audit Logging System Tracker Hook
+ */
+function logSystemActivity($pdo, $action, $details)
+{
+    $userId   = $_SESSION['user_id'] ?? null;
+    $username = $_SESSION['username'] ?? 'System/Anonymous';
+    $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
-// 4. Clean Central Application Core Routing Engine Switch (No inner requires)
+    try {
+        $sql = "INSERT INTO activity_logs (user_id, username, action, details, ip_address) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId, $username, $action, $details]);
+    } catch (PDOException $e) {
+        error_log("Audit logging failed: " . $e->getMessage());
+    }
+}
+
+// --- CENTRAL APP GATEWAY SWITCH ROUTER ---
+$route = $_GET['route'] ?? 'dashboard';
+
 switch ($route) {
-    // --- AUTHENTICATION INTERFACE ROUTING ---
+    // --- AUTHENTICATION ACTIONS LAYER ---
     case 'login':
         handleLogin($pdo);
         break;
@@ -55,10 +78,15 @@ switch ($route) {
         handleLogout();
         break;
 
+    case 'register':
+        handleRegistration($pdo);
+        break;
+
     case 'dashboard':
         handleDashboard($pdo);
         break;
 
+    // --- COOPERATIVE OPERATORS PROFILE CONTROL LAYER ---
     case 'admins':
         handleAdminList($pdo);
         break;
@@ -67,20 +95,39 @@ switch ($route) {
         handleToggleStatus($pdo);
         break;
 
-    // --- COOPERATIVE MEMBERSHIP DIRECTORY MODULE ---
+    case 'toggle_role':
+        handleToggleRole($pdo);
+        break;
+
+    case 'activity_logs':
+        checkAuthenticated($pdo);
+        if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
+            $_SESSION['error_message'] = "Access Denied: High security clearance requirements mismatch.";
+            header("Location: index.php?route=dashboard");
+            exit;
+        }
+        try {
+            $logs = $pdo->query("SELECT * FROM activity_logs ORDER BY id DESC LIMIT 500")->fetchAll();
+            include __DIR__ . '/views/activity_logs.php';
+        } catch (PDOException $e) {
+            die("Database audit logs fetch failure: " . $e->getMessage());
+        }
+        break;
+
+    // --- SYSTEM REGISTERED MEMBERS DIRECTORY MODULE ---
     case 'members':
         handleCoopMemberList($pdo);
         break;
 
-    case 'member_profile':
-        handleMemberProfile($pdo);
-        break;
-
-    case 'add_coop_member':
+    case 'add_member':
         handleCreateCoopMember($pdo);
         break;
 
-    // --- GENERAL LEDGER SUBSYSTEM MODULE ---
+    case 'view_member':
+        handleMemberProfile($pdo);
+        break;
+
+    // --- GENERAL ACCOUNTING LEDGER FRAMEWORK MODULE ---
     case 'ledger':
         handleLedgerDashboard($pdo);
         break;
@@ -136,7 +183,5 @@ switch ($route) {
 
     default:
         http_response_code(404);
-        echo "<h2 style='color:red; font-family:Arial;'>404 Error: Core module endpoint [ " . htmlspecialchars($route) . " ] not found.</h2>";
-        echo "<p style='font-family:Arial;'><a href='index.php?route=login'>← Return to login panel</a></p>";
-        break;
+        die("Error 404: The system command or module address requested cannot be resolved.");
 }
