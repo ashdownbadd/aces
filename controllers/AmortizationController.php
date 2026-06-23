@@ -296,6 +296,7 @@ function handlePrintSOA($pdo)
     $loan_id = intval($_GET['id'] ?? 0);
     if ($loan_id <= 0) die("Missing configuration index context.");
 
+    // 1. Fetch Loan Data
     $sqlLoan = "SELECT l.*, m.first_name, m.last_name, m.member_number 
                 FROM loans l 
                 JOIN members m ON l.member_id = m.id 
@@ -304,8 +305,19 @@ function handlePrintSOA($pdo)
     $stmtLoan->execute([$loan_id]);
     $loan = $stmtLoan->fetch();
 
+    // 2. Fetch Schedule Data
     $schedule = $pdo->query("SELECT * FROM loan_schedules WHERE loan_id = {$loan_id} ORDER BY period ASC")->fetchAll();
-    include dirname(__DIR__) . '/views/print_soa.php';
+    
+    // 3. Fetch Ledger Data
+    $ledger = $pdo->query("SELECT *, datetime AS date FROM payment_ledger WHERE loan_id = {$loan_id} ORDER BY id ASC")->fetchAll();
+    
+    // --- CRITICAL FIX: MAP DATA TO VIEW VARIABLES ---
+    $loanData = $loan;
+    $rows     = $schedule;
+    // $ledger is already defined above
+
+    // 4. Include the view
+    include dirname(__DIR__) . '/views/loan_print.php';
 }
 
 /**
