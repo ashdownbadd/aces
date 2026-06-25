@@ -45,17 +45,36 @@ function handleLedgerDashboard($pdo)
         $stmtSummary->execute($params);
         $member_summaries = $stmtSummary->fetchAll();
 
+        // ... (inside handleLedgerDashboard)
         // Fetch recent transaction activity
+        $start_date = trim($_GET['start_date'] ?? '');
+        $end_date   = trim($_GET['end_date'] ?? '');
+
         $sqlVouchers = "SELECT jv.*, u.username AS operator_name 
                         FROM journal_vouchers jv
                         LEFT JOIN users u ON jv.created_by = u.id
-                        ORDER BY jv.transaction_date DESC, jv.id DESC LIMIT 50";
+                        WHERE 1=1";
 
-        $stmtVouchers = $pdo->query($sqlVouchers);
+        $voucherParams = [];
+
+        if (!empty($start_date)) {
+            $sqlVouchers .= " AND DATE(jv.transaction_date) >= ?";
+            $voucherParams[] = $start_date;
+        }
+        if (!empty($end_date)) {
+            $sqlVouchers .= " AND DATE(jv.transaction_date) <= ?";
+            $voucherParams[] = $end_date;
+        }
+
+        $sqlVouchers .= " ORDER BY jv.transaction_date DESC, jv.id DESC LIMIT 50";
+
+        $stmtVouchers = $pdo->prepare($sqlVouchers);
+        $stmtVouchers->execute($voucherParams);
         $vouchers = $stmtVouchers->fetchAll();
 
         include dirname(__DIR__) . '/views/ledger_dashboard.php';
     } catch (PDOException $e) {
+        // ... (rest of code)
         die("Database error loading ledger dashboard: " . $e->getMessage());
     }
 }

@@ -24,7 +24,7 @@ $isAdmin = (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1);
                 <th>Member</th>
                 <th>Type</th>
                 <th>Amount</th>
-                <?php if ($isAdmin): ?>
+                <th>Status</th> <?php if ($isAdmin): ?>
                     <th>Action</th>
                 <?php endif; ?>
             </tr>
@@ -38,11 +38,15 @@ $isAdmin = (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1);
                     <td><?php echo htmlspecialchars($v['entry_type']); ?></td>
                     <td>$<?php echo number_format($v['credit'] + $v['debit'], 2); ?></td>
 
+                    <td>
+                        <span style="background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold;">PENDING</span>
+                    </td>
+
                     <?php if ($isAdmin): ?>
                         <td>
                             <form action="index.php?route=approve_ledger_entry" method="POST">
                                 <input type="hidden" name="voucher_id" value="<?php echo htmlspecialchars($v['id']); ?>">
-                                <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">Approve</button>
+                                <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">Approve</button>
                             </form>
                         </td>
                     <?php endif; ?>

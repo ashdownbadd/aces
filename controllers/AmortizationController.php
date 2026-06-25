@@ -115,8 +115,10 @@ function handleCreateLoan($pdo)
                 $manual_payment
             ]);
 
-            $_SESSION['success_message'] = "Loan profile application successfully staged into the verification queue.";
+            $new_loan_id = $pdo->lastInsertId();
+            logSystemActivity($pdo, 'LOAN_CREATED', "Loan application created for Member ID {$member_id}, Amount: {$principal}");
 
+            $_SESSION['success_message'] = "Loan profile application successfully staged into the verification queue.";
             if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1) {
                 header("Location: index.php?route=pending_loans_queue");
             } else {
@@ -247,8 +249,8 @@ function handleApplyPayment($pdo)
         $stmtLedger = $pdo->prepare("INSERT INTO payment_ledger (loan_id, amount_paid, penalty_applied, interest_applied, principal_applied, excess, datetime, remarks) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)");
         $stmtLedger->execute([$loan_id, $payment_amt, $totals['penalty'], $totals['interest'], $totals['principal'], $excess, $remarks]);
 
-        // 4. THE STATUS VERIFICATION (The "Missing Update" fix)
-        // We calculate if ANY unpaid schedules remain. If count is 0, the loan is DONE.
+        logSystemActivity($pdo, 'LOAN_PAYMENT', "Applied payment of {$payment_amt} to Loan ID #{$loan_id}");
+
         $check = $pdo->prepare("SELECT COUNT(*) FROM loan_schedules WHERE loan_id = ? AND status != 'paid'");
         $check->execute([$loan_id]);
         $remaining_count = intval($check->fetchColumn());

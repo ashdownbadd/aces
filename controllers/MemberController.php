@@ -145,6 +145,7 @@ function handleCreateCoopMember($pdo)
             $stmtAddress = $pdo->prepare("INSERT INTO member_addresses (member_id, address_type, house_number, street, barangay, town_city, province, region) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmtAddress->execute([$member_id, $address_type, $house_number, $street, $barangay, $town_city, $province, $region]);
 
+            logSystemActivity($pdo, 'MEMBER_CREATED', "Created new member: {$first_name} {$last_name} (ID: {$formatted_member_no})");
             $pdo->commit();
 
             $_SESSION['success_message'] = "Member successfully registered. Member ID: " . $formatted_member_no;

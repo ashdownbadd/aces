@@ -18,23 +18,25 @@ if (!defined('ALLOW_ACCESS')) {
         </p>
     <?php endif; ?>
 
-    <form action="index.php" method="GET" style="margin-bottom: 20px; background: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; display: flex; gap: 10px; align-items: center;">
+    <form action="index.php" method="GET" style="margin-bottom: 20px; background: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
         <input type="hidden" name="route" value="ledger">
-        <label for="search" style="font-weight: bold;">Search Member:</label>
-        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" placeholder="Enter name or member number..." style="padding: 6px 12px; width: 300px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <label for="search" style="font-weight: bold;">Search:</label>
+        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" placeholder="Name or member no..." style="padding: 6px; width: 200px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <label for="start_date" style="font-weight: bold; margin-left: 10px;">From Date:</label>
+        <input type="date" id="start_date" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <label for="end_date" style="font-weight: bold;">To Date:</label>
+        <input type="date" id="end_date" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+
         <button type="submit" style="background: #337ab7; color: white; border: none; padding: 6px 15px; font-weight: bold; border-radius: 4px; cursor: pointer;">Filter</button>
-        <?php if (!empty($_GET['search'])): ?>
-            <a href="index.php?route=ledger" style="color: #666; font-size: 0.9em; text-decoration: none; margin-left: 5px;">Clear</a>
-        <?php endif; ?>
+        <a href="index.php?route=ledger" style="color: #666; font-size: 0.9em; text-decoration: none; margin-left: 5px;">Clear All</a>
     </form>
 
     <p style="display: flex; gap: 10px; align-items: center; margin-bottom: 25px;">
-        <a href="index.php?route=add_ledger_entry" style="background: #337ab7; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">
-            + Post New Journal Voucher Entry
-        </a>
-        <a href="index.php?route=pending_approvals" style="background: #f0ad4e; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">
-            ⚠️ View Pending Approvals Verification Queue
-        </a>
+        <a href="index.php?route=add_ledger_entry" style="background: #337ab7; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">+ Post New Journal Voucher Entry</a>
+        <a href="index.php?route=pending_approvals" style="background: #f0ad4e; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">⚠️ View Pending Approvals Verification Queue</a>
     </p>
 
     <h3>Member Share Capital Balances</h3>
@@ -51,24 +53,16 @@ if (!defined('ALLOW_ACCESS')) {
         <tbody>
             <?php if (empty($member_summaries)): ?>
                 <tr>
-                    <td colspan="5" style="text-align: center; color: #777;">No members found matching your search.</td>
+                    <td colspan="5" style="text-align: center; color: #777;">No members found.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($member_summaries as $ms): ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($ms['member_number']); ?></code></td>
-                        <td>
-                            <a href="index.php?route=ledger_statement&id=<?php echo $ms['member_id']; ?>" style="color: #337ab7; font-weight: bold; text-decoration: none;">
-                                <?php echo htmlspecialchars($ms['last_name'] . ', ' . $ms['first_name']); ?>
-                            </a>
-                        </td>
+                        <td><a href="index.php?route=ledger_statement&id=<?php echo $ms['member_id']; ?>" style="color: #337ab7; font-weight: bold; text-decoration: none;"><?php echo htmlspecialchars($ms['last_name'] . ', ' . $ms['first_name']); ?></a></td>
                         <td style="color: green;">$<?php echo number_format($ms['total_credits'], 2); ?></td>
                         <td style="color: #c9302c;">$<?php echo number_format($ms['total_debits'], 2); ?></td>
-                        <td>
-                            <strong style="color: <?php echo ($ms['current_balance'] >= 0) ? 'blue' : 'red'; ?>;">
-                                $<?php echo number_format($ms['current_balance'], 2); ?>
-                            </strong>
-                        </td>
+                        <td><strong style="color: <?php echo ($ms['current_balance'] >= 0) ? 'blue' : 'red'; ?>;">$<?php echo number_format($ms['current_balance'], 2); ?></strong></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -83,12 +77,13 @@ if (!defined('ALLOW_ACCESS')) {
                 <th>Reference No.</th>
                 <th>Particulars / Description</th>
                 <th>Posted By</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($vouchers)): ?>
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #777;">No transaction vouchers recorded in the ledger yet.</td>
+                    <td colspan="5" style="text-align: center; color: #777;">No transaction vouchers recorded.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($vouchers as $v): ?>
@@ -97,6 +92,15 @@ if (!defined('ALLOW_ACCESS')) {
                         <td><code><?php echo htmlspecialchars($v['reference_number']); ?></code></td>
                         <td><?php echo htmlspecialchars($v['particulars']); ?></td>
                         <td><span style="background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.9em;"><?php echo htmlspecialchars($v['operator_name'] ?? 'System'); ?></span></td>
+                        <td>
+                            <?php if (($v['status'] ?? '') === 'approved'): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold;">APPROVED</span>
+                            <?php elseif (($v['status'] ?? '') === 'pending'): ?>
+                                <span style="background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold;">PENDING</span>
+                            <?php else: ?>
+                                <span style="background: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold;"><?php echo strtoupper($v['status'] ?? 'UNKNOWN'); ?></span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
