@@ -47,9 +47,6 @@ function checkAuthenticated($pdo)
     }
 }
 
-/**
- * Global Audit Logging System Tracker Hook
- */
 function logSystemActivity($pdo, $action, $details)
 {
     $userId   = $_SESSION['user_id'] ?? null;
@@ -59,7 +56,7 @@ function logSystemActivity($pdo, $action, $details)
     try {
         $sql = "INSERT INTO activity_logs (user_id, username, action, details, ip_address) VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$userId, $username, $action, $details]);
+        $stmt->execute([$userId, $username, $action, $details, $ip]);
     } catch (PDOException $e) {
         error_log("Audit logging failed: " . $e->getMessage());
     }
@@ -123,7 +120,7 @@ switch ($route) {
         handleCreateCoopMember($pdo);
         break;
 
-    case 'view_member':
+    case 'member_profile':
         handleMemberProfile($pdo);
         break;
 

@@ -12,13 +12,15 @@ function handleCoopMemberList($pdo)
     $searchTerm = trim($_GET['search'] ?? '');
 
     try {
-        // Base query now includes ledger_entries to calculate real-time share capital
+        // Updated SQL to join journal_vouchers and filter by status
         $sql = "SELECT m.id, m.member_number, m.first_name, m.last_name, m.status, 
                        c.email, c.phone_no_1 AS phone,
-                       (COALESCE(SUM(le.credit), 0) - COALESCE(SUM(le.debit), 0)) AS share_capital
+                       (COALESCE(SUM(CASE WHEN jv.status = 'approved' THEN le.credit ELSE 0 END), 0) - 
+                        COALESCE(SUM(CASE WHEN jv.status = 'approved' THEN le.debit ELSE 0 END), 0)) AS share_capital
                 FROM members m
                 LEFT JOIN member_contact c ON m.id = c.member_id
-                LEFT JOIN ledger_entries le ON m.id = le.member_id";
+                LEFT JOIN ledger_entries le ON m.id = le.member_id
+                LEFT JOIN journal_vouchers jv ON le.voucher_id = jv.id"; // Joined to access status
 
         $params = [];
 
@@ -28,7 +30,7 @@ function handleCoopMemberList($pdo)
             $params = [$likeTerm, $likeTerm, $likeTerm];
         }
 
-        // Grouping is required when using SUM() to keep rows separate per member
+        // Correctly placed group by
         $sql .= " GROUP BY m.id, c.email, c.phone_no_1 ORDER BY m.id DESC";
 
         $stmt = $pdo->prepare($sql);
@@ -86,7 +88,6 @@ function handleCreateCoopMember($pdo)
 {
     checkAuthenticated($pdo);
 
-    // If the form was submitted
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $first_name = trim($_POST['first_name'] ?? '');
         $middle_name = trim($_POST['middle_name'] ?? '');
@@ -94,7 +95,6 @@ function handleCreateCoopMember($pdo)
         $date_of_birth = trim($_POST['date_of_birth'] ?? '');
         $membership_type = trim($_POST['membership_type'] ?? 'Regular');
 
-        // Basic validation
         if (empty($first_name) || empty($last_name) || empty($date_of_birth)) {
             $_SESSION['error_message'] = "First name, last name, and date of birth are required.";
             include dirname(__DIR__) . '/views/member_add.php';
@@ -102,76 +102,61 @@ function handleCreateCoopMember($pdo)
         }
 
         try {
-            // Start transaction to ensure all database actions succeed or fail together
             $pdo->beginTransaction();
 
-            // 1. Insert core entity record into members table along with its date_of_birth column
+            // 1. Insert core entity record
             $sqlMember = "INSERT INTO members (member_number, first_name, middle_name, last_name, date_of_birth, membership_type, status, date_of_membership) 
                           VALUES ('TEMP', ?, ?, ?, ?, ?, 'active', CURDATE())";
             $stmtM = $pdo->prepare($sqlMember);
             $stmtM->execute([$first_name, $middle_name, $last_name, $date_of_birth, $membership_type]);
 
-            // 2. Retrieve the auto-incremented ID assigned by MySQL
             $member_id = $pdo->lastInsertId();
 
-            // 3. Generate the formatted member number (e.g., COOP-2026-0051)
             $year = date('Y');
             $formatted_member_no = "COOP-" . $year . "-" . str_pad($member_id, 4, "0", STR_PAD_LEFT);
 
-            // 4. Update the newly created record with the correct, formatted number
             $updateStmt = $pdo->prepare("UPDATE members SET member_number = ? WHERE id = ?");
             $updateStmt->execute([$formatted_member_no, $member_id]);
 
-            // 5. Save all comprehensive profile data from the expanded form
+            // 2. Extract profile data
+            $sex = trim($_POST['sex'] ?? '');
+            $marital_status = trim($_POST['marital_status'] ?? ''); // Corrected variable name
 
-            // Extract data safely from POST
-            $sex          = trim($_POST['sex'] ?? '');
-            $civil_status = trim($_POST['marital_status'] ?? $_POST['marital_status'] ?? ''); // Fallback compatibility check
-            $religion     = trim($_POST['religion'] ?? '');
-            $email        = trim($_POST['email'] ?? '');
-            $phone_no_1   = trim($_POST['phone_no_1'] ?? '');
-            $phone_no_2   = trim($_POST['phone_no_2'] ?? '');
+            // 3. Insert Profile (Fixed column/placeholder count: 3 cols, 3 placeholders)
+            $stmtProfile = $pdo->prepare("INSERT INTO member_profiles (member_id, sex, marital_status) VALUES (?, ?, ?)");
+            $stmtProfile->execute([$member_id, $sex, $marital_status]);
 
-            // Extract modular address parts matching your exact database columns
-            $house_number = trim($_POST['house_number'] ?? '');
-            $street       = trim($_POST['street'] ?? '');
-            $barangay     = trim($_POST['barangay'] ?? '');
-            $town_city    = trim($_POST['town_city'] ?? '');
-            $province     = trim($_POST['province'] ?? '');
-            $region       = trim($_POST['region'] ?? '');
-            $address_type = 'Home'; // Default fallback value for required schema categorization
-
-            // Insert into member_profiles matching the profile layout keys (civil_status, religion)
-            $stmtProfile = $pdo->prepare("INSERT INTO member_profiles (member_id, sex, civil_status, religion) VALUES (?, ?, ?, ?)");
-            $stmtProfile->execute([$member_id, $sex, $civil_status, $religion]);
-
-            // Insert into Contact
+            // 4. Insert Contact
+            $email = trim($_POST['email'] ?? '');
+            $phone_no_1 = trim($_POST['phone_no_1'] ?? '');
+            $phone_no_2 = trim($_POST['phone_no_2'] ?? '');
             $stmtContact = $pdo->prepare("INSERT INTO member_contact (member_id, email, phone_no_1, phone_no_2) VALUES (?, ?, ?, ?)");
             $stmtContact->execute([$member_id, $email, $phone_no_1, $phone_no_2]);
 
-            // Insert into member_addresses with your exact updated schema structural names
+            // 5. Insert Address
+            $house_number = trim($_POST['house_number'] ?? '');
+            $street = trim($_POST['street'] ?? '');
+            $barangay = trim($_POST['barangay'] ?? '');
+            $town_city = trim($_POST['town_city'] ?? '');
+            $province = trim($_POST['province'] ?? '');
+            $region = trim($_POST['region'] ?? '');
+            $address_type = 'Home';
+
             $stmtAddress = $pdo->prepare("INSERT INTO member_addresses (member_id, address_type, house_number, street, barangay, town_city, province, region) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmtAddress->execute([$member_id, $address_type, $house_number, $street, $barangay, $town_city, $province, $region]);
 
-            // Save all changes
             $pdo->commit();
 
-            // Redirect back to members list with success alert
             $_SESSION['success_message'] = "Member successfully registered. Member ID: " . $formatted_member_no;
             header("Location: index.php?route=members");
             exit;
         } catch (PDOException $e) {
-            // Cancel all changes if something went wrong
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
+            if ($pdo->inTransaction()) $pdo->rollBack();
             $_SESSION['error_message'] = "Database error: " . $e->getMessage();
             include dirname(__DIR__) . '/views/member_add.php';
             return;
         }
     } else {
-        // If it's a GET request, just show the form
         include dirname(__DIR__) . '/views/member_add.php';
     }
 }
-// FIXED: Removed the duplicate closing curly brace that was causing the parsing syntax crash here

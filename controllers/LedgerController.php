@@ -154,8 +154,15 @@ function handlePendingApprovals($pdo)
 {
     checkAuthenticated($pdo);
 
-    // SECURITY RATIFICATION: If user is not an Admin (id 1), redirect back
-    if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
+    // UPDATED: Allow both Admin (1) and Staff (2) to view the pending list
+    // Replace '2' with your actual staff role ID if it is different
+    $staff_role_id = 2;
+
+    if (
+        !isset($_SESSION['role_id']) ||
+        (intval($_SESSION['role_id']) !== 1 && intval($_SESSION['role_id']) !== $staff_role_id)
+    ) {
+
         $_SESSION['error_message'] = "Access Denied: You do not have permission to view pending approvals.";
         header("Location: index.php?route=ledger");
         exit;
@@ -177,21 +184,25 @@ function handleApproveVoucher($pdo)
 {
     checkAuthenticated($pdo);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // SECURITY RATIFICATION: Prevent non-admins from executing database updates
-        if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
-            die("Security Error: Unauthorized transaction authorization request.");
-        }
+    if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
+        die("Access Denied: You do not have permission to perform this action.");
+    }
 
-        $voucher_id = intval($_POST['voucher_id']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $voucher_id = intval($_POST['voucher_id'] ?? 0);
         try {
+            // 1. Update the status
             $stmt = $pdo->prepare("UPDATE journal_vouchers SET status = 'approved' WHERE id = ?");
             $stmt->execute([$voucher_id]);
+
+            // 2. LOG THE ACTION (This will now appear in your activity_logs table)
+            logSystemActivity($pdo, 'VOUCHER_APPROVAL', "Approved journal voucher ID #{$voucher_id}");
+
             $_SESSION['success_message'] = "Voucher approved successfully.";
+            header("Location: index.php?route=pending_approvals");
+            exit;
         } catch (PDOException $e) {
-            $_SESSION['error_message'] = "Approval failed: " . $e->getMessage();
+            die("Error: " . $e->getMessage());
         }
     }
-    header("Location: index.php?route=pending_approvals");
-    exit;
 }

@@ -12,7 +12,6 @@ require_once __DIR__ . '/../helpers/AmortizationEngine.php';
 function checkAndUpdateOverdueSchedules($pdo)
 {
     try {
-        // 1. Fetch all unpaid schedule periods for active (Approved) loans
         $sql = "SELECT ls.*, l.interest_rate, l.principal 
                 FROM loan_schedules ls
                 JOIN loans l ON ls.loan_id = l.id
@@ -22,7 +21,6 @@ function checkAndUpdateOverdueSchedules($pdo)
         $schedules = $stmt->fetchAll();
 
         $todayStr = date('Y-m-d');
-
         $stmtUpdate = $pdo->prepare("UPDATE loan_schedules SET status = ?, rem_penalty = ? WHERE id = ?");
 
         foreach ($schedules as $row) {
@@ -30,16 +28,12 @@ function checkAndUpdateOverdueSchedules($pdo)
             $penalty = floatval($row['rem_penalty']);
             $isUpdated = false;
 
-            // Check if the payment target timeline has passed today's date
             if ($row['due_date'] < $todayStr) {
-                // Change state to overdue if it was still marked pending
                 if ($status === 'pending') {
                     $status = 'overdue';
                     $isUpdated = true;
                 }
 
-                // Standardized late processing calculations: apply 1% monthly penalty on remaining principal balance
-                // calculated daily (1% / 30 days) for accurate accrual trace
                 $daysOverdue = (strtotime($todayStr) - strtotime($row['due_date'])) / (60 * 60 * 24);
                 if ($daysOverdue > 0) {
                     $calculatedPenalty = floatval($row['rem_principal']) * (0.01 / 30) * $daysOverdue;
@@ -67,7 +61,6 @@ function handleAmortizationDashboard($pdo)
     checkAuthenticated($pdo);
     checkAndUpdateOverdueSchedules($pdo);
 
-    // Filters dashboard records so only verified, fully active loans appear on the screen
     $sql = "SELECT l.*, m.first_name, m.last_name, m.member_number 
             FROM loans l 
             JOIN members m ON l.member_id = m.id 
@@ -81,15 +74,11 @@ function handleAmortizationDashboard($pdo)
 /**
  * Handles creation of a loan request; automatically saves under 'Pending' status
  */
-/**
- * Handles creation of a loan request; automatically saves under 'Pending' status
- */
 function handleCreateLoan($pdo)
 {
     checkAuthenticated($pdo);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Extract inputs from the POST body
         $member_id            = intval($_POST['member_id'] ?? 0);
         $loan_type            = trim($_POST['loan_type'] ?? '');
         $collateral           = trim($_POST['collateral'] ?? '');
@@ -101,13 +90,11 @@ function handleCreateLoan($pdo)
         $start_date           = $_POST['start_date'] ?? date('Y-m-d');
         $manual_payment       = floatval($_POST['manual_payment'] ?? 0.00);
 
-        // Validation safety checkpoint
         if ($member_id <= 0 || empty($loan_type) || $principal <= 0 || $interest_rate < 0 || $terms <= 0) {
             die("Validation Error: Please configure all required structural parameters correctly.");
         }
 
         try {
-            // SQL Columns perfectly matched against your loans.sql structure
             $sql = "INSERT INTO loans (
                         member_id, loan_type, collateral, amortization_type, 
                         payment_frequency, principal, interest_rate, terms, 
@@ -129,7 +116,12 @@ function handleCreateLoan($pdo)
             ]);
 
             $_SESSION['success_message'] = "Loan profile application successfully staged into the verification queue.";
-            header("Location: index.php?route=pending_loans_queue");
+
+            if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1) {
+                header("Location: index.php?route=pending_loans_queue");
+            } else {
+                header("Location: index.php?route=amortization_dashboard");
+            }
             exit;
         } catch (PDOException $e) {
             die("Database Error submitting credit request: " . $e->getMessage());
@@ -140,9 +132,6 @@ function handleCreateLoan($pdo)
     include dirname(__DIR__) . '/views/loan_create.php';
 }
 
-/**
- * Displays detailed payment scheduling matrix trace metrics
- */
 /**
  * Displays detailed payment scheduling matrix trace metrics
  */
@@ -173,10 +162,11 @@ function handleViewLoan($pdo)
         $stmtSchedule->execute([$loan_id]);
         $schedule = $stmtSchedule->fetchAll();
 
-        // --- ALIGN VARIABLE NAMES TO MATCH WHAT views/loan_view.php EXPECTS ---
-        $loanData = $loan;      // view expects $loanData for name, member number, type
-        $rows     = $schedule;  // view expects $rows for the schedule table loops
-        $ledger   = [];         // view expects $ledger for transaction payments history (defaulting to empty array)
+        // Safe check for ledger table existence/records based on HTML structure
+        $ledger = $pdo->query("SELECT *, datetime FROM payment_ledger WHERE loan_id = {$loan_id} ORDER BY id DESC")->fetchAll();
+
+        $loanData = $loan;
+        $rows     = $schedule;
 
         include dirname(__DIR__) . '/views/loan_view.php';
     } catch (PDOException $e) {
@@ -185,118 +175,108 @@ function handleViewLoan($pdo)
 }
 
 /**
- * Records financial amortization remittance rows and reduces outstanding balances
+ * Complete Global Waterfall Distribution Payment Handler
+ */
+/**
+ * Complete Global Waterfall Distribution Payment Handler
  */
 function handleApplyPayment($pdo)
 {
     checkAuthenticated($pdo);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $schedule_id  = intval($_POST['schedule_id'] ?? 0);
-        $loan_id      = intval($_POST['loan_id'] ?? 0);
-        $payment_amt  = floatval($_POST['payment_amount'] ?? 0);
-        $payment_date = $_POST['payment_date'] ?? date('Y-m-d');
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-        if ($schedule_id <= 0 || $loan_id <= 0 || $payment_amt <= 0) {
-            die("Error: Validation parameters trace missing for processing remittance.");
+    $loan_id      = intval($_POST['loan_id'] ?? 0);
+    $payment_amt  = floatval($_POST['payment_amount'] ?? 0);
+    $remarks      = "Global Waterfall Repayment";
+
+    if ($loan_id <= 0 || $payment_amt <= 0) {
+        die("Validation Failed: Invalid Loan ID or Amount.");
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        // 1. Fetch all unpaid schedules
+        $stmt = $pdo->prepare("SELECT * FROM loan_schedules WHERE loan_id = ? AND status != 'paid' ORDER BY due_date ASC FOR UPDATE");
+        $stmt->execute([$loan_id]);
+        $unpaid_schedules = $stmt->fetchAll();
+
+        if (!$unpaid_schedules) {
+            throw new Exception("No pending schedules found. Account may already be fully paid.");
         }
 
-        try {
-            $pdo->beginTransaction();
+        $running_payment = round($payment_amt, 2);
+        $totals = ['penalty' => 0, 'interest' => 0, 'principal' => 0];
 
-            $stmtRow = $pdo->prepare("SELECT * FROM loan_schedules WHERE id = ? FOR UPDATE");
-            $stmtRow->execute([$schedule_id]);
-            $row = $stmtRow->fetch();
+        // 2. Waterfall Distribution
+        foreach ($unpaid_schedules as $row) {
+            if ($running_payment <= 0.005) break;
 
-            if (!$row) {
-                throw new Exception("Target loan repayment amortization matrix point missing.");
-            }
+            $s_id = $row['id'];
+            $rem = [
+                'p' => round(floatval($row['rem_penalty']), 2),
+                'i' => round(floatval($row['rem_interest']), 2),
+                'pr' => round(floatval($row['rem_principal']), 2)
+            ];
 
-            $rem_penalty   = floatval($row['rem_penalty']);
-            $rem_interest  = floatval($row['rem_interest']);
-            $rem_principal = floatval($row['rem_principal']);
+            // Allocate
+            $alloc = ['p' => 0, 'i' => 0, 'pr' => 0];
 
-            $allocated_penalty   = 0;
-            $allocated_interest  = 0;
-            $allocated_principal = 0;
-
-            $running_payment = $payment_amt;
-
-            if ($running_payment > 0 && $rem_penalty > 0) {
-                if ($running_payment >= $rem_penalty) {
-                    $allocated_penalty = $rem_penalty;
-                    $running_payment -= $rem_penalty;
-                    $rem_penalty = 0;
-                } else {
-                    $allocated_penalty = $running_payment;
-                    $rem_penalty -= $running_payment;
-                    $running_payment = 0;
+            // Penalty -> Interest -> Principal
+            foreach (['p' => 'penalty', 'i' => 'interest', 'pr' => 'principal'] as $k => $key) {
+                if ($running_payment > 0 && $rem[$k] > 0) {
+                    $take = min($running_payment, $rem[$k]);
+                    $alloc[$k] = $take;
+                    $rem[$k] -= $take;
+                    $running_payment = round($running_payment - $take, 2);
+                    $totals[$key] += $take;
                 }
             }
 
-            if ($running_payment > 0 && $rem_interest > 0) {
-                if ($running_payment >= $rem_interest) {
-                    $allocated_interest = $rem_interest;
-                    $running_payment -= $rem_interest;
-                    $rem_interest = 0;
-                } else {
-                    $allocated_interest = $running_payment;
-                    $rem_interest -= $running_payment;
-                    $running_payment = 0;
-                }
-            }
+            // Update row status
+            $total_rem = $rem['p'] + $rem['i'] + $rem['pr'];
+            $newStatus = ($total_rem <= 0.05) ? 'paid' : 'partial';
 
-            if ($running_payment > 0 && $rem_principal > 0) {
-                if ($running_payment >= $rem_principal) {
-                    $allocated_principal = $rem_principal;
-                    $running_payment -= $rem_principal;
-                    $rem_principal = 0;
-                } else {
-                    $allocated_principal = $running_payment;
-                    $rem_principal -= $running_payment;
-                    $running_payment = 0;
-                }
-            }
-
-            $newStatus = ($rem_principal <= 0 && $rem_interest <= 0) ? 'paid' : 'partial';
-
-            $sqlUpdateSchedule = "UPDATE loan_schedules SET rem_principal = ?, rem_interest = ?, rem_penalty = ?, status = ? WHERE id = ?";
-            $pdo->prepare($sqlUpdateSchedule)->execute([$rem_principal, $rem_interest, $rem_penalty, $newStatus, $schedule_id]);
-
-            $sqlInsertHistory = "INSERT INTO loan_payments (
-                                    schedule_id, loan_id, payment_amount, penalty_paid, interest_paid, principal_paid, payment_date
-                                 ) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $pdo->prepare($sqlInsertHistory)->execute([
-                $schedule_id,
-                $loan_id,
-                $payment_amt,
-                $allocated_penalty,
-                $allocated_interest,
-                $allocated_principal,
-                $payment_date
-            ]);
-
-            $pdo->commit();
-            $_SESSION['success_message'] = "Remittance applied successfully. Balances deducted.";
-            header("Location: index.php?route=view_loan&id=" . $loan_id);
-            exit;
-        } catch (Exception $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
-            die("Remittance Transaction Failure: " . $e->getMessage());
+            $upd = $pdo->prepare("UPDATE loan_schedules SET rem_principal = ?, rem_interest = ?, rem_penalty = ?, status = ? WHERE id = ?");
+            $upd->execute([$rem['pr'], $rem['i'], $rem['p'], $newStatus, $s_id]);
         }
+
+        // 3. Log to ledger
+        $excess = max(0, $running_payment);
+        $stmtLedger = $pdo->prepare("INSERT INTO payment_ledger (loan_id, amount_paid, penalty_applied, interest_applied, principal_applied, excess, datetime, remarks) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)");
+        $stmtLedger->execute([$loan_id, $payment_amt, $totals['penalty'], $totals['interest'], $totals['principal'], $excess, $remarks]);
+
+        // 4. THE STATUS VERIFICATION (The "Missing Update" fix)
+        // We calculate if ANY unpaid schedules remain. If count is 0, the loan is DONE.
+        $check = $pdo->prepare("SELECT COUNT(*) FROM loan_schedules WHERE loan_id = ? AND status != 'paid'");
+        $check->execute([$loan_id]);
+        $remaining_count = intval($check->fetchColumn());
+
+        if ($remaining_count === 0) {
+            $pdo->prepare("UPDATE loans SET soa_status = 'Fully Paid' WHERE id = ?")->execute([$loan_id]);
+            $_SESSION['success_message'] = "Payment processed. Loan is now Fully Paid!";
+        } else {
+            // Ensure status is NOT 'Fully Paid' if there is still debt
+            $pdo->prepare("UPDATE loans SET soa_status = 'Active' WHERE id = ?")->execute([$loan_id]);
+            $_SESSION['success_message'] = "Payment processed successfully.";
+        }
+
+        $pdo->commit();
+        header("Location: index.php?route=view_loan&id=" . $loan_id);
+        exit;
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        die("Transaction Error: " . $e->getMessage());
     }
 }
 
-/**
- * Formats data structure outputs into Statement of Account breakdowns
- */
 function handlePrintSOA($pdo)
 {
     checkAuthenticated($pdo);
     $loan_id = intval($_GET['id'] ?? 0);
     if ($loan_id <= 0) die("Missing configuration index context.");
 
-    // 1. Fetch Loan Data
     $sqlLoan = "SELECT l.*, m.first_name, m.last_name, m.member_number 
                 FROM loans l 
                 JOIN members m ON l.member_id = m.id 
@@ -305,18 +285,14 @@ function handlePrintSOA($pdo)
     $stmtLoan->execute([$loan_id]);
     $loan = $stmtLoan->fetch();
 
-    // 2. Fetch Schedule Data
     $schedule = $pdo->query("SELECT * FROM loan_schedules WHERE loan_id = {$loan_id} ORDER BY period ASC")->fetchAll();
-    
-    // 3. Fetch Ledger Data
+
+    // Fetch ledger data to map to view expectation
     $ledger = $pdo->query("SELECT *, datetime AS date FROM payment_ledger WHERE loan_id = {$loan_id} ORDER BY id ASC")->fetchAll();
-    
-    // --- CRITICAL FIX: MAP DATA TO VIEW VARIABLES ---
+
     $loanData = $loan;
     $rows     = $schedule;
-    // $ledger is already defined above
 
-    // 4. Include the view
     include dirname(__DIR__) . '/views/loan_print.php';
 }
 
@@ -334,17 +310,15 @@ function handleEditSchedulePeriod($pdo)
 
         $schedule_id   = intval($_POST['schedule_id'] ?? 0);
         $loan_id       = intval($_POST['loan_id'] ?? 0);
-        $rem_principal = floatval($_POST['rem_principal'] ?? 0);
-        $rem_interest  = floatval($_POST['rem_interest'] ?? 0);
         $rem_penalty   = floatval($_POST['rem_penalty'] ?? 0);
-        $status        = trim($_POST['status'] ?? 'pending');
 
         try {
-            $sql = "UPDATE loan_schedules SET rem_principal = ?, rem_interest = ?, rem_penalty = ?, status = ? WHERE id = ? AND loan_id = ?";
+            // Simplified update just for manual penalty overrides from the view
+            $sql = "UPDATE loan_schedules SET rem_penalty = ? WHERE id = ? AND loan_id = ?";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$rem_principal, $rem_interest, $rem_penalty, $status, $schedule_id, $loan_id]);
+            $stmt->execute([$rem_penalty, $schedule_id, $loan_id]);
 
-            $_SESSION['success_message'] = "Amortization period schedule criteria metrics modified manually.";
+            $_SESSION['success_message'] = "Amortization period schedule metrics modified manually.";
             header("Location: index.php?route=view_loan&id=" . $loan_id);
             exit;
         } catch (PDOException $e) {
@@ -359,6 +333,10 @@ function handleEditSchedulePeriod($pdo)
 function handlePendingLoansQueue($pdo)
 {
     checkAuthenticated($pdo);
+
+    if (!isset($_SESSION['role_id']) || $_SESSION['role_id'] != 1) {
+        die("Access Denied: You do not have permission to access the approval queue.");
+    }
 
     $sql = "SELECT l.*, m.first_name, m.last_name, m.member_number 
             FROM loans l 
@@ -397,10 +375,10 @@ function handleProcessLoanApproval($pdo)
             }
 
             if ($action === 'Approve') {
-                $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Approved' WHERE id = ?");
+                // Ensure new loans start with an Active SOA Status
+                $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Approved', soa_status = 'Active' WHERE id = ?");
                 $stmt->execute([$loan_id]);
 
-                // FIXED: Changed keys to match your database schema columns exactly
                 $scheduleRows = AmortizationEngine::generateSchedule([
                     'principal'         => floatval($loan['principal']),
                     'interest_rate'     => floatval($loan['interest_rate']),
@@ -430,17 +408,13 @@ function handleProcessLoanApproval($pdo)
                     ]);
                 }
 
-                // FIXED: Removed backslashes and utilized single quotes for nested parameters
                 logSystemActivity($pdo, 'LOAN_APPROVAL', "Approved and activated loan allocation record #{$loan_id}");
-
                 $_SESSION['success_message'] = "Loan profile allocation approved, activated, and repayment matrix instantiated successfully.";
             } else {
                 $stmt = $pdo->prepare("UPDATE loans SET loan_status = 'Rejected' WHERE id = ?");
                 $stmt->execute([$loan_id]);
 
-                // FIXED: Removed backslashes and utilized single quotes for nested parameters
                 logSystemActivity($pdo, 'LOAN_REJECTION', "Rejected loan application entry #{$loan_id}");
-
                 $_SESSION['success_message'] = "Loan profile application marked as Rejected.";
             }
 

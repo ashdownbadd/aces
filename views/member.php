@@ -14,7 +14,7 @@ if (!defined('ALLOW_ACCESS')) {
     <p>This workspace tracks actual cooperative shareholders, registration logs, and capital statements.</p>
 
     <?php if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
-        <p><a href="index.php?route=add_coop_member" style="background: #5cb85c; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">+ Register New Cooperative Member</a></p>
+        <p><a href="index.php?route=add_member" style="background: #5cb85c; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px;">+ Register New Cooperative Member</a></p>
     <?php else: ?>
         <p style="color: #777; font-style: italic; background: #eee; padding: 8px; display: inline-block; border-radius: 4px;">🔒 Account Tier Mode: Staff View (Read-Only)</p>
     <?php endif; ?>

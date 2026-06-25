@@ -19,7 +19,7 @@ if (!defined('ALLOW_ACCESS')) {
         </p>
     <?php endif; ?>
 
-    <form action="index.php?route=add_coop_member" method="POST">
+    <form action="index.php?route=add_member" method="POST">
 
         <div style="background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px;">
             <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #ddd; padding-bottom: 5px;">Personal Identity</h3>

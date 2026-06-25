@@ -52,20 +52,29 @@ $grandTotalDue = $totalRemPrincipal + $totalRemInterest + $totalRemPenalty;
             <hr>
             <h2 style="margin: 5px 0; color: #c9302c;">Grand Aggregate Total: ₱<?php echo number_format($grandTotalDue, 2); ?></h2>
 
-            <form action="index.php?route=apply_loan_payment" method="POST" style="margin-top: 15px;">
-                <input type="hidden" name="loan_id" value="<?php echo $loanData['id']; ?>">
-                <input type="number" name="amount_paid" step="0.01" required placeholder="Enter Payment Amount" style="width:100%; padding:8px; box-sizing:border-box;">
-                <input type="text" name="remarks" placeholder="Reference Remarks" style="width:100%; padding:8px; margin-top:5px; box-sizing:border-box;">
-                <button type="submit" style="width:100%; margin-top:10px; background:#c9302c; color:white; border:none; padding:8px; font-weight:bold; cursor:pointer;">
-                    Execute Global Waterfall Distribution Pass
-                </button>
-            </form>
+            <div style="background: #eef7ff; padding: 15px; border-radius: 8px; border: 1px solid #b3d7ff; margin-top: 15px;">
+                <h3 style="margin-top: 0;">Apply Global Payment</h3>
+                <form action="index.php?route=apply_loan_payment" method="POST" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="hidden" name="loan_id" value="<?php echo htmlspecialchars($loanData['id']); ?>">
+
+                    <label style="font-weight: bold;">Amount:</label>
+                    <input type="number" name="payment_amount" step="0.01" required placeholder="0.00" style="padding: 8px; width: 120px; border: 1px solid #ccc; border-radius: 4px;">
+
+                    <button type="submit" style="background:#27ae60; color:white; border:none; padding:8px 15px; cursor:pointer; border-radius: 4px; font-weight: bold;">
+                        Execute Waterfall Distribution
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
     <?php if (isset($_SESSION['success_message'])): ?>
-        <p style="color: green; font-weight: bold; background: #efe; padding: 8px; border: 1px solid green;"><?php echo $_SESSION['success_message'];
-                                                                                                                unset($_SESSION['success_message']); ?></p>
+        <p style="color: green; font-weight: bold; background: #efe; padding: 8px; border: 1px solid green;">
+            <?php
+            echo $_SESSION['success_message'];
+            unset($_SESSION['success_message']);
+            ?>
+        </p>
     <?php endif; ?>
 
     <h3>Chronological Period-by-Period Amortization Tracking Matrix</h3>
@@ -89,15 +98,15 @@ $grandTotalDue = $totalRemPrincipal + $totalRemInterest + $totalRemPenalty;
                     <td>₱<?php echo number_format($r['principal'], 2); ?> / ₱<?php echo number_format($r['rem_principal'], 2); ?></td>
                     <td>₱<?php echo number_format($r['interest'], 2); ?> / ₱<?php echo number_format($r['rem_interest'], 2); ?></td>
                     <td>₱<?php echo number_format($r['rem_penalty'], 2); ?></td>
-                    <td><?php echo strtoupper($r['status']); ?></td>
+                    <td><strong><?php echo strtoupper($r['status']); ?></strong></td>
                     <td style="background:#fffdf0;">
-                        <form action="index.php?route=edit_schedule_period" method="POST">
+                        <form action="index.php?route=edit_schedule_period" method="POST" style="margin: 0; display: flex; gap: 5px;">
                             <input type="hidden" name="schedule_id" value="<?php echo $r['id']; ?>">
                             <input type="hidden" name="loan_id" value="<?php echo $loanData['id']; ?>">
                             <input type="date" name="due_date" value="<?php echo $r['due_date']; ?>" style="width:100px;">
-                            <input type="number" step="0.01" name="penalty" value="<?php echo $r['rem_penalty']; ?>" style="width:60px;">
+                            <input type="number" step="0.01" name="rem_penalty" value="<?php echo $r['rem_penalty']; ?>" style="width:60px;">
                             <input type="text" name="remarks" placeholder="Notes..." style="width:80px;">
-                            <button type="submit" style="background:#f39c12; color:white; border:none; padding:2px 5px;">Update</button>
+                            <button type="submit" style="background:#f39c12; color:white; border:none; padding:4px 8px; border-radius: 3px; cursor: pointer;">Update</button>
                         </form>
                     </td>
                 </tr>
