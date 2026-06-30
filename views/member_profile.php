@@ -52,8 +52,7 @@ function display_value($value, $fallback = 'N/A') {
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr><td style="padding: 5px 0; width: 40%; color: #555;">Date of Birth</td> <td><strong><?php echo display_value($member['date_of_birth']); ?></strong></td></tr>
                     <tr><td style="padding: 5px 0; color: #555;">Sex</td> <td><strong><?php echo display_value($member['profile']['sex'] ?? null); ?></strong></td></tr>
-                    <tr><td style="padding: 5px 0; color: #555;">Civil Status</td> <td><strong><?php echo display_value($member['profile']['civil_status'] ?? null); ?></strong></td></tr>
-                    <tr><td style="padding: 5px 0; color: #555;">Religion</td> <td><strong><?php echo display_value($member['profile']['religion'] ?? null); ?></strong></td></tr>
+                    <tr><td style="padding: 5px 0; color: #555;">Marital Status</td> <td><strong><?php echo display_value($member['profile']['marital_status'] ?? null); ?></strong></td></tr>
                 </table>
             </div>
 
