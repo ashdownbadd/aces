@@ -12,7 +12,6 @@ function handleCoopMemberList($pdo)
     $searchTerm = trim($_GET['search'] ?? '');
 
     try {
-        // Updated SQL to join journal_vouchers and filter by status
         $sql = "SELECT m.id, m.member_number, m.first_name, m.last_name, m.status, 
                        c.email, c.phone_no_1 AS phone,
                        (COALESCE(SUM(CASE WHEN jv.status = 'approved' THEN le.credit ELSE 0 END), 0) - 
@@ -20,7 +19,7 @@ function handleCoopMemberList($pdo)
                 FROM members m
                 LEFT JOIN member_contact c ON m.id = c.member_id
                 LEFT JOIN ledger_entries le ON m.id = le.member_id
-                LEFT JOIN journal_vouchers jv ON le.voucher_id = jv.id"; // Joined to access status
+                LEFT JOIN journal_vouchers jv ON le.voucher_id = jv.id";
 
         $params = [];
 
@@ -30,8 +29,7 @@ function handleCoopMemberList($pdo)
             $params = [$likeTerm, $likeTerm, $likeTerm];
         }
 
-        // Correctly placed group by
-        $sql .= " GROUP BY m.id, c.email, c.phone_no_1 ORDER BY m.id DESC";
+        $sql .= " GROUP BY m.id, m.member_number, m.first_name, m.last_name, m.status, c.email, c.phone_no_1 ORDER BY m.id DESC";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
@@ -67,7 +65,7 @@ function handleMemberProfile($pdo)
         foreach ($relations as $key => $table) {
             $s = $pdo->prepare("SELECT * FROM $table WHERE member_id = ?");
             $s->execute([$member_id]);
-            $member[$key] = $s->fetch();
+            $member[$key] = $s->fetch() ?: [];
         }
 
         // 3. Fetch multi-row lists
@@ -75,8 +73,36 @@ function handleMemberProfile($pdo)
         foreach ($lists as $list) {
             $s = $pdo->prepare("SELECT * FROM member_$list WHERE member_id = ?");
             $s->execute([$member_id]);
-            $member[$list] = $s->fetchAll();
+            $member[$list] = $s->fetchAll() ?: [];
         }
+
+        // ==========================================
+        // 4. MEMBER 360: Fetch Ledger Balance
+        // ==========================================
+        $stmtLedger = $pdo->prepare("
+            SELECT COALESCE(SUM(le.credit) - SUM(le.debit), 0) as balance 
+            FROM ledger_entries le 
+            JOIN journal_vouchers jv ON le.voucher_id = jv.id 
+            WHERE le.member_id = ? AND jv.status = 'approved'
+        ");
+        $stmtLedger->execute([$member_id]);
+        $member['ledger_balance'] = $stmtLedger->fetchColumn() ?: 0;
+
+        // ==========================================
+        // 5. MEMBER 360: Fetch Active Loan + Next Due Date
+        // ==========================================
+        $stmtLoan = $pdo->prepare("
+            SELECT l.*, s.due_date as next_due_date
+            FROM loans l
+            LEFT JOIN loan_schedules s ON l.id = s.loan_id 
+                AND s.due_date >= CURDATE()
+            WHERE l.member_id = ? 
+              AND l.loan_status = 'approved'
+            ORDER BY s.due_date ASC 
+            LIMIT 1
+        ");
+        $stmtLoan->execute([$member_id]);
+        $member['active_loan'] = $stmtLoan->fetch() ?: null;
 
         include dirname(__DIR__) . '/views/member_profile.php';
     } catch (PDOException $e) {
@@ -120,9 +146,9 @@ function handleCreateCoopMember($pdo)
 
             // 2. Extract profile data
             $sex = trim($_POST['sex'] ?? '');
-            $marital_status = trim($_POST['marital_status'] ?? ''); // Corrected variable name
+            $marital_status = trim($_POST['marital_status'] ?? '');
 
-            // 3. Insert Profile (Fixed column/placeholder count: 3 cols, 3 placeholders)
+            // 3. Insert Profile
             $stmtProfile = $pdo->prepare("INSERT INTO member_profiles (member_id, sex, marital_status) VALUES (?, ?, ?)");
             $stmtProfile->execute([$member_id, $sex, $marital_status]);
 
