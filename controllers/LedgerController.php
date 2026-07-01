@@ -13,11 +13,9 @@ function handleLedgerDashboard($pdo)
     checkAuthenticated($pdo);
 
     $search = trim($_GET['search'] ?? '');
-    $ref_search = trim($_GET['ref_search'] ?? '');
 
     try {
-        // FIXED & SORTED SQL: Moved the approval filter check into the LEFT JOIN definition
-        // and changed the final sorting sequence to ORDER BY m.id ASC
+        // Base Query: We group by everything we select to satisfy SQL requirements
         $sqlSummary = "SELECT 
                         m.id AS member_id, 
                         m.member_number, 
@@ -29,23 +27,24 @@ function handleLedgerDashboard($pdo)
                          COALESCE(SUM(CASE WHEN le.entry_type IN ('withdrawal', 'mrs_deduction') THEN le.debit ELSE 0 END), 0)) AS current_balance
                        FROM members m
                        LEFT JOIN ledger_entries le ON m.id = le.member_id
-                       LEFT JOIN journal_vouchers jv ON le.voucher_id = jv.id AND jv.status = 'approved'
-                       WHERE 1=1";
+                       LEFT JOIN journal_vouchers jv ON le.voucher_id = jv.id
+                       WHERE (jv.status = 'approved' OR jv.status IS NULL)";
 
         $params = [];
+
+        // Add search filtering if provided
         if (!empty($search)) {
             $sqlSummary .= " AND (m.first_name LIKE ? OR m.last_name LIKE ? OR m.member_number LIKE ?)";
             $params = ["%$search%", "%$search%", "%$search%"];
         }
 
-        // Updated sorting parameter to order by numerical primary identifier
+        // Add the single Group By and Order By
         $sqlSummary .= " GROUP BY m.id, m.member_number, m.first_name, m.last_name ORDER BY m.id ASC";
 
         $stmtSummary = $pdo->prepare($sqlSummary);
         $stmtSummary->execute($params);
         $member_summaries = $stmtSummary->fetchAll();
 
-        // ... (inside handleLedgerDashboard)
         // Fetch recent transaction activity
         $start_date = trim($_GET['start_date'] ?? '');
         $end_date   = trim($_GET['end_date'] ?? '');
@@ -56,7 +55,6 @@ function handleLedgerDashboard($pdo)
                         WHERE 1=1";
 
         $voucherParams = [];
-
         if (!empty($start_date)) {
             $sqlVouchers .= " AND DATE(jv.transaction_date) >= ?";
             $voucherParams[] = $start_date;
@@ -74,14 +72,10 @@ function handleLedgerDashboard($pdo)
 
         include dirname(__DIR__) . '/views/ledger_dashboard.php';
     } catch (PDOException $e) {
-        // ... (rest of code)
         die("Database error loading ledger dashboard: " . $e->getMessage());
     }
 }
 
-/**
- * Handles processing and creating manual entry journal adjustments
- */
 function handleCreateLedgerEntry($pdo)
 {
     checkAuthenticated($pdo);
