@@ -2,6 +2,12 @@
 if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
+
+/** * @var array $member  The array containing core profile data for the targeted cooperative member
+ * @var int $total_coop_equity The total cooperative equity value
+ * @var int $pending_count The number of pending approvals
+ */
+
 ?>
 <div class="container" style="font-family: Arial, sans-serif; padding: 20px;">
     <div style="float: right; text-align: right;">
@@ -17,6 +23,18 @@ if (!defined('ALLOW_ACCESS')) {
             unset($_SESSION['success_message']); ?>
         </p>
     <?php endif; ?>
+
+    <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; flex: 1; border: 1px solid #b3d7ff;">
+            <h3 style="margin-top: 0; color: #0056b3;">Total Cooperative Equity</h3>
+            <p style="font-size: 1.8em; font-weight: bold; margin: 5px 0;">$<?php echo number_format($total_coop_equity, 2); ?></p>
+        </div>
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; flex: 1; border: 1px solid #ffeeba;">
+            <h3 style="margin-top: 0; color: #856404;">Pending Approvals</h3>
+            <p style="font-size: 1.8em; font-weight: bold; margin: 5px 0;"><?php echo $pending_count; ?></p>
+            <a href="index.php?route=pending_approvals" style="color: #856404; font-weight: bold;">View Queue →</a>
+        </div>
+    </div>
 
     <form action="index.php" method="GET" style="margin-bottom: 20px; background: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
         <input type="hidden" name="route" value="ledger">
@@ -48,21 +66,29 @@ if (!defined('ALLOW_ACCESS')) {
                 <th>Total Credits (+)</th>
                 <th>Total Debits (-)</th>
                 <th>Net Share Capital Balance</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($member_summaries)): ?>
                 <tr>
-                    <td colspan="5" style="text-align: center; color: #777;">No members found.</td>
+                    <td colspan="6" style="text-align: center; color: #777;">No members found.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($member_summaries as $ms): ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($ms['member_number']); ?></code></td>
-                        <td><a href="index.php?route=ledger_statement&id=<?php echo $ms['member_id']; ?>" style="color: #337ab7; font-weight: bold; text-decoration: none;"><?php echo htmlspecialchars($ms['last_name'] . ', ' . $ms['first_name']); ?></a></td>
+                        <td><?php echo htmlspecialchars($ms['last_name'] . ', ' . $ms['first_name']); ?></td>
                         <td style="color: green;">$<?php echo number_format($ms['total_credits'], 2); ?></td>
                         <td style="color: #c9302c;">$<?php echo number_format($ms['total_debits'], 2); ?></td>
-                        <td><strong style="color: <?php echo ($ms['current_balance'] >= 0) ? 'blue' : 'red'; ?>;">$<?php echo number_format($ms['current_balance'], 2); ?></strong></td>
+                        <td>
+                            <strong style="color: <?php echo ($ms['current_balance'] >= 0) ? 'green' : 'red'; ?>;">
+                                $<?php echo number_format($ms['current_balance'], 2); ?>
+                            </strong>
+                        </td>
+                        <td>
+                            <a href="index.php?route=ledger_statement&id=<?php echo $ms['member_id']; ?>" style="background: #17a2b8; color: white; padding: 4px 8px; text-decoration: none; font-size: 0.9em; border-radius: 3px;">View Statement</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

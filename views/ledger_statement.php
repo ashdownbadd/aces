@@ -20,19 +20,23 @@ if (!defined('ALLOW_ACCESS')) {
         <p style="margin: 4px 0;"><strong>Status:</strong> <span style="font-weight:bold; color: green;"><?php echo strtoupper($member['status'] ?? 'ACTIVE'); ?></span></p>
     </div>
 
-    <form action="index.php" method="GET" style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #eee;">
+    <form action="index.php" method="GET" style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #eee; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
         <input type="hidden" name="route" value="ledger_statement">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($member['id']); ?>">
 
-        <label for="ref_search" style="font-weight: bold;">Filter by Reference #:</label>
-        <input type="text" id="ref_search" name="ref_search"
-            value="<?php echo htmlspecialchars($_GET['ref_search'] ?? ''); ?>"
-            placeholder="e.g., 12345"
+        <label for="start_date" style="font-weight: bold;">From Date:</label>
+        <input type="date" id="start_date" name="start_date"
+            value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>"
             style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
 
-        <button type="submit" style="padding: 5px 15px; background: #337ab7; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+        <label for="end_date" style="font-weight: bold;">To Date:</label>
+        <input type="date" id="end_date" name="end_date"
+            value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>"
+            style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <button type="submit" style="padding: 5px 15px; background: #337ab7; color: white; border: none; border-radius: 4px; cursor: pointer;">Search / Filter</button>
         <a href="index.php?route=ledger_statement&id=<?php echo htmlspecialchars($member['id']); ?>"
-            style="margin-left: 10px; color: #666; text-decoration: none; font-size: 0.9em;">Clear Filter</a>
+            style="margin-left: 10px; color: #666; text-decoration: none; font-size: 0.9em;">Clear Filters</a>
     </form>
 
     <h3>Transaction Ledger Timeline History</h3>

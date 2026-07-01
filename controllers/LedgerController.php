@@ -15,6 +15,16 @@ function handleLedgerDashboard($pdo)
     $search = trim($_GET['search'] ?? '');
 
     try {
+        // --- NEW KPI DATA ---
+        $stmtKpi = $pdo->query("SELECT COUNT(*) FROM journal_vouchers WHERE status = 'pending'");
+        $pending_count = $stmtKpi->fetchColumn();
+
+        $stmtEquity = $pdo->query("SELECT SUM(credit - debit) FROM ledger_entries le 
+                                   JOIN journal_vouchers jv ON le.voucher_id = jv.id 
+                                   WHERE jv.status = 'approved'");
+        $total_coop_equity = $stmtEquity->fetchColumn() ?: 0;
+        // --------------------
+
         // Base Query: We group by everything we select to satisfy SQL requirements
         $sqlSummary = "SELECT 
                         m.id AS member_id, 
@@ -139,6 +149,8 @@ function handleLedgerStatement($pdo)
 {
     checkAuthenticated($pdo);
     $member_id = intval($_GET['id'] ?? 0);
+    $start_date = trim($_GET['start_date'] ?? '');
+    $end_date = trim($_GET['end_date'] ?? '');
 
     try {
         $stmtMember = $pdo->prepare("SELECT * FROM members WHERE id = ? LIMIT 1");
@@ -147,14 +159,27 @@ function handleLedgerStatement($pdo)
 
         if (!$member) die("Error: Target member profile does not exist.");
 
+        // --- NEW DATE FILTER LOGIC ---
         $sqlTransactions = "SELECT le.entry_type, le.debit, le.credit, jv.transaction_date, jv.reference_number, jv.particulars
                             FROM ledger_entries le
                             JOIN journal_vouchers jv ON le.voucher_id = jv.id
-                            WHERE le.member_id = ? AND jv.status = 'approved'
-                            ORDER BY jv.transaction_date ASC, le.id ASC";
+                            WHERE le.member_id = ? AND jv.status = 'approved'";
+
+        $params = [$member_id];
+
+        if (!empty($start_date)) {
+            $sqlTransactions .= " AND DATE(jv.transaction_date) >= ?";
+            $params[] = $start_date;
+        }
+        if (!empty($end_date)) {
+            $sqlTransactions .= " AND DATE(jv.transaction_date) <= ?";
+            $params[] = $end_date;
+        }
+
+        $sqlTransactions .= " ORDER BY jv.transaction_date ASC, le.id ASC";
 
         $stmtTx = $pdo->prepare($sqlTransactions);
-        $stmtTx->execute([$member_id]);
+        $stmtTx->execute($params);
         $history = $stmtTx->fetchAll();
 
         include dirname(__DIR__) . '/views/ledger_statement.php';
@@ -167,8 +192,6 @@ function handlePendingApprovals($pdo)
 {
     checkAuthenticated($pdo);
 
-    // UPDATED: Allow both Admin (1) and Staff (2) to view the pending list
-    // Replace '2' with your actual staff role ID if it is different
     $staff_role_id = 2;
 
     if (
@@ -204,11 +227,9 @@ function handleApproveVoucher($pdo)
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $voucher_id = intval($_POST['voucher_id'] ?? 0);
         try {
-            // 1. Update the status
             $stmt = $pdo->prepare("UPDATE journal_vouchers SET status = 'approved' WHERE id = ?");
             $stmt->execute([$voucher_id]);
 
-            // 2. LOG THE ACTION (This will now appear in your activity_logs table)
             logSystemActivity($pdo, 'VOUCHER_APPROVAL', "Approved journal voucher ID #{$voucher_id}");
 
             $_SESSION['success_message'] = "Voucher approved successfully.";
