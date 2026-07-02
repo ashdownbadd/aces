@@ -98,17 +98,22 @@ switch ($route) {
 
     case 'activity_logs':
         checkAuthenticated($pdo);
+
+        // Security check
         if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
             $_SESSION['error_message'] = "Access Denied: High security clearance requirements mismatch.";
             header("Location: index.php?route=dashboard");
             exit;
         }
+
+        // Database logic
         try {
             $logs = $pdo->query("SELECT * FROM activity_logs ORDER BY id DESC LIMIT 500")->fetchAll();
             include __DIR__ . '/views/activity_logs.php';
         } catch (PDOException $e) {
             die("Database audit logs fetch failure: " . $e->getMessage());
         }
+
         break;
 
     // --- SYSTEM REGISTERED MEMBERS DIRECTORY MODULE ---
@@ -182,3 +187,8 @@ switch ($route) {
         http_response_code(404);
         die("Error 404: The system command or module address requested cannot be resolved.");
 }
+
+$content = ob_get_clean();
+
+// Include the master layout
+include __DIR__ . '/views/layout.php';
