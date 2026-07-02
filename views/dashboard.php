@@ -82,7 +82,7 @@ if (!defined('ALLOW_ACCESS')) {
 
         <?php if (isset($_SESSION['role_id']) && intval($_SESSION['role_id']) === 1): ?>
             <li class="card card-yellow" style="margin-top: 30px; border-style: dashed;">
-                <a href="index.php?route=admins" style="font-weight: bold; font-size: 1.1em; color: #d32f2f; text-decoration: none;">🛡️ Manage System Operators & Staff Control Panel</a>
+                <a href="index.php?route=admins" style="font-weight: bold; font-size: 1.1em; color: #d32f2f; text-decoration: none;"><i class="fas fa-shield-halved"></i> Manage System Operators & Staff Control Panel</a>
                 <br><span style="color: #555; font-size: 0.95em;">Administrative clearance node: modify access rankings, create credentials, or trigger operator locks.</span>
                 <hr style="border-top-color: #f9a825;">
                 <a href="index.php?route=activity_logs" style="font-weight: bold; font-size: 1.1em; color: #004d40; text-decoration: none;">📊 Review Global System Activity Logs</a>

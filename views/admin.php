@@ -59,15 +59,19 @@ $admins = $members ?? [];
                             <?php else: ?>
                                 <div style="display: flex; gap: 8px;">
                                     <a href="index.php?route=toggle_status&id=<?php echo $admin['id']; ?>"
-                                        onclick="return confirm('Are you sure you want to alter the operational status for this user?');"
+                                        onclick="return confirm('Are you sure?');"
                                         class="btn <?php echo ($admin['status'] === 'active') ? 'btn-danger' : 'btn-success'; ?>">
-                                        <?php echo ($admin['status'] === 'active') ? 'Suspend Account 🛑' : 'Activate Account ✔'; ?>
+
+                                        <?php if ($admin['status'] === 'active'): ?>
+                                            <i class="fas fa-ban"></i> Suspend
+                                        <?php else: ?>
+                                            <i class="fas fa-check"></i> Activate
+                                        <?php endif; ?>
                                     </a>
 
                                     <a href="index.php?route=toggle_role&id=<?php echo $admin['id']; ?>"
-                                        onclick="return confirm('Change this user\'s administrative authorization rank?');"
                                         class="btn btn-warning">
-                                        Toggle Role 🔄
+                                        <i class="fas fa-sync-alt"></i> Toggle Role
                                     </a>
                                 </div>
                             <?php endif; ?>
