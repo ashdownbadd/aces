@@ -54,10 +54,10 @@ function logSystemActivity($pdo, $action, $details)
     $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
     try {
-        $sql = "INSERT INTO activity_logs (user_id, username, action, details, ip_address) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $pdo->prepare("INSERT INTO activity_logs (user_id, username, action, details, ip_address) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$userId, $username, $action, $details, $ip]);
     } catch (PDOException $e) {
+        // Silently fail or log to server error log to avoid interrupting the user's workflow
         error_log("Audit logging failed: " . $e->getMessage());
     }
 }
