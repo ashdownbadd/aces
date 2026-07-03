@@ -1,95 +1,41 @@
-/* ==========================================================
-   MODULE GRID
-========================================================== */
-
 .module-grid {
   display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-
-  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
-
-/* ==========================================================
-   MODULE CARD
-========================================================== */
 
 .module-card {
   display: flex;
+  align-items: center;
+  gap: 1rem;
 
-  flex-direction: column;
+  padding: 1.5rem;
 
-  gap: var(--space-4);
+  border-radius: 12px;
 
-  height: 100%;
+  background: #fff;
 
-  transition: var(--transition);
+  text-decoration: none;
+
+  transition: 0.2s;
+
+  border: 1px solid #e5e7eb;
 }
 
 .module-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
-
-/* ==========================================================
-   ICON
-========================================================== */
 
 .module-card__icon {
-  width: 56px;
-
-  height: 56px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border-radius: var(--radius-lg);
-
-  background: var(--gold-dim);
-
-  color: var(--gold);
-
-  font-size: 1.4rem;
+  font-size: 2rem;
 }
-
-/* ==========================================================
-   TITLE
-========================================================== */
 
 .module-card__title {
-  color: var(--text);
-
-  font-size: 1.1rem;
-
-  font-weight: 600;
-
-  text-decoration: none;
+  margin: 0;
 }
-
-.module-card__title:hover {
-  color: var(--gold);
-}
-
-/* ==========================================================
-   DESCRIPTION
-========================================================== */
 
 .module-card__description {
-  color: var(--t2);
-
-  line-height: 1.6;
-
-  flex: 1;
-}
-
-/* ==========================================================
-   FOOTER
-========================================================== */
-
-.module-card__footer {
-  display: flex;
-
-  justify-content: flex-end;
+  margin-top: 0.4rem;
+  color: #666;
 }

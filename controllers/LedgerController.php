@@ -20,23 +20,32 @@ function handleLedgerDashboard(PDO $pdo): string
 
         /*
         |--------------------------------------------------------------------------
-        | KPI Cards
+        | KPI Data
         |--------------------------------------------------------------------------
         */
 
-        $pending_count = $pdo
-            ->query("SELECT COUNT(*) FROM journal_vouchers WHERE status='pending'")
-            ->fetchColumn();
-
-        $total_coop_equity = $pdo
+        $totalCoopEquity = (float) (
+            $pdo
             ->query("
-                SELECT SUM(credit - debit)
-                FROM ledger_entries le
-                JOIN journal_vouchers jv
-                    ON le.voucher_id = jv.id
-                WHERE jv.status='approved'
-            ")
-            ->fetchColumn() ?: 0;
+                    SELECT SUM(credit - debit)
+                    FROM ledger_entries le
+                    INNER JOIN journal_vouchers jv
+                        ON le.voucher_id = jv.id
+                    WHERE jv.status = 'approved'
+                ")
+            ->fetchColumn()
+            ?: 0
+        );
+
+        $pendingApprovals = (int) (
+            $pdo
+            ->query("
+                    SELECT COUNT(*)
+                    FROM journal_vouchers
+                    WHERE status = 'pending'
+                ")
+            ->fetchColumn()
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -47,7 +56,7 @@ function handleLedgerDashboard(PDO $pdo): string
         $sql = "
             SELECT
 
-                m.id AS member_id,
+                m.id,
                 m.member_number,
                 m.first_name,
                 m.last_name,
@@ -98,17 +107,19 @@ function handleLedgerDashboard(PDO $pdo): string
                         ),
                         0
                     )
+
                 ) AS current_balance
 
             FROM members m
 
             LEFT JOIN ledger_entries le
-                ON m.id = le.member_id
+                ON le.member_id = m.id
 
             LEFT JOIN journal_vouchers jv
-                ON le.voucher_id = jv.id
+                ON jv.id = le.voucher_id
 
-            WHERE (jv.status='approved' OR jv.status IS NULL)
+            WHERE
+                (jv.status = 'approved' OR jv.status IS NULL)
         ";
 
         $params = [];
@@ -126,24 +137,30 @@ function handleLedgerDashboard(PDO $pdo): string
 
             $like = "%{$search}%";
 
-            $params = [$like, $like, $like];
+            $params = [
+                $like,
+                $like,
+                $like
+            ];
         }
 
         $sql .= "
             GROUP BY
-
                 m.id,
                 m.member_number,
                 m.first_name,
                 m.last_name
 
-            ORDER BY m.id ASC
+            ORDER BY
+                m.last_name ASC,
+                m.first_name ASC
         ";
 
         $stmt = $pdo->prepare($sql);
+
         $stmt->execute($params);
 
-        $member_summaries = $stmt->fetchAll();
+        $memberSummaries = $stmt->fetchAll();
 
         /*
         |--------------------------------------------------------------------------
@@ -162,20 +179,24 @@ function handleLedgerDashboard(PDO $pdo): string
             FROM journal_vouchers jv
 
             LEFT JOIN users u
-                ON jv.created_by = u.id
+                ON u.id = jv.created_by
 
-            WHERE 1=1
+            WHERE 1 = 1
         ";
 
         $voucherParams = [];
 
         if ($start_date !== '') {
+
             $sql .= " AND DATE(jv.transaction_date) >= ?";
+
             $voucherParams[] = $start_date;
         }
 
         if ($end_date !== '') {
+
             $sql .= " AND DATE(jv.transaction_date) <= ?";
+
             $voucherParams[] = $end_date;
         }
 
@@ -188,24 +209,232 @@ function handleLedgerDashboard(PDO $pdo): string
         ";
 
         $stmt = $pdo->prepare($sql);
+
         $stmt->execute($voucherParams);
 
         $vouchers = $stmt->fetchAll();
 
-        return render('ledger_dashboard', [
+        /*
+        |--------------------------------------------------------------------------
+        | KPI View Model
+        |--------------------------------------------------------------------------
+        */
 
-            'pending_count'     => $pending_count,
-            'total_coop_equity' => $total_coop_equity,
-            'member_summaries'  => $member_summaries,
-            'vouchers'          => $vouchers,
-            'search'            => $search,
-            'start_date'        => $start_date,
-            'end_date'          => $end_date
+        $kpis = [
 
-        ]);
+            [
+
+                'title'       => 'Total Equity',
+
+                'value'       => '₱' . number_format($totalCoopEquity, 2),
+
+                'subtitle'    => 'Approved Share Capital',
+
+                'description' => 'Current cooperative equity',
+
+                'icon'        => 'fas fa-coins',
+
+                'color'       => 'primary',
+
+                'url'         => url('ledger')
+
+            ],
+
+            [
+
+                'title'       => 'Pending Vouchers',
+
+                'value'       => $pendingApprovals,
+
+                'subtitle'    => 'Awaiting Approval',
+
+                'description' => 'Pending journal vouchers',
+
+                'icon'        => 'fas fa-clock',
+
+                'color'       => 'warning',
+
+                'url'         => url('pending_approvals')
+
+            ]
+
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | Member Table View Model
+        |--------------------------------------------------------------------------
+        */
+
+        $memberTable = [
+
+            'headers' => [
+
+                'Member',
+
+                'Credits',
+
+                'Debits',
+
+                'Balance',
+
+                'Actions'
+
+            ],
+
+            'rows' => []
+
+        ];
+
+        foreach ($memberSummaries as $member) {
+
+            $memberTable['rows'][] = [
+
+                htmlspecialchars(
+                    $member['last_name']
+                        . ', '
+                        . $member['first_name']
+                ),
+
+                '₱' . number_format((float)$member['total_credits'], 2),
+
+                '₱' . number_format((float)$member['total_debits'], 2),
+
+                '<strong>₱'
+                    . number_format((float)$member['current_balance'], 2)
+                    . '</strong>',
+
+                '<a class="btn btn--primary" href="index.php?route=ledger_statement&id='
+                    . (int)$member['id']
+                    . '">View</a>'
+
+            ];
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Voucher Table View Model
+        |--------------------------------------------------------------------------
+        */
+
+        $voucherTable = [
+
+            'headers' => [
+
+                'Reference',
+
+                'Date',
+
+                'Operator',
+
+                'Status'
+
+            ],
+
+            'rows' => []
+
+        ];
+
+        foreach ($vouchers as $voucher) {
+
+            $voucherTable['rows'][] = [
+
+                htmlspecialchars($voucher['reference_number']),
+
+                htmlspecialchars($voucher['transaction_date']),
+
+                htmlspecialchars($voucher['operator_name'] ?? 'System'),
+
+                htmlspecialchars(ucfirst($voucher['status']))
+
+            ];
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Render View
+        |--------------------------------------------------------------------------
+        */
+
+        return render(
+            'ledger_dashboard',
+            [
+
+                'kpis' => $kpis,
+
+                'memberTable' => $memberTable,
+
+                'voucherTable' => $voucherTable,
+
+                /*
+                |--------------------------------------------------------------------------
+                | Temporary Compatibility
+                |--------------------------------------------------------------------------
+                | Keep these while we rewrite ledger_dashboard.php.
+                | They can be removed afterwards.
+                */
+
+                'total_coop_equity' => $totalCoopEquity,
+
+                'pending_count' => $pendingApprovals,
+
+                'member_summaries' => $memberSummaries,
+
+                'vouchers' => $vouchers,
+
+                'search' => $search,
+
+                'start_date' => $start_date,
+
+                'end_date' => $end_date
+
+            ]
+        );
     } catch (PDOException $e) {
 
-        die("Database error loading ledger dashboard: " . $e->getMessage());
+        error_log($e->getMessage());
+
+        $_SESSION['error_message'] =
+            'Unable to load the Ledger Dashboard.';
+
+        return render(
+            'ledger_dashboard',
+            [
+
+                'kpis' => [],
+
+                'memberTable' => [
+
+                    'headers' => [],
+
+                    'rows' => []
+
+                ],
+
+                'voucherTable' => [
+
+                    'headers' => [],
+
+                    'rows' => []
+
+                ],
+
+                'total_coop_equity' => 0,
+
+                'pending_count' => 0,
+
+                'member_summaries' => [],
+
+                'vouchers' => [],
+
+                'search' => '',
+
+                'start_date' => '',
+
+                'end_date' => ''
+
+            ]
+        );
     }
 }
 

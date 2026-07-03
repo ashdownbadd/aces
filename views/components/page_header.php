@@ -1,24 +1,26 @@
 <?php
 
-$title ??= '';
-$description ??= '';
-$actions ??= '';
+$title = $title ?? '';
+
+$description = $description ?? '';
+
+$actions = $actions ?? '';
 
 ?>
 
-<div class="page__header">
+<header class="page-header">
 
-    <div class="page__heading">
+    <div>
 
-        <h1 class="page__title">
+        <h1 class="page-header__title">
 
             <?= htmlspecialchars($title) ?>
 
         </h1>
 
-        <?php if (!empty($description)): ?>
+        <?php if ($description): ?>
 
-            <p class="page__description">
+            <p class="page-header__description">
 
                 <?= $description ?>
 
@@ -28,9 +30,9 @@ $actions ??= '';
 
     </div>
 
-    <?php if (!empty($actions)): ?>
+    <?php if ($actions): ?>
 
-        <div class="page__actions">
+        <div class="page-header__actions">
 
             <?= $actions ?>
 
@@ -38,4 +40,4 @@ $actions ??= '';
 
     <?php endif; ?>
 
-</div>
+</header>

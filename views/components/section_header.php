@@ -1,31 +1,27 @@
 <?php
 
-$title ??= '';
+$title = $title ?? '';
 
-$description ??= '';
+$description = $description ?? '';
 
 ?>
 
-<div class="section__header">
+<div class="section-header">
 
-    <div>
+    <h2 class="section-header__title">
 
-        <h2 class="section__title">
+        <?= htmlspecialchars($title) ?>
 
-            <?= htmlspecialchars($title) ?>
+    </h2>
 
-        </h2>
+    <?php if ($description): ?>
 
-        <?php if (!empty($description)): ?>
+        <p class="section-header__description">
 
-            <p class="section__description">
+            <?= htmlspecialchars($description) ?>
 
-                <?= htmlspecialchars($description) ?>
+        </p>
 
-            </p>
-
-        <?php endif; ?>
-
-    </div>
+    <?php endif; ?>
 
 </div>

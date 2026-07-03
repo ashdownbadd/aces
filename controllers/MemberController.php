@@ -4,7 +4,7 @@ if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
 
-function handleCoopMemberList(PDO $pdo)
+function handleCoopMemberList(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
@@ -28,7 +28,7 @@ function handleCoopMemberList(PDO $pdo)
                             THEN le.credit
                             ELSE 0
                         END
-                    ),0)
+                    ), 0)
                     -
                     COALESCE(SUM(
                         CASE
@@ -36,24 +36,24 @@ function handleCoopMemberList(PDO $pdo)
                             THEN le.debit
                             ELSE 0
                         END
-                    ),0)
+                    ), 0)
                 ) AS share_capital
 
             FROM members m
 
             LEFT JOIN member_contact c
-                ON m.id = c.member_id
+                ON c.member_id = m.id
 
             LEFT JOIN ledger_entries le
-                ON m.id = le.member_id
+                ON le.member_id = m.id
 
             LEFT JOIN journal_vouchers jv
-                ON le.voucher_id = jv.id
+                ON jv.id = le.voucher_id
         ";
 
         $params = [];
 
-        if (!empty($searchTerm)) {
+        if ($searchTerm !== '') {
 
             $sql .= "
                 WHERE
@@ -64,7 +64,11 @@ function handleCoopMemberList(PDO $pdo)
 
             $like = "%{$searchTerm}%";
 
-            $params = [$like, $like, $like];
+            $params = [
+                $like,
+                $like,
+                $like
+            ];
         }
 
         $sql .= "
@@ -77,19 +81,121 @@ function handleCoopMemberList(PDO $pdo)
                 c.email,
                 c.phone_no_1
 
-            ORDER BY m.id DESC
+            ORDER BY
+                m.last_name ASC,
+                m.first_name ASC
         ";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
+        $members = $stmt->fetchAll();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Table View Model
+        |--------------------------------------------------------------------------
+        */
+
+        $headers = [
+
+            'Member No.',
+
+            'Full Name',
+
+            'Email',
+
+            'Phone',
+
+            'Share Capital',
+
+            'Status'
+
+        ];
+
+        $rows = [];
+
+        foreach ($members as $member) {
+
+            $profileUrl =
+                'index.php?route=member_profile&id='
+                . (int)$member['id'];
+
+            $status = strtolower($member['status'] ?? '');
+
+            if ($status === 'active') {
+
+                $statusBadge =
+                    '<span class="status status--active">ACTIVE</span>';
+            } else {
+
+                $statusBadge =
+                    '<span class="status status--inactive">'
+                    . htmlspecialchars(strtoupper($status ?: 'UNKNOWN'))
+                    . '</span>';
+            }
+
+            $rows[] = [
+
+                '<code class="code">'
+                    . htmlspecialchars($member['member_number'])
+                    . '</code>',
+
+                '<a class="module-card__title" href="'
+                    . $profileUrl
+                    . '">'
+                    . htmlspecialchars(
+                        $member['last_name']
+                            . ', '
+                            . $member['first_name']
+                    )
+                    . '</a>',
+
+                htmlspecialchars(
+                    $member['email'] ?: 'N/A'
+                ),
+
+                htmlspecialchars(
+                    $member['phone'] ?: 'N/A'
+                ),
+
+                '<strong>₱'
+                    . number_format(
+                        (float)$member['share_capital'],
+                        2
+                    )
+                    . '</strong>',
+
+                $statusBadge
+
+            ];
+        }
+
         return render('member', [
-            'coop_members' => $stmt->fetchAll(),
-            'searchTerm'   => $searchTerm
+
+            'headers' => $headers,
+
+            'rows' => $rows,
+
+            'searchTerm' => $searchTerm
+
         ]);
     } catch (PDOException $e) {
 
-        die("Database error fetching members: " . $e->getMessage());
+        $_SESSION['error_message'] =
+            'Unable to retrieve cooperative members.';
+
+        error_log($e->getMessage());
+
+        return render('member', [
+
+            'headers' => [],
+
+            'rows' => [],
+
+            'searchTerm' => $searchTerm
+
+        ]);
     }
 }
 

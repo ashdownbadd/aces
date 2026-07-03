@@ -19,12 +19,165 @@ function handleDashboard(PDO $pdo): string
 
     $alerts = getSystemAlerts($pdo);
 
-    return render('dashboard', array_merge(
-        $stats,
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Cards
+    |--------------------------------------------------------------------------
+    */
+
+    $cards = [
+
         [
-            'alerts' => $alerts
+
+            'title'       => 'Members',
+
+            'value'       => $stats['total_members'],
+
+            'subtitle'    => 'Registered Members',
+
+            'description' => 'Total cooperative members',
+
+            'icon'        => 'fas fa-users',
+
+            'color'       => 'primary',
+
+            'url'         => url('members')
+
+        ],
+
+        [
+
+            'title'       => 'Regular Members',
+
+            'value'       => $stats['types']['Regular'] ?? 0,
+
+            'subtitle'    => 'Membership Type',
+
+            'description' => 'Associate: ' . ($stats['types']['Associate'] ?? 0),
+
+            'icon'        => 'fas fa-id-card',
+
+            'color'       => 'gold',
+
+            'url'         => url('members')
+
+        ],
+
+        [
+
+            'title'       => 'Active Members',
+
+            'value'       => $stats['status']['active'] ?? 0,
+
+            'subtitle'    => 'Membership Status',
+
+            'description' => 'Inactive: ' . ($stats['status']['inactive'] ?? 0),
+
+            'icon'        => 'fas fa-user-check',
+
+            'color'       => 'success',
+
+            'url'         => url('members')
+
+        ],
+
+        [
+
+            'title'       => 'Female Members',
+
+            'value'       => $stats['gender']['Female'] ?? 0,
+
+            'subtitle'    => 'Gender Distribution',
+
+            'description' => 'Male: ' . ($stats['gender']['Male'] ?? 0),
+
+            'icon'        => 'fas fa-venus',
+
+            'color'       => 'warning',
+
+            'url'         => url('members')
+
         ]
-    ));
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Quick Actions
+    |--------------------------------------------------------------------------
+    */
+
+    $modules = [
+
+        [
+
+            'title'       => 'Members',
+
+            'description' => 'Manage cooperative members.',
+
+            'icon'        => 'fas fa-users',
+
+            'url'         => url('members'),
+
+            'color'       => 'primary'
+
+        ],
+
+        [
+
+            'title'       => 'Ledger',
+
+            'description' => 'Accounting and journal vouchers.',
+
+            'icon'        => 'fas fa-book',
+
+            'url'         => url('ledger'),
+
+            'color'       => 'success'
+
+        ],
+
+        [
+
+            'title'       => 'Loans',
+
+            'description' => 'Loan and amortization management.',
+
+            'icon'        => 'fas fa-money-bill-wave',
+
+            'url'         => url('amortization_dashboard'),
+
+            'color'       => 'warning'
+
+        ],
+
+        [
+
+            'title'       => 'Activity Logs',
+
+            'description' => 'View system audit trail.',
+
+            'icon'        => 'fas fa-history',
+
+            'url'         => url('activity_logs'),
+
+            'color'       => 'secondary'
+
+        ]
+
+    ];
+
+    return render(
+        'dashboard',
+        array_merge(
+            $stats,
+            [
+                'alerts' => $alerts,
+                'cards' => $cards,
+                'modules' => $modules
+            ]
+        )
+    );
 }
 
 /*

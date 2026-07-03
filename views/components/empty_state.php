@@ -1,8 +1,8 @@
 <?php
 
-$title ??= 'Nothing Found';
+$title = $title ?? 'No Data';
 
-$message ??= '';
+$message = $message ?? '';
 
 ?>
 

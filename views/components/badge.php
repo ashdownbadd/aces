@@ -1,8 +1,7 @@
 <?php
 
-$type ??= 'primary';
-
-$text ??= '';
+$type = $type ?? 'primary';
+$text = $text ?? '';
 
 ?>
 

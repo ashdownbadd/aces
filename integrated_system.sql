@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2026 at 10:40 AM
+-- Generation Time: Jul 03, 2026 at 07:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -37,6 +37,25 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `action`, `details`, `ip_address`, `created_at`) VALUES
+(1, 1, 'admin', 'VOUCHER_APPROVAL', 'Approved journal voucher ID #1', '::1', '2026-06-30 07:08:26'),
+(2, 1, 'admin', 'LOAN_CREATED', 'Loan application created for Member ID 1, Amount: 35000', '::1', '2026-06-30 08:49:30'),
+(3, 1, 'admin', 'VOUCHER_APPROVAL', 'Approved journal voucher ID #2', '::1', '2026-07-01 00:31:11'),
+(4, 1, 'admin', 'LOAN_CREATED', 'Loan application created for Member ID 1, Amount: 35000', '::1', '2026-07-01 08:15:34'),
+(5, 1, 'admin', 'LOAN_REJECTION', 'Rejected loan application entry #2', '::1', '2026-07-01 08:15:54'),
+(6, 1, 'admin', 'LOAN_APPROVAL', 'Approved and activated loan allocation record #1', '::1', '2026-07-01 08:15:56'),
+(7, 1, 'admin', 'VOUCHER_APPROVAL', 'Approved journal voucher ID #3', '::1', '2026-07-02 00:41:02'),
+(8, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to ADMINISTRATOR', '::1', '2026-07-02 03:06:35'),
+(9, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to STAFF', '::1', '2026-07-02 03:06:41'),
+(10, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to ADMINISTRATOR', '::1', '2026-07-02 04:00:22'),
+(11, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to STAFF', '::1', '2026-07-02 04:00:23'),
+(12, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to ADMINISTRATOR', '::1', '2026-07-02 07:09:49'),
+(13, 1, 'admin', 'USER_ROLE_TOGGLE', 'Altered role of operator #2 (user) to STAFF', '::1', '2026-07-02 07:09:52');
+
 -- --------------------------------------------------------
 
 --
@@ -58,13 +77,9 @@ CREATE TABLE `journal_vouchers` (
 --
 
 INSERT INTO `journal_vouchers` (`id`, `reference_number`, `transaction_date`, `particulars`, `created_by`, `created_at`, `status`) VALUES
-(1, '12345', '2026-06-18', 'Share Capital', 2, '2026-06-18 07:39:33', 'approved'),
-(2, '12346', '2026-06-19', 'Share Capital Withdrawal', 1, '2026-06-18 23:54:05', 'approved'),
-(3, 'JV-6A38E3461383A', '2026-06-22', 'Share Capital', 1, '2026-06-22 07:24:54', 'approved'),
-(4, 'JV-6A38E36EA2829', '2026-06-22', 'Share Capital', 1, '2026-06-22 07:25:34', 'approved'),
-(5, '12347', '2026-06-22', 'Share Capital', 1, '2026-06-22 08:01:13', 'approved'),
-(6, '12348', '2026-06-23', 'Share Capital', 1, '2026-06-23 01:13:30', 'approved'),
-(7, '12349', '2026-06-23', 'Share Capital', 1, '2026-06-23 02:35:48', 'approved');
+(1, '00001', '2026-06-30', 'Share Capital', 2, '2026-06-30 07:08:07', 'approved'),
+(2, '00002', '2026-07-01', 'Share Capital', 1, '2026-07-01 00:26:14', 'approved'),
+(3, '00003', '2026-07-02', 'Share Capital Withdrawal', 1, '2026-07-02 00:40:58', 'approved');
 
 -- --------------------------------------------------------
 
@@ -87,13 +102,9 @@ CREATE TABLE `ledger_entries` (
 --
 
 INSERT INTO `ledger_entries` (`id`, `voucher_id`, `member_id`, `account_code`, `entry_type`, `debit`, `credit`) VALUES
-(1, 1, 17, 'CAP', 'deposit', 0.0000, 25000.0000),
-(2, 2, 17, 'CAP', 'withdrawal', 10000.0000, 0.0000),
-(3, 3, 17, 'CAP', 'deposit', 0.0000, 100000.0000),
-(4, 4, 29, 'CAP', 'deposit', 0.0000, 120000.0000),
-(5, 5, 51, 'CAP', 'deposit', 0.0000, 600000.0000),
-(6, 6, 26, 'CAP', 'deposit', 0.0000, 1000000.0000),
-(7, 7, 25, 'CAP', 'deposit', 0.0000, 50000.0000);
+(1, 1, 1, 'CAP', 'deposit', 0.0000, 10000.0000),
+(2, 2, 2, 'CAP', 'deposit', 0.0000, 10000.0000),
+(3, 3, 21, 'CAP', 'withdrawal', 5000.0000, 0.0000);
 
 -- --------------------------------------------------------
 
@@ -128,10 +139,8 @@ CREATE TABLE `loans` (
 --
 
 INSERT INTO `loans` (`id`, `member_id`, `loan_type`, `collateral`, `soa_status`, `loan_status`, `amortization_type`, `payment_frequency`, `principal`, `interest_rate`, `terms`, `start_date`, `manual_payment`, `tct_no`, `tax_declaration_no`, `real_property_status`, `undertaking_doc`, `deed_of_rights_doc`, `created_at`) VALUES
-(1, 17, 'Salary Loan', 'Real Property', 'Pending', 'Approved', 'Straight-line', 'Monthly', 25000.00, 2.00, 12, '2026-06-19', 0.00, '12345', '12345', 'Pending', 'uploads/1781837410_undertaking.pdf', 'uploads/1781837410_deed.pdf', '2026-06-19 02:50:10'),
-(2, 25, 'Salary Loan', 'Post-Dated Check', 'Fully Paid', 'Approved', 'Straight-line', 'Monthly', 10000.00, 2.00, 3, '2026-06-19', 0.00, '', '', 'Updated', NULL, NULL, '2026-06-19 03:14:53'),
-(3, 51, 'Salary Loan', 'Post-Dated Check', 'Pending', 'Approved', 'Straight-line', 'Monthly', 10000.00, 2.00, 3, '2026-06-23', 0.00, '', '', 'Updated', '', '', '2026-06-23 06:17:34'),
-(4, 52, 'Salary Loan', 'Post-Dated Check', 'Pending', 'Approved', 'Straight-line', 'Monthly', 35000.00, 2.00, 6, '2025-06-25', 0.00, '', '', 'Updated', '', '', '2026-06-23 06:52:11');
+(1, 1, 'Salary Loan', 'Post-Dated Check', 'Active', 'Approved', 'Diminishing balance', 'Monthly', 35000.00, 2.00, 6, '2026-06-30', 0.00, NULL, NULL, NULL, NULL, NULL, '2026-06-30 08:49:30'),
+(2, 1, 'Personal Loan', 'Post-Dated Check', 'Pending', 'Rejected', 'Diminishing balance', 'Monthly', 35000.00, 2.00, 6, '2026-07-01', 0.00, NULL, NULL, NULL, NULL, NULL, '2026-07-01 08:15:34');
 
 -- --------------------------------------------------------
 
@@ -159,30 +168,12 @@ CREATE TABLE `loan_schedules` (
 --
 
 INSERT INTO `loan_schedules` (`id`, `loan_id`, `period`, `due_date`, `principal`, `interest`, `orig_penalty`, `rem_principal`, `rem_interest`, `rem_penalty`, `status`, `remarks`) VALUES
-(1, 1, 1, '2026-07-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(2, 1, 2, '2026-08-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(3, 1, 3, '2026-09-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(4, 1, 4, '2026-10-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(5, 1, 5, '2026-11-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(6, 1, 6, '2026-12-19', 2083.33, 500.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(7, 1, 7, '2027-01-20', 2083.33, 500.00, 0.00, 583.31, 0.00, 123.45, 'pending', ''),
-(8, 1, 8, '2027-02-19', 2083.33, 500.00, 0.00, 2083.33, 0.00, 0.00, 'pending', NULL),
-(9, 1, 9, '2027-03-19', 2083.33, 500.00, 0.00, 2083.33, 0.00, 0.00, 'pending', NULL),
-(10, 1, 10, '2027-04-19', 2083.33, 500.00, 0.00, 2083.33, 0.00, 0.00, 'pending', NULL),
-(11, 1, 11, '2027-05-19', 2083.33, 500.00, 0.00, 2083.33, 0.00, 0.00, 'pending', NULL),
-(12, 1, 12, '2027-06-19', 2083.33, 500.00, 0.00, 2083.33, 0.00, 0.00, 'pending', NULL),
-(13, 2, 1, '2026-05-19', 3333.33, 200.00, 100.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(14, 2, 2, '2026-08-19', 3333.33, 200.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(15, 2, 3, '2026-09-19', 3333.33, 200.00, 0.00, 0.00, 0.00, 0.00, 'paid', NULL),
-(16, 3, 1, '2026-07-23', 3333.33, 200.00, 0.00, 3333.33, 200.00, 0.00, 'pending', ''),
-(17, 3, 2, '2026-08-23', 3333.33, 200.00, 0.00, 3333.33, 200.00, 0.00, 'pending', ''),
-(18, 3, 3, '2026-09-23', 3333.33, 200.00, 0.00, 3333.33, 200.00, 0.00, 'pending', ''),
-(19, 4, 1, '2025-07-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 3208.33, 'overdue', ''),
-(20, 4, 2, '2025-08-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 2916.67, 'overdue', ''),
-(21, 4, 3, '2025-09-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 2625.00, 'overdue', ''),
-(22, 4, 4, '2025-10-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 2333.33, 'overdue', ''),
-(23, 4, 5, '2025-11-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 2041.67, 'overdue', ''),
-(24, 4, 6, '2025-12-25', 5833.33, 700.00, 0.00, 5833.33, 700.00, 1750.00, 'overdue', '');
+(1, 1, 1, '2026-01-01', 5833.33, 700.00, 0.00, 5833.33, 700.00, 355.75, 'overdue', ''),
+(2, 1, 2, '2026-08-30', 5833.33, 583.33, 0.00, 5833.33, 583.33, 0.00, 'pending', ''),
+(3, 1, 3, '2026-09-30', 5833.33, 466.67, 0.00, 5833.33, 466.67, 0.00, 'pending', ''),
+(4, 1, 4, '2026-10-30', 5833.33, 350.00, 0.00, 5833.33, 350.00, 0.00, 'pending', ''),
+(5, 1, 5, '2026-11-30', 5833.33, 233.33, 0.00, 5833.33, 233.33, 0.00, 'pending', ''),
+(6, 1, 6, '2026-12-30', 5833.33, 116.67, 0.00, 5833.33, 116.67, 0.00, 'pending', '');
 
 -- --------------------------------------------------------
 
@@ -215,58 +206,31 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`id`, `member_number`, `first_name`, `middle_name`, `last_name`, `prefix`, `suffix`, `nickname`, `membership_type`, `subscription`, `status`, `date_of_membership`, `date_of_birth`, `date_of_death`, `remarks`, `created_at`, `updated_at`) VALUES
-(1, 'COOP-2026-0001', 'Stephanie', 'Torres', 'Williams', 'Mrs.', 'IV', 'Stephanieie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1551-06-01', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(2, 'COOP-2026-0002', 'Stephanie', 'Ramos', 'Jones', 'Mr.', 'Jr.', 'Stephanieie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1660-05-27', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(3, 'COOP-2026-0003', 'Jessica', 'Reyes', 'Thomas', 'Mrs.', 'IV', 'Jessicaie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1307-12-16', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(4, 'COOP-2026-0004', 'Andrew', 'Bautista', 'Martinez', 'Dr.', 'III', 'Andrewie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1904-04-27', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(5, 'COOP-2026-0005', 'John', 'Mendoza', 'Davis', 'Dr.', 'Jr.', 'Johnie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1928-09-12', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(6, 'COOP-2026-0006', 'Jane', 'Dela Cruz', 'Rodriguez', 'Dr.', '', 'Janeie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1907-07-12', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(7, 'COOP-2026-0007', 'Jane', 'Torres', 'Jones', 'Dr.', 'IV', 'Janeie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1249-05-04', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(8, 'COOP-2026-0008', 'Danilo', 'Mendoza', 'Perez', 'Ms.', 'IV', 'Daniloie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1519-07-01', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(9, 'COOP-2026-0009', 'Maria Clara', 'Garcia', 'Rodriguez', 'Mrs.', 'III', 'Maria Claraie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1353-10-27', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(10, 'COOP-2026-0010', 'David', 'Torres', 'Castro', 'Mrs.', 'Jr.', 'Davidie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1202-12-21', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(11, 'COOP-2026-0011', 'Rey', 'Reyes', 'Brown', 'Engr.', 'III', 'Reyie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1313-07-03', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(12, 'COOP-2026-0012', 'Karen', 'Garcia', 'Brown', 'Ms.', 'Jr.', 'Karenie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1783-01-01', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(13, 'COOP-2026-0013', 'Mark', 'Torres', 'Jones', 'Mr.', 'III', 'Markie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1948-04-11', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(14, 'COOP-2026-0014', 'Amanda', 'Aquino', 'Gonzalez', 'Mr.', '', 'Amandaie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1336-08-16', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(15, 'COOP-2026-0015', 'Jane', 'Garcia', 'Gonzalez', 'Engr.', '', 'Janeie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1147-01-22', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(16, 'COOP-2026-0016', 'Stephanie', 'Bautista', 'Williams', 'Mrs.', 'IV', 'Stephanieie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1928-05-08', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(17, 'COOP-2026-0017', 'Amanda', 'Reyes', 'Anderson', 'Engr.', '', 'Amandaie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1468-10-20', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(18, 'COOP-2026-0018', 'Andrew', 'Aquino', 'Jones', 'Mr.', 'IV', 'Andrewie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1967-07-24', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(19, 'COOP-2026-0019', 'Sarah', 'Mendoza', 'Martinez', 'Dr.', '', 'Sarahie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1186-07-24', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(20, 'COOP-2026-0020', 'Ryan', 'Reyes', 'Wilson', 'Mrs.', '', 'Ryanie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1244-03-14', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(21, 'COOP-2026-0021', 'Princess', 'Bautista', 'Jones', 'Engr.', '', 'Princessie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1234-01-19', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(22, 'COOP-2026-0022', 'James', 'Cruz', 'Johnson', 'Engr.', 'Jr.', 'Jamesie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1467-04-05', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(23, 'COOP-2026-0023', 'William', 'Santos', 'Williams', 'Ms.', 'IV', 'Williamie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1122-12-09', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(24, 'COOP-2026-0024', 'Maria Clara', 'Mendoza', 'Martinez', 'Mr.', '', 'Maria Claraie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1498-07-16', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(25, 'COOP-2026-0025', 'Mark', 'Dela Cruz', 'Anderson', 'Ms.', 'IV', 'Markie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1884-04-03', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(26, 'COOP-2026-0026', 'Stephanie', 'Reyes', 'Hernandez', 'Mrs.', '', 'Stephanieie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1823-09-18', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(27, 'COOP-2026-0027', 'Emily', 'Ramos', 'Johnson', 'Dr.', 'III', 'Emilyie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1975-01-06', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(28, 'COOP-2026-0028', 'Jessica', 'Aquino', 'Jones', 'Dr.', 'IV', 'Jessicaie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1345-03-14', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(29, 'COOP-2026-0029', 'Maria', 'Cruz', 'Anderson', 'Dr.', '', 'Mariaie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1406-10-26', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(30, 'COOP-2026-0030', 'John', 'Bautista', 'Rodriguez', 'Ms.', 'Jr.', 'Johnie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1591-03-26', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(31, 'COOP-2026-0031', 'Jane', 'Garcia', 'Gonzalez', 'Dr.', '', 'Janeie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1322-12-22', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(32, 'COOP-2026-0032', 'Dorothy', 'Garcia', 'Anderson', 'Mr.', 'Jr.', 'Dorothyie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1390-06-13', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(33, 'COOP-2026-0033', 'James', 'Santos', 'Gonzalez', 'Engr.', 'Jr.', 'Jamesie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1253-12-15', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(34, 'COOP-2026-0034', 'David', 'Bautista', 'Smith', 'Mrs.', 'III', 'Davidie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1801-10-09', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(35, 'COOP-2026-0035', 'Princess', 'Ramos', 'Martinez', 'Engr.', 'IV', 'Princessie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1514-09-18', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(36, 'COOP-2026-0036', 'Amanda', 'Mendoza', 'Davis', 'Dr.', 'III', 'Amandaie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1922-03-10', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(37, 'COOP-2026-0037', 'Mark', 'Santos', 'Lopez', 'Ms.', 'IV', 'Markie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1906-08-06', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(38, 'COOP-2026-0038', 'Emily', 'Torres', 'Wilson', 'Ms.', '', 'Emilyie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1674-12-16', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(39, 'COOP-2026-0039', 'Rey', 'Aquino', 'Lopez', 'Engr.', 'III', 'Reyie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1675-04-28', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(40, 'COOP-2026-0040', 'David', 'Torres', 'Perez', 'Dr.', 'III', 'Davidie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1423-05-15', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(41, 'COOP-2026-0041', 'David', 'Ramos', 'Perez', 'Mr.', 'Jr.', 'Davidie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1213-02-24', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(42, 'COOP-2026-0042', 'Ryan', 'Torres', 'Smith', 'Mr.', 'Jr.', 'Ryanie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1892-10-20', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(43, 'COOP-2026-0043', 'Sarah', 'Bautista', 'Smith', 'Dr.', 'III', 'Sarahie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1484-04-01', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(44, 'COOP-2026-0044', 'Mark', 'Garcia', 'Johnson', 'Ms.', '', 'Markie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1413-12-14', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(45, 'COOP-2026-0045', 'Sarah', 'Bautista', 'Rodriguez', 'Mr.', 'IV', 'Sarahie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1324-11-06', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(46, 'COOP-2026-0046', 'Stephanie', 'Torres', 'Martinez', 'Mr.', 'IV', 'Stephanieie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1704-09-14', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(47, 'COOP-2026-0047', 'Emily', 'Cruz', 'Wilson', 'Mrs.', 'Jr.', 'Emilyie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1230-07-26', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(48, 'COOP-2026-0048', 'Princess', 'Cruz', 'Gonzalez', 'Ms.', 'IV', 'Princessie', 'Regular', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1792-05-17', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(49, 'COOP-2026-0049', 'Robert', 'Reyes', 'Williams', 'Ms.', 'III', 'Robertie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1269-12-05', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(50, 'COOP-2026-0050', 'Sarah', 'Cruz', 'Perez', 'Mr.', 'Jr.', 'Sarahie', 'Associate', 'Standard Capital Contribution Option', 'active', '2026-01-15', '1399-06-12', NULL, 'System auto-seeded cooperative member asset profile.', '2026-06-18 07:07:29', '2026-06-18 07:07:29'),
-(51, 'COOP-2026-0051', 'Justin', NULL, 'Bieber', NULL, NULL, NULL, 'Regular', NULL, 'active', '0000-00-00', '0000-00-00', NULL, NULL, '2026-06-22 03:10:47', '2026-06-22 03:10:47'),
-(52, 'COOP-2026-0052', 'Randall Jay', 'Veloria', 'Unarce', NULL, NULL, NULL, 'Regular', NULL, 'active', '2026-06-22', '2026-06-21', NULL, NULL, '2026-06-22 06:47:22', '2026-06-22 06:47:22');
+(1, '0001', 'David', 'Santos', 'Reyes', '', '', 'Dav', 'Associate', 'Inactive', 'inactive', '2023-06-30', '1979-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(2, '0002', 'Nicole', 'Torres', 'Ramos', '', '', 'Nic', 'Associate', 'Inactive', 'active', '2016-06-30', '1975-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(3, '0003', 'Maria', 'Cruz', 'Ramos', '', '', 'Mar', 'Regular', 'Active', 'inactive', '2024-06-30', '1983-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(4, '0004', 'Rose', 'Garcia', 'Villanueva', '', '', 'Ros', 'Associate', 'Inactive', 'inactive', '2021-06-30', '1979-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(5, '0005', 'Grace', 'Mendoza', 'Diaz', '', '', 'Gra', 'Associate', 'Active', 'inactive', '2016-06-30', '1972-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(6, '0006', 'Karen', 'Reyes', 'Villanueva', '', '', 'Kar', 'Regular', 'Active', 'active', '2022-06-30', '1989-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(7, '0007', 'Nathan', 'Lopez', 'Garcia', '', '', 'Nat', 'Regular', 'Inactive', 'inactive', '2024-06-30', '1998-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(8, '0008', 'Anthony', 'Bautista', 'Diaz', '', '', 'Ant', 'Regular', 'Active', 'inactive', '2025-06-30', '1968-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(9, '0009', 'Paul', 'Dela Cruz', 'Garcia', '', '', 'Pau', 'Associate', 'Active', 'active', '2019-06-30', '2002-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(10, '0010', 'Rose', 'Flores', 'Flores', '', '', 'Ros', 'Associate', 'Inactive', 'active', '2016-06-30', '1980-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(11, '0011', 'Jessica', 'Mendoza', 'Garcia', '', '', 'Jes', 'Associate', 'Inactive', 'inactive', '2022-06-30', '1984-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(12, '0012', 'Maria', 'Dela Cruz', 'Navarro', '', '', 'Mar', 'Regular', 'Inactive', 'active', '2024-06-30', '1990-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(13, '0013', 'Michelle', 'Bautista', 'Lopez', '', '', 'Mic', 'Associate', 'Inactive', 'active', '2019-06-30', '1970-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(14, '0014', 'Michelle', 'Mendoza', 'Aquino', '', '', 'Mic', 'Regular', 'Inactive', 'active', '2025-06-30', '1976-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(15, '0015', 'Christine', 'Santos', 'Lopez', '', '', 'Chr', 'Associate', 'Inactive', 'inactive', '2016-06-30', '1974-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(16, '0016', 'Maria', 'Mendoza', 'Ramos', '', '', 'Mar', 'Associate', 'Active', 'inactive', '2021-06-30', '1990-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(17, '0017', 'Grace', 'Dela Cruz', 'Aquino', '', '', 'Gra', 'Associate', 'Inactive', 'active', '2023-06-30', '1967-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(18, '0018', 'Angela', 'Flores', 'Diaz', '', '', 'Ang', 'Associate', 'Inactive', 'inactive', '2024-06-30', '1984-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(19, '0019', 'Karen', 'Torres', 'Lopez', '', '', 'Kar', 'Regular', 'Active', 'active', '2019-06-30', '1968-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(20, '0020', 'Patricia', 'Flores', 'Mendoza', '', '', 'Pat', 'Regular', 'Active', 'active', '2025-06-30', '1972-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(21, '0021', 'Brian', 'Reyes', 'Cruz', '', '', 'Bri', 'Associate', 'Active', 'inactive', '2018-06-30', '1974-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(22, '0022', 'Nathan', 'Dela Cruz', 'Castro', '', '', 'Nat', 'Associate', 'Inactive', 'active', '2017-06-30', '1973-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(23, '0023', 'Kevin', 'Garcia', 'Fernandez', '', '', 'Kev', 'Regular', 'Inactive', 'active', '2022-06-30', '2001-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(24, '0024', 'Daniel', 'Garcia', 'Santos', '', '', 'Dan', 'Associate', 'Inactive', 'active', '2019-06-30', '1967-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00'),
+(25, '0025', 'Rose', 'Bautista', 'Aquino', '', '', 'Ros', 'Associate', 'Active', 'active', '2020-06-30', '1997-06-30', NULL, 'Seed Data', '2026-06-30 07:05:00', '2026-06-30 07:05:00');
 
 -- --------------------------------------------------------
 
@@ -293,57 +257,31 @@ CREATE TABLE `member_addresses` (
 --
 
 INSERT INTO `member_addresses` (`id`, `member_id`, `address_type`, `house_number`, `street`, `barangay`, `zone`, `district`, `town_city`, `province`, `region`) VALUES
-(1, 1, 'Permanent', '#106', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 2', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(2, 2, 'Permanent', '#107', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 9', 'District 4', 'Manila', 'Metro Manila', 'NCR'),
-(3, 3, 'Permanent', '#78', 'Rizal Avenue Ext.', 'San Jose', 'Zone 2', 'District 3', 'Antipolo', 'Rizal', 'Region IV-A'),
-(4, 4, 'Permanent', '#221', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 9', 'District 4', 'Manila', 'Metro Manila', 'NCR'),
-(5, 5, 'Permanent', '#123', 'Rizal Avenue Ext.', 'San Jose', 'Zone 1', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(6, 6, 'Permanent', '#205', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 2', 'District 4', 'Imus', 'Cavite', 'Region IV-A'),
-(7, 7, 'Permanent', '#170', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 7', 'District 4', 'Manila', 'Metro Manila', 'NCR'),
-(8, 8, 'Permanent', '#214', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 1', 'District 2', 'Imus', 'Cavite', 'Region IV-A'),
-(9, 9, 'Permanent', '#105', 'Rizal Avenue Ext.', 'San Jose', 'Zone 5', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(10, 10, 'Permanent', '#93', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 5', 'District 4', 'Imus', 'Cavite', 'Region IV-A'),
-(11, 11, 'Permanent', '#198', 'Rizal Avenue Ext.', 'Balibago', 'Zone 6', 'District 2', 'Angeles City', 'Pampanga', 'Region III'),
-(12, 12, 'Permanent', '#207', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 1', 'District 2', 'Manila', 'Metro Manila', 'NCR'),
-(13, 13, 'Permanent', '#23', 'Rizal Avenue Ext.', 'Barangay 78', 'Zone 4', 'District 1', 'Caloocan', 'Metro Manila', 'NCR'),
-(14, 14, 'Permanent', '#2', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 4', 'District 3', 'Imus', 'Cavite', 'Region IV-A'),
-(15, 15, 'Permanent', '#129', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 4', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(16, 16, 'Permanent', '#129', 'Rizal Avenue Ext.', 'Barangay 78', 'Zone 7', 'District 2', 'Caloocan', 'Metro Manila', 'NCR'),
-(17, 17, 'Permanent', '#171', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 4', 'District 4', 'Manila', 'Metro Manila', 'NCR'),
-(18, 18, 'Permanent', '#164', 'Rizal Avenue Ext.', 'San Jose', 'Zone 10', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(19, 19, 'Permanent', '#81', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 2', 'District 3', 'Imus', 'Cavite', 'Region IV-A'),
-(20, 20, 'Permanent', '#60', 'Rizal Avenue Ext.', 'Balibago', 'Zone 5', 'District 2', 'Angeles City', 'Pampanga', 'Region III'),
-(21, 21, 'Permanent', '#24', 'Rizal Avenue Ext.', 'Balibago', 'Zone 6', 'District 2', 'Angeles City', 'Pampanga', 'Region III'),
-(22, 22, 'Permanent', '#169', 'Rizal Avenue Ext.', 'San Jose', 'Zone 2', 'District 3', 'Antipolo', 'Rizal', 'Region IV-A'),
-(23, 23, 'Permanent', '#79', 'Rizal Avenue Ext.', 'Balibago', 'Zone 4', 'District 4', 'Angeles City', 'Pampanga', 'Region III'),
-(24, 24, 'Permanent', '#204', 'Rizal Avenue Ext.', 'Balibago', 'Zone 8', 'District 2', 'Angeles City', 'Pampanga', 'Region III'),
-(25, 25, 'Permanent', '#114', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 1', 'District 2', 'Manila', 'Metro Manila', 'NCR'),
-(26, 26, 'Permanent', '#39', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 10', 'District 3', 'Imus', 'Cavite', 'Region IV-A'),
-(27, 27, 'Permanent', '#14', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 10', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(28, 28, 'Permanent', '#140', 'Rizal Avenue Ext.', 'San Jose', 'Zone 3', 'District 1', 'Antipolo', 'Rizal', 'Region IV-A'),
-(29, 29, 'Permanent', '#163', 'Rizal Avenue Ext.', 'Balibago', 'Zone 10', 'District 4', 'Angeles City', 'Pampanga', 'Region III'),
-(30, 30, 'Permanent', '#190', 'Rizal Avenue Ext.', 'San Jose', 'Zone 10', 'District 4', 'Antipolo', 'Rizal', 'Region IV-A'),
-(31, 31, 'Permanent', '#41', 'Rizal Avenue Ext.', 'Barangay 78', 'Zone 6', 'District 2', 'Caloocan', 'Metro Manila', 'NCR'),
-(32, 32, 'Permanent', '#207', 'Rizal Avenue Ext.', 'San Jose', 'Zone 2', 'District 4', 'Antipolo', 'Rizal', 'Region IV-A'),
-(33, 33, 'Permanent', '#92', 'Rizal Avenue Ext.', 'Barangay 78', 'Zone 8', 'District 1', 'Caloocan', 'Metro Manila', 'NCR'),
-(34, 34, 'Permanent', '#108', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 3', 'District 3', 'Manila', 'Metro Manila', 'NCR'),
-(35, 35, 'Permanent', '#11', 'Rizal Avenue Ext.', 'Balibago', 'Zone 8', 'District 1', 'Angeles City', 'Pampanga', 'Region III'),
-(36, 36, 'Permanent', '#175', 'Rizal Avenue Ext.', 'Balibago', 'Zone 5', 'District 4', 'Angeles City', 'Pampanga', 'Region III'),
-(37, 37, 'Permanent', '#145', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 10', 'District 1', 'Imus', 'Cavite', 'Region IV-A'),
-(38, 38, 'Permanent', '#83', 'Rizal Avenue Ext.', 'San Jose', 'Zone 1', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(39, 39, 'Permanent', '#189', 'Rizal Avenue Ext.', 'Barangay 78', 'Zone 7', 'District 3', 'Caloocan', 'Metro Manila', 'NCR'),
-(40, 40, 'Permanent', '#11', 'Rizal Avenue Ext.', 'Balibago', 'Zone 10', 'District 1', 'Angeles City', 'Pampanga', 'Region III'),
-(41, 41, 'Permanent', '#234', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 7', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(42, 42, 'Permanent', '#216', 'Rizal Avenue Ext.', 'San Jose', 'Zone 5', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(43, 43, 'Permanent', '#159', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 6', 'District 2', 'Manila', 'Metro Manila', 'NCR'),
-(44, 44, 'Permanent', '#147', 'Rizal Avenue Ext.', 'Balibago', 'Zone 7', 'District 4', 'Angeles City', 'Pampanga', 'Region III'),
-(45, 45, 'Permanent', '#226', 'Rizal Avenue Ext.', 'Malagasang', 'Zone 1', 'District 4', 'Imus', 'Cavite', 'Region IV-A'),
-(46, 46, 'Permanent', '#152', 'Rizal Avenue Ext.', 'San Jose', 'Zone 6', 'District 1', 'Antipolo', 'Rizal', 'Region IV-A'),
-(47, 47, 'Permanent', '#77', 'Rizal Avenue Ext.', 'San Jose', 'Zone 6', 'District 2', 'Antipolo', 'Rizal', 'Region IV-A'),
-(48, 48, 'Permanent', '#91', 'Rizal Avenue Ext.', 'Balibago', 'Zone 8', 'District 2', 'Angeles City', 'Pampanga', 'Region III'),
-(49, 49, 'Permanent', '#112', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 8', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(50, 50, 'Permanent', '#180', 'Rizal Avenue Ext.', 'Barangay 12', 'Zone 9', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
-(54, 52, 'Home', '21', 'Street Test', 'Barangay Test', NULL, NULL, 'Town Test', 'Province Test', 'Region Test');
+(1, 1, 'Home', '571', 'Sample Street', 'Maligaya', '6', 'District 6', 'Caloocan City', 'Metro Manila', 'NCR'),
+(2, 2, 'Home', '611', 'Sample Street', 'Balibago', '8', 'District 4', 'Parañaque City', 'Metro Manila', 'NCR'),
+(3, 3, 'Home', '69', 'Sample Street', 'Balibago', '4', 'District 4', 'Pasig City', 'Metro Manila', 'NCR'),
+(4, 4, 'Home', '952', 'Sample Street', 'Mabini', '10', 'District 5', 'Quezon City', 'Metro Manila', 'NCR'),
+(5, 5, 'Home', '587', 'Sample Street', 'Balibago', '1', 'District 1', 'Quezon City', 'Metro Manila', 'NCR'),
+(6, 6, 'Home', '212', 'Sample Street', 'Balibago', '1', 'District 6', 'Pasig City', 'Metro Manila', 'NCR'),
+(7, 7, 'Home', '70', 'Sample Street', 'Bagumbayan', '9', 'District 4', 'Parañaque City', 'Metro Manila', 'NCR'),
+(8, 8, 'Home', '525', 'Sample Street', 'Mabini', '8', 'District 1', 'Las Piñas City', 'Metro Manila', 'NCR'),
+(9, 9, 'Home', '380', 'Sample Street', 'Poblacion', '4', 'District 1', 'Makati City', 'Metro Manila', 'NCR'),
+(10, 10, 'Home', '418', 'Sample Street', 'Balibago', '9', 'District 2', 'Parañaque City', 'Metro Manila', 'NCR'),
+(11, 11, 'Home', '239', 'Sample Street', 'San Jose', '8', 'District 1', 'Manila', 'Metro Manila', 'NCR'),
+(12, 12, 'Home', '490', 'Sample Street', 'Poblacion', '2', 'District 4', 'Pasig City', 'Metro Manila', 'NCR'),
+(13, 13, 'Home', '170', 'Sample Street', 'San Roque', '6', 'District 3', 'Manila', 'Metro Manila', 'NCR'),
+(14, 14, 'Home', '960', 'Sample Street', 'Maligaya', '8', 'District 2', 'Taguig City', 'Metro Manila', 'NCR'),
+(15, 15, 'Home', '298', 'Sample Street', 'Bagumbayan', '9', 'District 2', 'Taguig City', 'Metro Manila', 'NCR'),
+(16, 16, 'Home', '719', 'Sample Street', 'Maligaya', '7', 'District 2', 'Taguig City', 'Metro Manila', 'NCR'),
+(17, 17, 'Home', '613', 'Sample Street', 'Balibago', '9', 'District 5', 'Makati City', 'Metro Manila', 'NCR'),
+(18, 18, 'Home', '552', 'Sample Street', 'Bagumbayan', '10', 'District 5', 'Las Piñas City', 'Metro Manila', 'NCR'),
+(19, 19, 'Home', '257', 'Sample Street', 'Maligaya', '1', 'District 4', 'Las Piñas City', 'Metro Manila', 'NCR'),
+(20, 20, 'Home', '580', 'Sample Street', 'Maligaya', '2', 'District 3', 'Makati City', 'Metro Manila', 'NCR'),
+(21, 21, 'Home', '781', 'Sample Street', 'Maligaya', '10', 'District 1', 'Quezon City', 'Metro Manila', 'NCR'),
+(22, 22, 'Home', '46', 'Sample Street', 'Sta. Cruz', '9', 'District 5', 'Las Piñas City', 'Metro Manila', 'NCR'),
+(23, 23, 'Home', '785', 'Sample Street', 'Sta. Cruz', '5', 'District 2', 'Pasig City', 'Metro Manila', 'NCR'),
+(24, 24, 'Home', '52', 'Sample Street', 'Bagumbayan', '8', 'District 2', 'Pasig City', 'Metro Manila', 'NCR'),
+(25, 25, 'Home', '558', 'Sample Street', 'Bagumbayan', '1', 'District 2', 'Parañaque City', 'Metro Manila', 'NCR');
 
 -- --------------------------------------------------------
 
@@ -370,56 +308,31 @@ CREATE TABLE `member_beneficiaries` (
 --
 
 INSERT INTO `member_beneficiaries` (`id`, `member_id`, `relation`, `first_name`, `middle_name`, `last_name`, `prefix`, `suffix`, `date_of_birth`, `place_of_birth`, `status`) VALUES
-(1, 1, 'Child', 'Jane', NULL, 'Williams', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(2, 2, 'Sibling', 'Maria', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(3, 3, 'Sibling', 'Dorothy', NULL, 'Thomas', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(4, 4, 'Child', 'Mark', NULL, 'Martinez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(5, 5, 'Spouse', 'Maria Clara', NULL, 'Davis', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(6, 6, 'Spouse', 'Dorothy', NULL, 'Rodriguez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(7, 7, 'Sibling', 'Jun', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(8, 8, 'Spouse', 'Emily', NULL, 'Perez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(9, 9, 'Sibling', 'Emily', NULL, 'Rodriguez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(10, 10, 'Child', 'Sarah', NULL, 'Castro', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(11, 11, 'Spouse', 'Robert', NULL, 'Brown', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(12, 12, 'Sibling', 'James', NULL, 'Brown', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(13, 13, 'Sibling', 'Maria', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(14, 14, 'Spouse', 'Ryan', NULL, 'Gonzalez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(15, 15, 'Spouse', 'Princess', NULL, 'Gonzalez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(16, 16, 'Sibling', 'Maria', NULL, 'Williams', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(17, 17, 'Sibling', 'Emily', NULL, 'Anderson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(18, 18, 'Child', 'William', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(19, 19, 'Spouse', 'Maria Clara', NULL, 'Martinez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(20, 20, 'Sibling', 'Jessica', NULL, 'Wilson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(21, 21, 'Sibling', 'Mark', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(22, 22, 'Child', 'Sarah', NULL, 'Johnson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(23, 23, 'Sibling', 'Jun', NULL, 'Williams', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(24, 24, 'Child', 'Jessica', NULL, 'Martinez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(25, 25, 'Sibling', 'Andrew', NULL, 'Anderson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(26, 26, 'Sibling', 'Michael', NULL, 'Hernandez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(27, 27, 'Sibling', 'Mark', NULL, 'Johnson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(28, 28, 'Sibling', 'David', NULL, 'Jones', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(29, 29, 'Spouse', 'Andrew', NULL, 'Anderson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(30, 30, 'Child', 'Princess', NULL, 'Rodriguez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(31, 31, 'Sibling', 'William', NULL, 'Gonzalez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(32, 32, 'Sibling', 'Joseph', NULL, 'Anderson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(33, 33, 'Sibling', 'Princess', NULL, 'Gonzalez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(34, 34, 'Spouse', 'Michael', NULL, 'Smith', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(35, 35, 'Sibling', 'David', NULL, 'Martinez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(36, 36, 'Spouse', 'Ryan', NULL, 'Davis', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(37, 37, 'Spouse', 'Mark', NULL, 'Lopez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(38, 38, 'Spouse', 'Jun', NULL, 'Wilson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(39, 39, 'Child', 'William', NULL, 'Lopez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(40, 40, 'Spouse', 'James', NULL, 'Perez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(41, 41, 'Sibling', 'John', NULL, 'Perez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(42, 42, 'Child', 'Stephanie', NULL, 'Smith', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(43, 43, 'Child', 'William', NULL, 'Smith', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(44, 44, 'Spouse', 'Danilo', NULL, 'Johnson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(45, 45, 'Sibling', 'Emily', NULL, 'Rodriguez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(46, 46, 'Sibling', 'Robert', NULL, 'Martinez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(47, 47, 'Child', 'Ryan', NULL, 'Wilson', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(48, 48, 'Child', 'William', NULL, 'Gonzalez', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(49, 49, 'Child', 'Maria', NULL, 'Williams', NULL, NULL, '2015-08-20', NULL, 'Active'),
-(50, 50, 'Sibling', 'Ryan', NULL, 'Perez', NULL, NULL, '2015-08-20', NULL, 'Active');
+(1, 1, 'Mother', 'Daniel', 'Cruz', 'Flores', '', '', '2007-06-30', 'Caloocan City', 'Active'),
+(2, 2, 'Brother', 'John', 'Mendoza', 'Santos', '', '', '1978-06-30', 'Parañaque City', 'Active'),
+(3, 3, 'Father', 'Robert', 'Garcia', 'Ramos', '', '', '2003-06-30', 'Pasig City', 'Active'),
+(4, 4, 'Spouse', 'Anthony', 'Garcia', 'Diaz', '', '', '1997-06-30', 'Quezon City', 'Active'),
+(5, 5, 'Sister', 'Grace', 'Santos', 'Ramos', '', '', '1979-06-30', 'Quezon City', 'Active'),
+(6, 6, 'Spouse', 'David', 'Reyes', 'Navarro', '', '', '1962-06-30', 'Pasig City', 'Active'),
+(7, 7, 'Sister', 'Nicole', 'Garcia', 'Diaz', '', '', '1973-06-30', 'Parañaque City', 'Active'),
+(8, 8, 'Sister', 'Maria', 'Mendoza', 'Villanueva', '', '', '1973-06-30', 'Las Piñas City', 'Active'),
+(9, 9, 'Mother', 'Paul', 'Garcia', 'Garcia', '', '', '1971-06-30', 'Makati City', 'Active'),
+(10, 10, 'Mother', 'Nicole', 'Garcia', 'Reyes', '', '', '1961-06-30', 'Parañaque City', 'Active'),
+(11, 11, 'Brother', 'Jessica', 'Flores', 'Diaz', '', '', '2006-06-30', 'Manila', 'Active'),
+(12, 12, 'Mother', 'Karen', 'Dela Cruz', 'Villanueva', '', '', '1974-06-30', 'Pasig City', 'Active'),
+(13, 13, 'Spouse', 'Mark', 'Torres', 'Santos', '', '', '2009-06-30', 'Manila', 'Active'),
+(14, 14, 'Father', 'Joshua', 'Santos', 'Lopez', '', '', '1966-06-30', 'Taguig City', 'Active'),
+(15, 15, 'Brother', 'Angela', 'Garcia', 'Diaz', '', '', '1985-06-30', 'Taguig City', 'Active'),
+(16, 16, 'Sister', 'Mark', 'Dela Cruz', 'Cruz', '', '', '1983-06-30', 'Taguig City', 'Active'),
+(17, 17, 'Spouse', 'Ryan', 'Mendoza', 'Villanueva', '', '', '1970-06-30', 'Makati City', 'Active'),
+(18, 18, 'Sister', 'Michelle', 'Flores', 'Fernandez', '', '', '2003-06-30', 'Las Piñas City', 'Active'),
+(19, 19, 'Mother', 'Robert', 'Mendoza', 'Mendoza', '', '', '2006-06-30', 'Las Piñas City', 'Active'),
+(20, 20, 'Father', 'David', 'Flores', 'Castro', '', '', '1967-06-30', 'Makati City', 'Active'),
+(21, 21, 'Father', 'Angela', 'Dela Cruz', 'Fernandez', '', '', '1983-06-30', 'Quezon City', 'Active'),
+(22, 22, 'Mother', 'Paul', 'Mendoza', 'Cruz', '', '', '1984-06-30', 'Las Piñas City', 'Active'),
+(23, 23, 'Spouse', 'James', 'Santos', 'Garcia', '', '', '1994-06-30', 'Pasig City', 'Active'),
+(24, 24, 'Mother', 'Angela', 'Santos', 'Castro', '', '', '1965-06-30', 'Pasig City', 'Active'),
+(25, 25, 'Mother', 'Joseph', 'Reyes', 'Diaz', '', '', '2005-06-30', 'Parañaque City', 'Active');
 
 -- --------------------------------------------------------
 
@@ -442,58 +355,31 @@ CREATE TABLE `member_contact` (
 --
 
 INSERT INTO `member_contact` (`id`, `member_id`, `phone_no_1`, `phone_no_2`, `telephone_no_1`, `telephone_no_2`, `email`) VALUES
-(1, 1, '09171196293', '09221347365', '(02) 88459639', NULL, 'stephanie.williams1@example.coop'),
-(2, 2, '09173219827', '09221959779', '(02) 83154325', NULL, 'stephanie.jones2@example.coop'),
-(3, 3, '09179651567', '09228823580', '(02) 89255242', NULL, 'jessica.thomas3@example.coop'),
-(4, 4, '09174740322', '09225620868', '(02) 82245700', NULL, 'andrew.martinez4@example.coop'),
-(5, 5, '09172451290', '09227775362', '(02) 89629730', NULL, 'john.davis5@example.coop'),
-(6, 6, '09178017353', '09225878139', '(02) 86201225', NULL, 'jane.rodriguez6@example.coop'),
-(7, 7, '09179939190', '09222869829', '(02) 85362781', NULL, 'jane.jones7@example.coop'),
-(8, 8, '09179183851', '09225469808', '(02) 85494129', NULL, 'danilo.perez8@example.coop'),
-(9, 9, '09172173574', '09222408959', '(02) 81773329', NULL, 'maria clara.rodriguez9@example.coop'),
-(10, 10, '09172013426', '09229012728', '(02) 87048900', NULL, 'david.castro10@example.coop'),
-(11, 11, '09171386696', '09229928262', '(02) 87048074', NULL, 'rey.brown11@example.coop'),
-(12, 12, '09171416405', '09227003696', '(02) 88127280', NULL, 'karen.brown12@example.coop'),
-(13, 13, '09171678684', '09229662009', '(02) 89293522', NULL, 'mark.jones13@example.coop'),
-(14, 14, '09172073518', '09228407218', '(02) 86485098', NULL, 'amanda.gonzalez14@example.coop'),
-(15, 15, '09179645476', '09229197234', '(02) 81914725', NULL, 'jane.gonzalez15@example.coop'),
-(16, 16, '09177401546', '09224647512', '(02) 89106320', NULL, 'stephanie.williams16@example.coop'),
-(17, 17, '09173699689', '09222902195', '(02) 82630802', NULL, 'amanda.anderson17@example.coop'),
-(18, 18, '09174527349', '09229077688', '(02) 86072283', NULL, 'andrew.jones18@example.coop'),
-(19, 19, '09173685884', '09222762184', '(02) 81350295', NULL, 'sarah.martinez19@example.coop'),
-(20, 20, '09174073422', '09228133729', '(02) 84132351', NULL, 'ryan.wilson20@example.coop'),
-(21, 21, '09177866364', '09228387645', '(02) 82828264', NULL, 'princess.jones21@example.coop'),
-(22, 22, '09171990662', '09226662798', '(02) 81516226', NULL, 'james.johnson22@example.coop'),
-(23, 23, '09171979807', '09226235115', '(02) 82768097', NULL, 'william.williams23@example.coop'),
-(24, 24, '09177084150', '09227499341', '(02) 85651584', NULL, 'maria clara.martinez24@example.coop'),
-(25, 25, '09172199935', '09221091630', '(02) 87029903', NULL, 'mark.anderson25@example.coop'),
-(26, 26, '09179711637', '09227465617', '(02) 82335893', NULL, 'stephanie.hernandez26@example.coop'),
-(27, 27, '09174460369', '09224067957', '(02) 82135438', NULL, 'emily.johnson27@example.coop'),
-(28, 28, '09172059013', '09221932496', '(02) 82775081', NULL, 'jessica.jones28@example.coop'),
-(29, 29, '09174825516', '09228373201', '(02) 83957371', NULL, 'maria.anderson29@example.coop'),
-(30, 30, '09174327359', '09226371152', '(02) 87961911', NULL, 'john.rodriguez30@example.coop'),
-(31, 31, '09178376560', '09225960100', '(02) 83709991', NULL, 'jane.gonzalez31@example.coop'),
-(32, 32, '09173878649', '09226988479', '(02) 81689358', NULL, 'dorothy.anderson32@example.coop'),
-(33, 33, '09172663202', '09225270471', '(02) 86865293', NULL, 'james.gonzalez33@example.coop'),
-(34, 34, '09177060427', '09226247246', '(02) 83923579', NULL, 'david.smith34@example.coop'),
-(35, 35, '09178675974', '09221611761', '(02) 83344595', NULL, 'princess.martinez35@example.coop'),
-(36, 36, '09171476595', '09225735905', '(02) 82157569', NULL, 'amanda.davis36@example.coop'),
-(37, 37, '09175172610', '09224598679', '(02) 89226006', NULL, 'mark.lopez37@example.coop'),
-(38, 38, '09175983342', '09225083334', '(02) 81735794', NULL, 'emily.wilson38@example.coop'),
-(39, 39, '09174862901', '09226190110', '(02) 83094507', NULL, 'rey.lopez39@example.coop'),
-(40, 40, '09176930206', '09222246359', '(02) 82561832', NULL, 'david.perez40@example.coop'),
-(41, 41, '09179520847', '09224964467', '(02) 88570327', NULL, 'david.perez41@example.coop'),
-(42, 42, '09174803553', '09226702389', '(02) 81926946', NULL, 'ryan.smith42@example.coop'),
-(43, 43, '09179003338', '09227998917', '(02) 87444865', NULL, 'sarah.smith43@example.coop'),
-(44, 44, '09177122432', '09228316371', '(02) 82408956', NULL, 'mark.johnson44@example.coop'),
-(45, 45, '09171249925', '09223098750', '(02) 86413188', NULL, 'sarah.rodriguez45@example.coop'),
-(46, 46, '09177201069', '09228352267', '(02) 83472225', NULL, 'stephanie.martinez46@example.coop'),
-(47, 47, '09172864883', '09223568678', '(02) 83752736', NULL, 'emily.wilson47@example.coop'),
-(48, 48, '09174878572', '09221614676', '(02) 83999263', NULL, 'princess.gonzalez48@example.coop'),
-(49, 49, '09172097265', '09227380693', '(02) 83786766', NULL, 'robert.williams49@example.coop'),
-(50, 50, '09174314873', '09229429791', '(02) 86400037', NULL, 'sarah.perez50@example.coop'),
-(51, 51, '123456789', NULL, NULL, NULL, 'justinbieber@gmail.com'),
-(63, 52, '123456789', '123456789', NULL, NULL, 'u.randalljay00@gmail.com');
+(1, 1, '09103937425', '', '', '', 'david.Reyes1@gmail.com'),
+(2, 2, '09485354521', '', '', '', 'nicole.Ramos2@gmail.com'),
+(3, 3, '09794892493', '', '', '', 'maria.Ramos3@gmail.com'),
+(4, 4, '09632468991', '', '', '', 'rose.Villanueva4@gmail.com'),
+(5, 5, '09112930448', '', '', '', 'grace.Diaz5@gmail.com'),
+(6, 6, '09515731087', '', '', '', 'karen.Villanueva6@gmail.com'),
+(7, 7, '09631629411', '', '', '', 'nathan.Garcia7@gmail.com'),
+(8, 8, '09527427600', '', '', '', 'anthony.Diaz8@gmail.com'),
+(9, 9, '09339499520', '', '', '', 'paul.Garcia9@gmail.com'),
+(10, 10, '09819052629', '', '', '', 'rose.Flores10@gmail.com'),
+(11, 11, '09617087734', '', '', '', 'jessica.Garcia11@gmail.com'),
+(12, 12, '09513590049', '', '', '', 'maria.Navarro12@gmail.com'),
+(13, 13, '09133969148', '', '', '', 'michelle.Lopez13@gmail.com'),
+(14, 14, '09395381150', '', '', '', 'michelle.Aquino14@gmail.com'),
+(15, 15, '09771568052', '', '', '', 'christine.Lopez15@gmail.com'),
+(16, 16, '09547451689', '', '', '', 'maria.Ramos16@gmail.com'),
+(17, 17, '09827049382', '', '', '', 'grace.Aquino17@gmail.com'),
+(18, 18, '09624944830', '', '', '', 'angela.Diaz18@gmail.com'),
+(19, 19, '09252684944', '', '', '', 'karen.Lopez19@gmail.com'),
+(20, 20, '09487453393', '', '', '', 'patricia.Mendoza20@gmail.com'),
+(21, 21, '09961999768', '', '', '', 'brian.Cruz21@gmail.com'),
+(22, 22, '09305029202', '', '', '', 'nathan.Castro22@gmail.com'),
+(23, 23, '09746603524', '', '', '', 'kevin.Fernandez23@gmail.com'),
+(24, 24, '09371843276', '', '', '', 'daniel.Santos24@gmail.com'),
+(25, 25, '09676324529', '', '', '', 'rose.Aquino25@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -516,56 +402,31 @@ CREATE TABLE `member_education` (
 --
 
 INSERT INTO `member_education` (`id`, `member_id`, `program`, `school_university`, `location`, `date_started`, `date_ended`) VALUES
-(1, 1, 'BS in Computer Science', 'Ateneo de Manila University', 'Manila', '2018-06-05', '2022-04-15'),
-(2, 2, 'AB Communication', 'Polytechnic University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(3, 3, 'Associate in Hotel Management', 'De La Salle University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(4, 4, 'BS in Computer Science', 'Polytechnic University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(5, 5, 'BS in Computer Science', 'Polytechnic University of the Philippines', 'Antipolo', '2018-06-05', '2022-04-15'),
-(6, 6, 'Associate in Hotel Management', 'University of Santo Tomas', 'Imus', '2018-06-05', '2022-04-15'),
-(7, 7, 'AB Communication', 'Ateneo de Manila University', 'Manila', '2018-06-05', '2022-04-15'),
-(8, 8, 'BS in Civil Engineering', 'Polytechnic University of the Philippines', 'Imus', '2018-06-05', '2022-04-15'),
-(9, 9, 'Associate in Hotel Management', 'De La Salle University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(10, 10, 'BS in Computer Science', 'De La Salle University', 'Imus', '2018-06-05', '2022-04-15'),
-(11, 11, 'AB Communication', 'University of the Philippines', 'Angeles City', '2018-06-05', '2022-04-15'),
-(12, 12, 'Associate in Hotel Management', 'De La Salle University', 'Manila', '2018-06-05', '2022-04-15'),
-(13, 13, 'BS in Computer Science', 'Polytechnic University of the Philippines', 'Caloocan', '2018-06-05', '2022-04-15'),
-(14, 14, 'BS in Computer Science', 'Ateneo de Manila University', 'Imus', '2018-06-05', '2022-04-15'),
-(15, 15, 'Associate in Hotel Management', 'Polytechnic University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(16, 16, 'Associate in Hotel Management', 'Polytechnic University of the Philippines', 'Caloocan', '2018-06-05', '2022-04-15'),
-(17, 17, 'AB Communication', 'Ateneo de Manila University', 'Manila', '2018-06-05', '2022-04-15'),
-(18, 18, 'Associate in Hotel Management', 'University of Santo Tomas', 'Antipolo', '2018-06-05', '2022-04-15'),
-(19, 19, 'BS in Civil Engineering', 'University of Santo Tomas', 'Imus', '2018-06-05', '2022-04-15'),
-(20, 20, 'BS in Civil Engineering', 'Ateneo de Manila University', 'Angeles City', '2018-06-05', '2022-04-15'),
-(21, 21, 'AB Communication', 'Polytechnic University of the Philippines', 'Angeles City', '2018-06-05', '2022-04-15'),
-(22, 22, 'Associate in Hotel Management', 'University of the Philippines', 'Antipolo', '2018-06-05', '2022-04-15'),
-(23, 23, 'BS in Civil Engineering', 'University of Santo Tomas', 'Angeles City', '2018-06-05', '2022-04-15'),
-(24, 24, 'BS in Business Administration', 'Ateneo de Manila University', 'Angeles City', '2018-06-05', '2022-04-15'),
-(25, 25, 'BS in Business Administration', 'University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(26, 26, 'AB Communication', 'Ateneo de Manila University', 'Imus', '2018-06-05', '2022-04-15'),
-(27, 27, 'AB Communication', 'Ateneo de Manila University', 'Manila', '2018-06-05', '2022-04-15'),
-(28, 28, 'BS in Business Administration', 'De La Salle University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(29, 29, 'BS in Business Administration', 'De La Salle University', 'Angeles City', '2018-06-05', '2022-04-15'),
-(30, 30, 'AB Communication', 'Ateneo de Manila University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(31, 31, 'BS in Civil Engineering', 'Polytechnic University of the Philippines', 'Caloocan', '2018-06-05', '2022-04-15'),
-(32, 32, 'BS in Computer Science', 'University of Santo Tomas', 'Antipolo', '2018-06-05', '2022-04-15'),
-(33, 33, 'BS in Business Administration', 'De La Salle University', 'Caloocan', '2018-06-05', '2022-04-15'),
-(34, 34, 'AB Communication', 'University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(35, 35, 'AB Communication', 'University of Santo Tomas', 'Angeles City', '2018-06-05', '2022-04-15'),
-(36, 36, 'AB Communication', 'Ateneo de Manila University', 'Angeles City', '2018-06-05', '2022-04-15'),
-(37, 37, 'BS in Computer Science', 'De La Salle University', 'Imus', '2018-06-05', '2022-04-15'),
-(38, 38, 'BS in Computer Science', 'University of Santo Tomas', 'Antipolo', '2018-06-05', '2022-04-15'),
-(39, 39, 'BS in Civil Engineering', 'Polytechnic University of the Philippines', 'Caloocan', '2018-06-05', '2022-04-15'),
-(40, 40, 'BS in Civil Engineering', 'University of the Philippines', 'Angeles City', '2018-06-05', '2022-04-15'),
-(41, 41, 'BS in Civil Engineering', 'University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(42, 42, 'BS in Business Administration', 'University of Santo Tomas', 'Antipolo', '2018-06-05', '2022-04-15'),
-(43, 43, 'BS in Business Administration', 'University of the Philippines', 'Manila', '2018-06-05', '2022-04-15'),
-(44, 44, 'AB Communication', 'De La Salle University', 'Angeles City', '2018-06-05', '2022-04-15'),
-(45, 45, 'Associate in Hotel Management', 'Ateneo de Manila University', 'Imus', '2018-06-05', '2022-04-15'),
-(46, 46, 'BS in Computer Science', 'De La Salle University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(47, 47, 'Associate in Hotel Management', 'Ateneo de Manila University', 'Antipolo', '2018-06-05', '2022-04-15'),
-(48, 48, 'BS in Computer Science', 'University of Santo Tomas', 'Angeles City', '2018-06-05', '2022-04-15'),
-(49, 49, 'BS in Computer Science', 'University of Santo Tomas', 'Manila', '2018-06-05', '2022-04-15'),
-(50, 50, 'AB Communication', 'University of the Philippines', 'Manila', '2018-06-05', '2022-04-15');
+(1, 1, 'BS Civil Engineering', 'University of Santo Tomas', 'Caloocan City', '2007-06-01', '2021-04-30'),
+(2, 2, 'BS Information Technology', 'Ateneo de Manila University', 'Parañaque City', '2008-06-01', '2021-04-30'),
+(3, 3, 'BS Computer Science', 'De La Salle University', 'Pasig City', '2011-06-01', '2020-04-30'),
+(4, 4, 'BS Nursing', 'De La Salle University', 'Quezon City', '2007-06-01', '2018-04-30'),
+(5, 5, 'BS Information Systems', 'University of the Philippines', 'Quezon City', '2009-06-01', '2016-04-30'),
+(6, 6, 'BS Accountancy', 'Polytechnic University of the Philippines', 'Pasig City', '2008-06-01', '2022-04-30'),
+(7, 7, 'BS Civil Engineering', 'University of the Philippines', 'Parañaque City', '2009-06-01', '2020-04-30'),
+(8, 8, 'BS Nursing', 'University of Santo Tomas', 'Las Piñas City', '2014-06-01', '2021-04-30'),
+(9, 9, 'BS Information Technology', 'University of Santo Tomas', 'Makati City', '2006-06-01', '2016-04-30'),
+(10, 10, 'BS Civil Engineering', 'University of Santo Tomas', 'Parañaque City', '2003-06-01', '2021-04-30'),
+(11, 11, 'BS Information Technology', 'Polytechnic University of the Philippines', 'Manila', '2004-06-01', '2020-04-30'),
+(12, 12, 'BS Information Technology', 'Ateneo de Manila University', 'Pasig City', '2003-06-01', '2023-04-30'),
+(13, 13, 'BS Computer Science', 'De La Salle University', 'Manila', '2002-06-01', '2018-04-30'),
+(14, 14, 'BS Computer Science', 'University of the Philippines', 'Taguig City', '2004-06-01', '2018-04-30'),
+(15, 15, 'BS Civil Engineering', 'Far Eastern University', 'Taguig City', '2009-06-01', '2023-04-30'),
+(16, 16, 'BS Information Systems', 'Polytechnic University of the Philippines', 'Taguig City', '2007-06-01', '2017-04-30'),
+(17, 17, 'BS Accountancy', 'De La Salle University', 'Makati City', '2008-06-01', '2016-04-30'),
+(18, 18, 'BS Accountancy', 'Ateneo de Manila University', 'Las Piñas City', '2008-06-01', '2023-04-30'),
+(19, 19, 'BS Accountancy', 'University of Santo Tomas', 'Las Piñas City', '2008-06-01', '2018-04-30'),
+(20, 20, 'BS Computer Science', 'Ateneo de Manila University', 'Makati City', '2002-06-01', '2019-04-30'),
+(21, 21, 'BS Information Systems', 'Far Eastern University', 'Quezon City', '2007-06-01', '2018-04-30'),
+(22, 22, 'BS Accountancy', 'Polytechnic University of the Philippines', 'Las Piñas City', '2001-06-01', '2020-04-30'),
+(23, 23, 'BS Information Technology', 'University of the Philippines', 'Pasig City', '2001-06-01', '2019-04-30'),
+(24, 24, 'BS Information Technology', 'De La Salle University', 'Pasig City', '2013-06-01', '2020-04-30'),
+(25, 25, 'BS Computer Science', 'University of Santo Tomas', 'Parañaque City', '2005-06-01', '2023-04-30');
 
 -- --------------------------------------------------------
 
@@ -587,56 +448,31 @@ CREATE TABLE `member_experience` (
 --
 
 INSERT INTO `member_experience` (`id`, `member_id`, `job_title`, `organization`, `date_started`, `date_ended`) VALUES
-(1, 1, 'Project Manager', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(2, 2, 'Software Engineer', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(3, 3, 'Administrative Assistant', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(4, 4, 'Customer Support Specialist', 'Nexus Development', '2022-05-01', '2025-12-30'),
-(5, 5, 'Project Manager', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(6, 6, 'Customer Support Specialist', 'Nexus Development', '2022-05-01', '2025-12-30'),
-(7, 7, 'Customer Support Specialist', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(8, 8, 'Accountant', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(9, 9, 'Accountant', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(10, 10, 'Operations Supervisor', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(11, 11, 'Accountant', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(12, 12, 'Project Manager', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(13, 13, 'Software Engineer', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(14, 14, 'Accountant', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(15, 15, 'Customer Support Specialist', 'Nexus Development', '2022-05-01', '2025-12-30'),
-(16, 16, 'Customer Support Specialist', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(17, 17, 'Accountant', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(18, 18, 'Software Engineer', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(19, 19, 'Software Engineer', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(20, 20, 'Administrative Assistant', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(21, 21, 'Project Manager', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(22, 22, 'Administrative Assistant', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(23, 23, 'Operations Supervisor', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(24, 24, 'Project Manager', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(25, 25, 'Operations Supervisor', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(26, 26, 'Operations Supervisor', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(27, 27, 'Accountant', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(28, 28, 'Administrative Assistant', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(29, 29, 'Accountant', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(30, 30, 'Operations Supervisor', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(31, 31, 'Customer Support Specialist', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(32, 32, 'Accountant', 'Nexus Development', '2022-05-01', '2025-12-30'),
-(33, 33, 'Project Manager', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(34, 34, 'Software Engineer', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(35, 35, 'Project Manager', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(36, 36, 'Customer Support Specialist', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(37, 37, 'Operations Supervisor', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(38, 38, 'Administrative Assistant', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(39, 39, 'Administrative Assistant', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(40, 40, 'Administrative Assistant', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(41, 41, 'Accountant', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(42, 42, 'Accountant', 'Apex Outsourcing', '2022-05-01', '2025-12-30'),
-(43, 43, 'Accountant', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(44, 44, 'Operations Supervisor', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(45, 45, 'Customer Support Specialist', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(46, 46, 'Customer Support Specialist', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(47, 47, 'Operations Supervisor', 'TechSolutions Inc.', '2022-05-01', '2025-12-30'),
-(48, 48, 'Operations Supervisor', 'Global Finance Corp', '2022-05-01', '2025-12-30'),
-(49, 49, 'Customer Support Specialist', 'Pioneer Enterprises', '2022-05-01', '2025-12-30'),
-(50, 50, 'Project Manager', 'Pioneer Enterprises', '2022-05-01', '2025-12-30');
+(1, 1, 'Accountant', 'Future Systems', '2015-01-01', '2026-06-30'),
+(2, 2, 'Accountant', 'Future Systems', '2019-01-01', '2026-06-30'),
+(3, 3, 'Network Engineer', 'Metro Solutions', '2020-01-01', '2026-06-30'),
+(4, 4, 'Project Manager', 'GlobalTech', '2019-01-01', '2026-06-30'),
+(5, 5, 'HR Officer', 'XYZ Technologies', '2016-01-01', '2026-06-30'),
+(6, 6, 'Teacher', 'GlobalTech', '2016-01-01', '2026-06-30'),
+(7, 7, 'Project Manager', 'Innovate Inc.', '2018-01-01', '2026-06-30'),
+(8, 8, 'Web Developer', 'Metro Solutions', '2016-01-01', '2026-06-30'),
+(9, 9, 'Business Analyst', 'Innovate Inc.', '2019-01-01', '2026-06-30'),
+(10, 10, 'Teacher', 'Metro Solutions', '2016-01-01', '2026-06-30'),
+(11, 11, 'Software Developer', 'XYZ Technologies', '2019-01-01', '2026-06-30'),
+(12, 12, 'HR Officer', 'XYZ Technologies', '2017-01-01', '2026-06-30'),
+(13, 13, 'HR Officer', 'XYZ Technologies', '2016-01-01', '2026-06-30'),
+(14, 14, 'Project Manager', 'XYZ Technologies', '2020-01-01', '2026-06-30'),
+(15, 15, 'Project Manager', 'Innovate Inc.', '2020-01-01', '2026-06-30'),
+(16, 16, 'Business Analyst', 'Innovate Inc.', '2016-01-01', '2026-06-30'),
+(17, 17, 'Accountant', 'XYZ Technologies', '2016-01-01', '2026-06-30'),
+(18, 18, 'Teacher', 'GlobalTech', '2019-01-01', '2026-06-30'),
+(19, 19, 'Project Manager', 'Metro Solutions', '2019-01-01', '2026-06-30'),
+(20, 20, 'Business Analyst', 'Metro Solutions', '2018-01-01', '2026-06-30'),
+(21, 21, 'Project Manager', 'Metro Solutions', '2015-01-01', '2026-06-30'),
+(22, 22, 'Accountant', 'Metro Solutions', '2017-01-01', '2026-06-30'),
+(23, 23, 'Software Developer', 'ABC Corporation', '2017-01-01', '2026-06-30'),
+(24, 24, 'Teacher', 'XYZ Technologies', '2017-01-01', '2026-06-30'),
+(25, 25, 'Business Analyst', 'Innovate Inc.', '2015-01-01', '2026-06-30');
 
 -- --------------------------------------------------------
 
@@ -663,57 +499,31 @@ CREATE TABLE `member_profiles` (
 --
 
 INSERT INTO `member_profiles` (`id`, `member_id`, `title_rank`, `position`, `tin_no`, `marital_status`, `sex`, `height`, `weight`, `complexion`, `birthplace`) VALUES
-(1, 1, 'Associate', 'Member Developer', '951-826-205-000', 'Married', 'Female', '165 cm', '74 kg', 'Light', 'City Public Hospital'),
-(2, 2, 'Associate', 'Member Developer', '198-262-829-000', 'Single', 'Male', '168 cm', '90 kg', 'Fair', 'City Public Hospital'),
-(3, 3, 'Associate', 'Member Developer', '188-198-269-000', 'Single', 'Male', '151 cm', '74 kg', 'Fair', 'City Public Hospital'),
-(4, 4, 'Associate', 'Member Developer', '567-190-864-000', 'Married', 'Female', '158 cm', '52 kg', 'Fair', 'City Public Hospital'),
-(5, 5, 'Associate', 'Member Developer', '494-462-484-000', 'Married', 'Female', '164 cm', '59 kg', 'Tan', 'City Public Hospital'),
-(6, 6, 'Associate', 'Member Developer', '599-635-564-000', 'Single', 'Female', '153 cm', '82 kg', 'Light', 'City Public Hospital'),
-(7, 7, 'Associate', 'Member Developer', '481-397-753-000', 'Married', 'Male', '152 cm', '78 kg', 'Fair', 'City Public Hospital'),
-(8, 8, 'Associate', 'Member Developer', '512-779-996-000', 'Married', 'Male', '160 cm', '57 kg', 'Tan', 'City Public Hospital'),
-(9, 9, 'Associate', 'Member Developer', '897-947-935-000', 'Single', 'Male', '165 cm', '55 kg', 'Light', 'City Public Hospital'),
-(10, 10, 'Associate', 'Member Developer', '454-103-784-000', 'Married', 'Female', '182 cm', '58 kg', 'Tan', 'City Public Hospital'),
-(11, 11, 'Associate', 'Member Developer', '380-453-830-000', 'Single', 'Male', '167 cm', '73 kg', 'Tan', 'City Public Hospital'),
-(12, 12, 'Associate', 'Member Developer', '647-139-580-000', 'Single', 'Male', '157 cm', '51 kg', 'Light', 'City Public Hospital'),
-(13, 13, 'Associate', 'Member Developer', '224-142-772-000', 'Married', 'Female', '180 cm', '75 kg', 'Light', 'City Public Hospital'),
-(14, 14, 'Associate', 'Member Developer', '943-613-457-000', 'Single', 'Female', '182 cm', '50 kg', 'Fair', 'City Public Hospital'),
-(15, 15, 'Associate', 'Member Developer', '104-746-690-000', 'Single', 'Female', '175 cm', '66 kg', 'Tan', 'City Public Hospital'),
-(16, 16, 'Associate', 'Member Developer', '972-633-329-000', 'Single', 'Male', '177 cm', '72 kg', 'Fair', 'City Public Hospital'),
-(17, 17, 'Associate', 'Member Developer', '517-838-835-000', 'Single', 'Male', '181 cm', '50 kg', 'Fair', 'City Public Hospital'),
-(18, 18, 'Associate', 'Member Developer', '106-782-425-000', 'Single', 'Male', '160 cm', '81 kg', 'Fair', 'City Public Hospital'),
-(19, 19, 'Associate', 'Member Developer', '399-512-772-000', 'Married', 'Male', '168 cm', '82 kg', 'Fair', 'City Public Hospital'),
-(20, 20, 'Associate', 'Member Developer', '161-628-492-000', 'Married', 'Male', '157 cm', '81 kg', 'Light', 'City Public Hospital'),
-(21, 21, 'Associate', 'Member Developer', '474-370-818-000', 'Single', 'Female', '172 cm', '89 kg', 'Fair', 'City Public Hospital'),
-(22, 22, 'Associate', 'Member Developer', '202-463-747-000', 'Married', 'Male', '174 cm', '79 kg', 'Tan', 'City Public Hospital'),
-(23, 23, 'Associate', 'Member Developer', '699-907-314-000', 'Single', 'Female', '174 cm', '71 kg', 'Light', 'City Public Hospital'),
-(24, 24, 'Associate', 'Member Developer', '432-203-950-000', 'Single', 'Female', '172 cm', '72 kg', 'Light', 'City Public Hospital'),
-(25, 25, 'Associate', 'Member Developer', '681-281-311-000', 'Married', 'Female', '162 cm', '54 kg', 'Fair', 'City Public Hospital'),
-(26, 26, 'Associate', 'Member Developer', '115-606-398-000', 'Married', 'Male', '172 cm', '79 kg', 'Fair', 'City Public Hospital'),
-(27, 27, 'Associate', 'Member Developer', '675-446-389-000', 'Single', 'Female', '170 cm', '83 kg', 'Light', 'City Public Hospital'),
-(28, 28, 'Associate', 'Member Developer', '671-429-757-000', 'Married', 'Male', '176 cm', '66 kg', 'Light', 'City Public Hospital'),
-(29, 29, 'Associate', 'Member Developer', '583-121-318-000', 'Single', 'Female', '163 cm', '89 kg', 'Tan', 'City Public Hospital'),
-(30, 30, 'Associate', 'Member Developer', '255-866-224-000', 'Married', 'Male', '182 cm', '83 kg', 'Light', 'City Public Hospital'),
-(31, 31, 'Associate', 'Member Developer', '787-755-422-000', 'Married', 'Female', '171 cm', '64 kg', 'Tan', 'City Public Hospital'),
-(32, 32, 'Associate', 'Member Developer', '428-588-882-000', 'Single', 'Male', '174 cm', '89 kg', 'Tan', 'City Public Hospital'),
-(33, 33, 'Associate', 'Member Developer', '419-837-365-000', 'Married', 'Female', '162 cm', '73 kg', 'Light', 'City Public Hospital'),
-(34, 34, 'Associate', 'Member Developer', '792-646-900-000', 'Single', 'Female', '163 cm', '81 kg', 'Tan', 'City Public Hospital'),
-(35, 35, 'Associate', 'Member Developer', '971-431-484-000', 'Single', 'Male', '156 cm', '87 kg', 'Fair', 'City Public Hospital'),
-(36, 36, 'Associate', 'Member Developer', '574-804-864-000', 'Single', 'Female', '164 cm', '64 kg', 'Fair', 'City Public Hospital'),
-(37, 37, 'Associate', 'Member Developer', '179-856-164-000', 'Married', 'Male', '154 cm', '68 kg', 'Light', 'City Public Hospital'),
-(38, 38, 'Associate', 'Member Developer', '837-574-954-000', 'Married', 'Male', '165 cm', '71 kg', 'Fair', 'City Public Hospital'),
-(39, 39, 'Associate', 'Member Developer', '709-164-270-000', 'Single', 'Female', '184 cm', '88 kg', 'Light', 'City Public Hospital'),
-(40, 40, 'Associate', 'Member Developer', '542-858-486-000', 'Married', 'Male', '153 cm', '90 kg', 'Light', 'City Public Hospital'),
-(41, 41, 'Associate', 'Member Developer', '806-447-571-000', 'Single', 'Female', '185 cm', '69 kg', 'Light', 'City Public Hospital'),
-(42, 42, 'Associate', 'Member Developer', '135-899-686-000', 'Married', 'Female', '174 cm', '74 kg', 'Light', 'City Public Hospital'),
-(43, 43, 'Associate', 'Member Developer', '941-265-755-000', 'Single', 'Female', '171 cm', '89 kg', 'Fair', 'City Public Hospital'),
-(44, 44, 'Associate', 'Member Developer', '304-264-588-000', 'Single', 'Female', '184 cm', '80 kg', 'Light', 'City Public Hospital'),
-(45, 45, 'Associate', 'Member Developer', '320-363-107-000', 'Married', 'Male', '165 cm', '83 kg', 'Fair', 'City Public Hospital'),
-(46, 46, 'Associate', 'Member Developer', '406-959-277-000', 'Married', 'Female', '167 cm', '88 kg', 'Light', 'City Public Hospital'),
-(47, 47, 'Associate', 'Member Developer', '312-470-629-000', 'Married', 'Female', '169 cm', '73 kg', 'Fair', 'City Public Hospital'),
-(48, 48, 'Associate', 'Member Developer', '357-592-331-000', 'Married', 'Male', '153 cm', '55 kg', 'Fair', 'City Public Hospital'),
-(49, 49, 'Associate', 'Member Developer', '622-288-784-000', 'Married', 'Female', '164 cm', '81 kg', 'Light', 'City Public Hospital'),
-(50, 50, 'Associate', 'Member Developer', '330-822-744-000', 'Married', 'Female', '172 cm', '68 kg', 'Fair', 'City Public Hospital'),
-(62, 52, NULL, NULL, NULL, 'Single', 'Male', NULL, NULL, NULL, NULL);
+(1, 1, '', 'Accountant', '216-141-696', 'Single', 'Male', '182', '68', 'Light', 'Caloocan City'),
+(2, 2, '', 'Accountant', '777-120-224', 'Single', 'Female', '189', '79', 'Fair', 'Parañaque City'),
+(3, 3, '', 'Network Engineer', '339-353-522', 'Single', 'Male', '178', '61', 'Morena', 'Pasig City'),
+(4, 4, '', 'Project Manager', '773-791-633', 'Single', 'Female', '184', '74', 'Medium', 'Quezon City'),
+(5, 5, '', 'HR Officer', '236-741-813', 'Married', 'Male', '164', '63', 'Fair', 'Quezon City'),
+(6, 6, '', 'Teacher', '583-771-555', 'Married', 'Male', '151', '53', 'Fair', 'Pasig City'),
+(7, 7, '', 'Project Manager', '347-927-904', 'Married', 'Male', '157', '62', 'Medium', 'Parañaque City'),
+(8, 8, '', 'Web Developer', '499-436-563', 'Single', 'Male', '169', '80', 'Light', 'Las Piñas City'),
+(9, 9, '', 'Business Analyst', '931-516-220', 'Single', 'Male', '187', '82', 'Light', 'Makati City'),
+(10, 10, '', 'Teacher', '447-155-235', 'Married', 'Female', '190', '87', 'Medium', 'Parañaque City'),
+(11, 11, '', 'Software Developer', '793-163-523', 'Married', 'Female', '177', '61', 'Morena', 'Manila'),
+(12, 12, '', 'HR Officer', '802-656-732', 'Single', 'Female', '181', '79', 'Fair', 'Pasig City'),
+(13, 13, '', 'HR Officer', '737-639-552', 'Married', 'Male', '169', '83', 'Fair', 'Manila'),
+(14, 14, '', 'Project Manager', '113-486-312', 'Married', 'Female', '178', '59', 'Light', 'Taguig City'),
+(15, 15, '', 'Project Manager', '551-193-615', 'Married', 'Female', '178', '50', 'Light', 'Taguig City'),
+(16, 16, '', 'Business Analyst', '433-639-303', 'Married', 'Female', '164', '89', 'Light', 'Taguig City'),
+(17, 17, '', 'Accountant', '672-192-262', 'Single', 'Female', '170', '87', 'Morena', 'Makati City'),
+(18, 18, '', 'Teacher', '926-859-600', 'Single', 'Male', '158', '56', 'Fair', 'Las Piñas City'),
+(19, 19, '', 'Project Manager', '265-425-756', 'Single', 'Male', '154', '54', 'Fair', 'Las Piñas City'),
+(20, 20, '', 'Business Analyst', '403-259-828', 'Married', 'Female', '175', '67', 'Morena', 'Makati City'),
+(21, 21, '', 'Project Manager', '449-974-583', 'Single', 'Male', '158', '90', 'Fair', 'Quezon City'),
+(22, 22, '', 'Accountant', '657-829-106', 'Single', 'Male', '158', '66', 'Morena', 'Las Piñas City'),
+(23, 23, '', 'Software Developer', '194-547-566', 'Single', 'Male', '171', '85', 'Light', 'Pasig City'),
+(24, 24, '', 'Teacher', '254-135-923', 'Married', 'Male', '175', '65', 'Medium', 'Pasig City'),
+(25, 25, '', 'Business Analyst', '575-666-990', 'Married', 'Female', '154', '54', 'Morena', 'Parañaque City');
 
 -- --------------------------------------------------------
 
@@ -733,15 +543,6 @@ CREATE TABLE `payment_ledger` (
   `remarks` text DEFAULT NULL,
   `datetime` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `payment_ledger`
---
-
-INSERT INTO `payment_ledger` (`id`, `loan_id`, `amount_paid`, `penalty_applied`, `interest_applied`, `principal_applied`, `excess`, `type`, `remarks`, `datetime`) VALUES
-(1, 1, 5000.00, 0.00, 5000.00, 0.00, 0.00, 'Global', 'OR-10023', '2026-06-19 02:51:13'),
-(2, 1, 15000.00, 0.00, 1000.00, 14000.00, 0.00, 'Global', 'OR-10024', '2026-06-19 02:54:19'),
-(3, 2, 10699.99, 100.00, 600.00, 9999.99, 0.00, 'Global', 'Final Settlement Test', '2026-06-19 03:23:14');
 
 -- --------------------------------------------------------
 
@@ -786,7 +587,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `role_id`, `username`, `email`, `password_hash`, `status`, `created_at`) VALUES
 (1, 1, 'admin', 'justinbieber@gmail.com', '$2y$10$pNIz.r1TYdKWhDfshjqaveo4gZi96ZFdB7.Vp7SzYGFzRuDn0faiG', 'active', '2026-06-15 03:50:29'),
-(2, 2, 'dummy_customer', 'dummy@test.com', '$2y$10$ua8918vz/NZ5o9aVm/GA6OXQ5Eyb0V/HFGWkz8uZL74TBCx25zXT6', 'active', '2026-06-18 02:48:40');
+(2, 2, 'user', 'dummy@test.com', '$2y$10$ua8918vz/NZ5o9aVm/GA6OXQ5Eyb0V/HFGWkz8uZL74TBCx25zXT6', 'active', '2026-06-18 02:48:40');
 
 --
 -- Indexes for dumped tables
@@ -908,79 +709,79 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `journal_vouchers`
 --
 ALTER TABLE `journal_vouchers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ledger_entries`
 --
 ALTER TABLE `ledger_entries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `loans`
 --
 ALTER TABLE `loans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `loan_schedules`
 --
 ALTER TABLE `loan_schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_addresses`
 --
 ALTER TABLE `member_addresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_beneficiaries`
 --
 ALTER TABLE `member_beneficiaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_contact`
 --
 ALTER TABLE `member_contact`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_education`
 --
 ALTER TABLE `member_education`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_experience`
 --
 ALTER TABLE `member_experience`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `member_profiles`
 --
 ALTER TABLE `member_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `payment_ledger`
 --
 ALTER TABLE `payment_ledger`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `roles`

@@ -1,225 +1,106 @@
 <?php
+
 if (!defined('ALLOW_ACCESS')) {
-    die('Direct access to this file is prohibited.');
+    exit('Direct access to this file is prohibited.');
 }
+
 ?>
 
-<div class="container">
+<div class="page">
 
-    <div class="header-actions">
+    <?php
 
-        <p>
-            <a href="index.php?route=dashboard">
-                ← Back to Dashboard
-            </a>
-        </p>
+    c('page_header', [
 
-    </div>
+        'title' => 'Cooperative Members',
 
-    <h2>Cooperative Official Members Registry</h2>
+        'description' =>
+        'Manage cooperative members, registrations, and shareholder information.'
 
-    <p class="u-mb-lg">
-        This workspace tracks actual cooperative shareholders,
-        registration logs,
-        and capital statements.
-    </p>
+    ]);
 
-    <?php if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
+    ?>
 
-        <a
-            href="index.php?route=add_member"
-            class="btn btn--success u-mb-lg">
+    <?php c('flash_messages'); ?>
 
-            + Register New Cooperative Member
+    <?php
 
-        </a>
+    ob_start();
 
-    <?php else: ?>
+    if (isset($_SESSION['role_id']) && (int)$_SESSION['role_id'] === 1) {
 
-        <div class="badge badge--staff u-mb-lg">
+        c('button', [
 
-            🔒 Account Tier Mode:
-            Staff View (Read-Only)
+            'href' => url('add_member'),
 
-        </div>
+            'text' => 'Register New Member',
 
-    <?php endif; ?>
+            'icon' => 'fas fa-user-plus',
 
-    <?php if (isset($_SESSION['success_message'])): ?>
+            'type' => 'success'
 
-        <div class="alert alert--success">
+        ]);
+    } else {
 
-            <?= htmlspecialchars($_SESSION['success_message']); ?>
+        c('badge', [
 
-            <?php unset($_SESSION['success_message']); ?>
+            'type' => 'staff',
 
-        </div>
+            'text' => 'Staff View (Read-Only)'
 
-    <?php endif; ?>
+        ]);
+    }
 
-    <form
-        action="index.php"
-        method="GET"
-        class="toolbar__search">
+    $toolbarLeft = ob_get_clean();
 
-        <input
-            type="hidden"
-            name="route"
-            value="members">
+    ob_start();
 
-        <label
-            class="form__label"
-            for="search">
+    c('search_box', [
 
-            Search Member
+        'action' => 'index.php',
 
-        </label>
+        'value' => $searchTerm,
 
-        <input
-            class="form__control"
-            type="text"
-            id="search"
-            name="search"
-            placeholder="Enter name or member number..."
-            value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+        'placeholder' => 'Search by member name or member number...'
 
-        <button
-            class="btn btn--primary"
-            type="submit">
+    ]);
 
-            Filter
+    $toolbarRight = ob_get_clean();
 
-        </button>
+    c('toolbar', [
 
-        <?php if (!empty($_GET['search'])): ?>
+        'left' => $toolbarLeft,
 
-            <a
-                href="index.php?route=members">
+        'right' => $toolbarRight
 
-                Clear Filter
+    ]);
 
-            </a>
+    ?>
 
-        <?php endif; ?>
+    <?php
 
-    </form>
+    c('section_header', [
 
-    <table class="table">
+        'title' => 'Member Registry',
 
-        <thead>
+        'description' => 'List of registered cooperative members.'
 
-            <tr>
+    ]);
 
-                <th>Member No.</th>
+    ?>
 
-                <th>Full Name</th>
+    <?php
 
-                <th>Email</th>
+    c('table', [
 
-                <th>Phone</th>
+        'headers' => $headers,
 
-                <th>Share Capital</th>
+        'rows' => $rows,
 
-                <th>Status</th>
+        'emptyMessage' => 'No cooperative members found.'
 
-            </tr>
+    ]);
 
-        </thead>
-
-        <tbody>
-
-            <?php if (empty($coop_members)): ?>
-
-                <tr>
-
-                    <td colspan="6" class="table__empty">
-
-                        No members found.
-
-                    </td>
-
-                </tr>
-
-            <?php else: ?>
-
-                <?php foreach ($coop_members as $m): ?>
-
-                    <tr>
-
-                        <td>
-
-                            <code class="code">
-
-                                <?= htmlspecialchars($m['member_number']); ?>
-
-                            </code>
-
-                        </td>
-
-                        <td>
-
-                            <a
-                                class="module-card__title"
-                                href="index.php?route=member_profile&id=<?= $m['id']; ?>">
-
-                                <?= htmlspecialchars($m['last_name'] . ', ' . $m['first_name']); ?>
-
-                            </a>
-
-                        </td>
-
-                        <td>
-
-                            <?= htmlspecialchars($m['email'] ?: 'N/A'); ?>
-
-                        </td>
-
-                        <td>
-
-                            <?= htmlspecialchars($m['phone'] ?: 'N/A'); ?>
-
-                        </td>
-
-                        <td>
-
-                            <strong>
-
-                                $<?= number_format($m['share_capital'] ?? 0, 2); ?>
-
-                            </strong>
-
-                        </td>
-
-                        <td>
-
-                            <?php if (($m['status'] ?? '') === 'active'): ?>
-
-                                <span class="status status--active">
-
-                                    ACTIVE
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <span class="status status--inactive">
-
-                                    <?= htmlspecialchars(strtoupper($m['status'] ?? 'UNKNOWN')); ?>
-
-                                </span>
-
-                            <?php endif; ?>
-
-                        </td>
-
-                    </tr>
-
-                <?php endforeach; ?>
-
-            <?php endif; ?>
-
-        </tbody>
-
-    </table>
+    ?>
 
 </div>

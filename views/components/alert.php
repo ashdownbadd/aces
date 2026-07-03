@@ -1,18 +1,20 @@
 <?php
 
-$type ??= 'info';
-$title ??= '';
-$message ??= '';
+$type = $type ?? 'info';
+
+$title = $title ?? '';
+
+$message = $message ?? '';
 
 ?>
 
 <div class="alert alert--<?= htmlspecialchars($type) ?>">
 
-    <?php if (!empty($title)): ?>
+    <?php if ($title): ?>
 
         <div class="alert__title">
 
-            <?= $title ?>
+            <?= htmlspecialchars($title) ?>
 
         </div>
 
