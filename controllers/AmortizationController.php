@@ -110,8 +110,67 @@ function handleAmortizationDashboard(PDO $pdo): string
         ORDER BY l.id DESC
     ");
 
+    $loans = $stmt->fetchAll();
+
+    $totalDisbursed = (float) $pdo
+        ->query("
+            SELECT COALESCE(SUM(principal),0)
+            FROM loans
+            WHERE loan_status='Approved'
+        ")
+        ->fetchColumn();
+
+    $projectedRevenue = (float) $pdo
+        ->query("
+            SELECT COALESCE(SUM(ls.interest),0)
+            FROM loan_schedules ls
+            JOIN loans l
+                ON ls.loan_id=l.id
+            WHERE l.loan_status='Approved'
+        ")
+        ->fetchColumn();
+
+    $collectedToDate = (float) $pdo
+        ->query("
+            SELECT COALESCE(SUM(pl.amount_paid-pl.excess),0)
+            FROM payment_ledger pl
+            JOIN loans l
+                ON pl.loan_id=l.id
+            WHERE l.loan_status='Approved'
+        ")
+        ->fetchColumn();
+
+    $portfolioAtRisk = (float) $pdo
+        ->query("
+            SELECT COALESCE(
+                SUM(
+                    ls.rem_principal +
+                    ls.rem_interest +
+                    ls.rem_penalty
+                ),
+                0
+            )
+            FROM loan_schedules ls
+            JOIN loans l
+                ON ls.loan_id=l.id
+            WHERE
+                ls.status='overdue'
+                AND l.loan_status='Approved'
+        ")
+        ->fetchColumn();
+
     return render('amortization_dashboard', [
-        'loans' => $stmt->fetchAll()
+
+        'loans' => $loans,
+
+        'totalDisbursed' => $totalDisbursed,
+
+        'projectedRevenue' => $projectedRevenue,
+
+        'collectedToDate' => $collectedToDate,
+
+        'portfolioAtRisk' => $portfolioAtRisk
+
     ]);
 }
 

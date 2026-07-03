@@ -1,256 +1,351 @@
 <?php
+
 if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
+
+// The controller should provide $alerts.
+// Fallback only to prevent errors during development.
+$alerts ??= [
+    'negative_equity' => [],
+    'past_due_loans'  => []
+];
+
+$hasAlerts =
+    !empty($alerts['negative_equity']) ||
+    !empty($alerts['past_due_loans']);
+
 ?>
 
-<div class="container">
+<div class="page">
 
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
 
+    <div class="page__header">
 
-    <h1>Welcome to the Dashboard</h1>
+        <div class="page__heading">
 
-    <p>
-        This is the central command center for the Membership,
-        Amortization, and General Ledger modules.
-    </p>
+            <h1 class="page__title">
+                Dashboard
+            </h1>
 
-    <?php if (isset($_SESSION['error_message'])): ?>
-
-        <div class="alert alert--danger">
-
-            <?= htmlspecialchars($_SESSION['error_message']); ?>
-
-            <?php unset($_SESSION['error_message']); ?>
-
-        </div>
-
-    <?php endif; ?>
-
-    <?php
-
-    $alerts = (function_exists('getSystemAlerts') && isset($pdo))
-        ? getSystemAlerts($pdo)
-        : [
-            'negative_equity' => [],
-            'past_due_loans' => []
-        ];
-
-    ?>
-
-    <?php if (!empty($alerts['negative_equity']) || !empty($alerts['past_due_loans'])): ?>
-
-        <div class="alert alert--warning dashboard-alert">
-
-            <h2 class="dashboard-alert__title">
-                ⚠️ System Health Alerts
-            </h2>
-
-            <?php if (!empty($alerts['negative_equity'])): ?>
-
-                <p>
-                    <strong>Negative Share Capital:</strong>
-
-                    <?= count($alerts['negative_equity']); ?>
-
-                    member(s) have a balance below zero and require review.
-                </p>
-
-            <?php endif; ?>
-
-            <?php if (!empty($alerts['past_due_loans'])): ?>
-
-                <p>
-
-                    <strong>Past Due Loans:</strong>
-
-                    <?= count($alerts['past_due_loans']); ?>
-
-                    active loan(s) are past their scheduled due date.
-
-                </p>
-
-                <a href="index.php?route=amortization_dashboard">
-                    View Amortization Queue →
-                </a>
-
-            <?php endif; ?>
-
-        </div>
-
-    <?php endif; ?>
-
-
-    <div class="dashboard-grid">
-
-        <div class="dashboard-card">
-
-            <h3 class="dashboard-card__title">
-                Total Members
-            </h3>
-
-            <p class="dashboard-value">
-                <?= $total_members ?? 0; ?>
-            </p>
-
-        </div>
-
-
-        <div class="dashboard-card card--primary">
-
-            <h3 class="dashboard-card__title">
-                Types
-            </h3>
-
-            <p>
-                Regular:
-                <strong><?= $types['Regular'] ?? 0; ?></strong>
-            </p>
-
-            <p>
-                Associate:
-                <strong><?= $types['Associate'] ?? 0; ?></strong>
-            </p>
-
-        </div>
-
-
-        <div class="dashboard-card card--success">
-
-            <h3 class="dashboard-card__title">
-                Status
-            </h3>
-
-            <p>
-                Active:
-                <strong><?= $status['active'] ?? 0; ?></strong>
-            </p>
-
-            <p>
-                Inactive:
-                <strong><?= $status['inactive'] ?? 0; ?></strong>
-            </p>
-
-        </div>
-
-
-        <div class="dashboard-card card--info">
-
-            <h3 class="dashboard-card__title">
-                Gender
-            </h3>
-
-            <p>
-                Male:
-                <strong><?= $gender['Male'] ?? 0; ?></strong>
-            </p>
-
-            <p>
-                Female:
-                <strong><?= $gender['Female'] ?? 0; ?></strong>
+            <p class="page__description">
+                Welcome back,
+                <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>.
+                Here's a quick overview of your cooperative management system.
             </p>
 
         </div>
 
     </div>
 
-    <hr>
+    <!-- ========================================================= -->
+    <!-- FLASH MESSAGES -->
+    <!-- ========================================================= -->
 
-    <h3>Available Application Modules</h3>
+    <?php if (!empty($_SESSION['success_message'])): ?>
 
-    <ul class="module-list">
+        <div class="alert alert--success">
 
-        <li class="module-list__item">
+            <strong>Success</strong>
 
-            <div class="card module-card">
+            <p>
 
-                <a class="module-card__title"
-                    href="index.php?route=members">
+                <?= htmlspecialchars($_SESSION['success_message']) ?>
 
-                    👥 Manage Cooperative Members Directory
+            </p>
 
-                </a>
+        </div>
 
-                <div class="module-card__description">
+        <?php unset($_SESSION['success_message']); ?>
 
-                    Track official cooperative shareholders,
-                    initial capital logs, and statements.
+    <?php endif; ?>
 
-                </div>
+    <?php if (!empty($_SESSION['error_message'])): ?>
+
+        <div class="alert alert--danger">
+
+            <strong>Error</strong>
+
+            <p>
+
+                <?= htmlspecialchars($_SESSION['error_message']) ?>
+
+            </p>
+
+        </div>
+
+        <?php unset($_SESSION['error_message']); ?>
+
+    <?php endif; ?>
+
+    <!-- ========================================================= -->
+    <!-- SYSTEM OVERVIEW -->
+    <!-- ========================================================= -->
+
+    <section class="section">
+
+        <div class="section__header">
+
+            <div>
+
+                <h2 class="section__title">
+
+                    System Overview
+
+                </h2>
+
+                <p class="section__description">
+
+                    Key cooperative statistics.
+
+                </p>
 
             </div>
 
-        </li>
+        </div>
 
-        <li class="module-list__item">
+        <div class="section__body">
 
-            <div class="card module-card">
+            <div class="stats">
 
-                <a class="module-card__title"
-                    href="index.php?route=amortization_dashboard">
+                <div class="stats__card stats__card--primary">
 
-                    📈 Amortization Calculators Module
+                    <div class="stats__content">
 
-                </a>
+                        <span class="stats__label">
 
-            </div>
+                            Members
 
-        </li>
+                        </span>
 
-        <li class="module-list__item">
+                        <span class="stats__value">
 
-            <div class="card module-card">
+                            <?= $total_members ?? 0 ?>
 
-                <a class="module-card__title"
-                    href="index.php?route=ledger">
+                        </span>
 
-                    📖 General Ledger & Accounting Framework
+                        <span class="stats__description">
 
-                </a>
+                            Registered cooperative members
 
-            </div>
-
-        </li>
-
-        <?php if (isset($_SESSION['role_id']) && intval($_SESSION['role_id']) === 1): ?>
-
-            <li class="module-list__item">
-
-                <div class="card card--warning module-card module-card--admin">
-
-                    <a class="module-card__title"
-                        href="index.php?route=admins">
-
-                        <i class="fas fa-shield-halved"></i>
-
-                        Manage System Operators & Staff Control Panel
-
-                    </a>
-
-                    <div class="module-card__description">
-
-                        Administrative clearance node:
-                        modify access rankings,
-                        create credentials,
-                        or trigger operator locks.
+                        </span>
 
                     </div>
 
-                    <hr>
+                    <div class="stats__icon">
 
-                    <a class="module-card__title"
-                        href="index.php?route=activity_logs">
+                        <i class="fas fa-users"></i>
 
-                        📊 Review Global System Activity Logs
-
-                    </a>
+                    </div>
 
                 </div>
 
-            </li>
+                <div class="stats__card stats__card--gold">
 
-        <?php endif; ?>
+                    <div class="stats__content">
 
-    </ul>
+                        <span class="stats__label">
+
+                            Regular Members
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            <?= $types['Regular'] ?? 0 ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Associate:
+                            <?= $types['Associate'] ?? 0 ?>
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-id-card"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="stats__card stats__card--success">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Active Members
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            <?= $status['active'] ?? 0 ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Inactive:
+                            <?= $status['inactive'] ?? 0 ?>
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-user-check"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="stats__card stats__card--warning">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Female Members
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            <?= $gender['Female'] ?? 0 ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Male:
+                            <?= $gender['Male'] ?? 0 ?>
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-venus"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SYSTEM HEALTH -->
+    <!-- ========================================================= -->
+
+    <section class="section">
+
+        <div class="section__header">
+
+            <div>
+
+                <h2 class="section__title">
+
+                    System Health
+
+                </h2>
+
+                <p class="section__description">
+
+                    Monitor issues that require administrator attention.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="section__body">
+
+            <?php if ($hasAlerts): ?>
+
+                <div class="alert alert--warning">
+
+                    <div class="alert__title">
+
+                        <i class="fas fa-triangle-exclamation"></i>
+
+                        System Health Alerts
+
+                    </div>
+
+                    <?php if (!empty($alerts['negative_equity'])): ?>
+
+                        <p>
+
+                            <strong><?= count($alerts['negative_equity']) ?></strong>
+
+                            member(s) currently have a negative share capital balance.
+
+                        </p>
+
+                    <?php endif; ?>
+
+                    <?php if (!empty($alerts['past_due_loans'])): ?>
+
+                        <p>
+
+                            <strong><?= count($alerts['past_due_loans']) ?></strong>
+
+                            loan account(s) are already past due.
+
+                        </p>
+
+                        <a
+                            href="index.php?route=amortization_dashboard"
+                            class="btn btn--warning">
+
+                            View Loan Dashboard
+
+                        </a>
+
+                    <?php endif; ?>
+
+                </div>
+
+            <?php else: ?>
+
+                <div class="alert alert--success">
+
+                    <div class="alert__title">
+
+                        <i class="fas fa-circle-check"></i>
+
+                        System Healthy
+
+                    </div>
+
+                    <p>
+
+                        No negative share capital or overdue loans were detected.
+
+                    </p>
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+    </section>
 
 </div>

@@ -1,0 +1,41 @@
+/* ==========================================================
+   ALERT
+========================================================== */
+
+.alert {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+}
+
+.alert__title {
+  font-size: 1rem;
+
+  font-weight: 700;
+}
+
+.alert--warning {
+  border-left: 4px solid var(--gold);
+}
+
+.alert--success {
+  border-left: 4px solid var(--ok);
+}
+
+.alert--danger {
+  border-left: 4px solid var(--danger);
+}
+
+.alert p {
+  margin: 0;
+}

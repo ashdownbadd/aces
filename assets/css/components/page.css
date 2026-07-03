@@ -1,62 +1,42 @@
 /* ==========================================================
-   TOOLBAR
+   PAGE
    ICS UI Framework
 ========================================================== */
 
 /* ==========================================================
-   TOOLBAR
+   PAGE
 ========================================================== */
 
-.toolbar {
+.page {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.page__header {
   display: flex;
 
   justify-content: space-between;
 
-  align-items: center;
+  align-items: flex-start;
 
-  gap: var(--space-4);
-
-  flex-wrap: wrap;
+  gap: var(--space-5);
 }
 
 /* ==========================================================
-   LEFT
+   TITLE GROUP
 ========================================================== */
 
-.toolbar__start {
+.page__heading {
   display: flex;
 
-  align-items: center;
-
-  gap: var(--space-3);
-
-  flex-wrap: wrap;
-}
-
-/* ==========================================================
-   RIGHT
-========================================================== */
-
-.toolbar__end {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: flex-end;
-
-  gap: var(--space-3);
-
-  flex-wrap: wrap;
-}
-
-/* ==========================================================
-   GROUP
-========================================================== */
-
-.toolbar__group {
-  display: flex;
-
-  align-items: center;
+  flex-direction: column;
 
   gap: var(--space-2);
 }
@@ -65,40 +45,72 @@
    TITLE
 ========================================================== */
 
-.toolbar__title {
-  font-size: var(--text-lg);
+.page__title {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family: var(--font-heading);
+
+  font-size: var(--text-2xl);
 
   font-weight: var(--fw-bold);
 
-  color: var(--text);
+  line-height: 1.2;
 }
 
 /* ==========================================================
-   SEARCH
+   DESCRIPTION
 ========================================================== */
 
-.toolbar__search {
-  min-width: 280px;
+.page__description {
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: var(--text-md);
+
+  line-height: 1.6;
 }
 
 /* ==========================================================
-   FILTER
+   ACTIONS
 ========================================================== */
 
-.toolbar__filter {
-  min-width: 180px;
+.page__actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-3);
+
+  flex-wrap: wrap;
 }
 
 /* ==========================================================
-   DIVIDER
+   BODY
 ========================================================== */
 
-.toolbar__divider {
-  width: 1px;
+.page__body {
+  display: flex;
 
-  align-self: stretch;
+  flex-direction: column;
 
-  background: var(--border);
+  gap: var(--space-6);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.page__footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: var(--space-3);
 }
 
 /* ==========================================================
@@ -106,24 +118,13 @@
 ========================================================== */
 
 @media (max-width: 768px) {
-  .toolbar {
+  .page__header {
     flex-direction: column;
 
-    align-items: stretch;
+    align-items: flex-start;
   }
 
-  .toolbar__start,
-  .toolbar__end {
-    width: 100%;
-
-    justify-content: flex-start;
-  }
-
-  .toolbar__search {
-    width: 100%;
-  }
-
-  .toolbar__filter {
+  .page__actions {
     width: 100%;
   }
 }

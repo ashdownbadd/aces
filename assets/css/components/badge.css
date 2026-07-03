@@ -1,0 +1,55 @@
+/* ==========================================================
+   BADGE
+========================================================== */
+
+.badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+/* ==========================================================
+   COLORS
+========================================================== */
+
+.badge--primary {
+  background: var(--gold-dim);
+
+  color: var(--gold);
+}
+
+.badge--success {
+  background: rgba(39, 168, 88, 0.12);
+
+  color: var(--ok);
+}
+
+.badge--danger {
+  background: rgba(217, 61, 61, 0.12);
+
+  color: var(--danger);
+}
+
+.badge--warning {
+  background: rgba(245, 155, 10, 0.12);
+
+  color: var(--gold);
+}
+
+.badge--neutral {
+  background: var(--raised);
+
+  color: var(--t2);
+}

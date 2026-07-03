@@ -1,0 +1,63 @@
+/* ==========================================================
+   SECTION
+========================================================== */
+
+.section {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-5);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.section__header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: var(--space-4);
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.section__title {
+  margin: 0;
+
+  font-family: var(--font-heading);
+
+  font-size: var(--text-xl);
+
+  font-weight: var(--fw-bold);
+
+  color: var(--text);
+}
+
+/* ==========================================================
+   DESCRIPTION
+========================================================== */
+
+.section__description {
+  color: var(--text-light);
+
+  font-size: var(--text-sm);
+}
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+.section__body {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-5);
+}

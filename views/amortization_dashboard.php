@@ -3,31 +3,8 @@
 if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
-
-// ====================================================================
-// CORE FINANCE PORTFOLIO AGGREGATION METRICS COMPUTATION ENGINE
-// ====================================================================
-$totalDisbursed = 0;
-$projectedRevenue = 0;
-$collectedToDate = 0;
-$portfolioAtRisk = 0;
-
-// 1. Calculate Grand Total Disbursed Capital (Filtered strictly to Approved accounts)
-$q1 = $pdo->query("SELECT SUM(principal) FROM loans WHERE loan_status = 'Approved'")->fetchColumn();
-$totalDisbursed = floatval($q1);
-
-// 2. Calculate Grand Expected Total Interest Revenue Across Timelines
-$q2 = $pdo->query("SELECT SUM(ls.interest) FROM loan_schedules ls JOIN loans l ON ls.loan_id = l.id WHERE l.loan_status = 'Approved'")->fetchColumn();
-$projectedRevenue = floatval($q2);
-
-// 3. Calculate Cash Liquidity Collected to Date from Ledger Drops
-$q3 = $pdo->query("SELECT SUM(pl.amount_paid - pl.excess) FROM payment_ledger pl JOIN loans l ON pl.loan_id = l.id WHERE l.loan_status = 'Approved'")->fetchColumn();
-$collectedToDate = floatval($q3);
-
-// 4. Calculate Portfolio At Risk (PAR) - Remaining balances currently late/overdue
-$q4 = $pdo->query("SELECT SUM(ls.rem_principal + ls.rem_interest + ls.rem_penalty) FROM loan_schedules ls JOIN loans l ON ls.loan_id = l.id WHERE ls.status = 'overdue' AND l.loan_status = 'Approved'")->fetchColumn();
-$portfolioAtRisk = floatval($q4);
 ?>
+
 <div class="container" style="font-family: Arial, sans-serif; padding: 20px;">
     <div style="float: right; text-align: right;">
         <p><a href="index.php?route=dashboard">← Back to Main Control Room</a></p>

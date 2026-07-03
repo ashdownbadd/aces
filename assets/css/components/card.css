@@ -1,0 +1,218 @@
+/* ==========================================================
+   CARD
+   ICS UI Framework
+========================================================== */
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card {
+  display: flex;
+
+  flex-direction: column;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+
+  transition: var(--transition);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.card__header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: var(--space-5);
+
+  border-bottom: 1px solid var(--border);
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.card__title {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family: var(--font-heading);
+
+  font-size: var(--text-lg);
+
+  font-weight: var(--fw-bold);
+}
+
+/* ==========================================================
+   SUBTITLE
+========================================================== */
+
+.card__subtitle {
+  margin-top: 4px;
+
+  color: var(--text-light);
+
+  font-size: var(--text-sm);
+}
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+.card__body {
+  padding: var(--space-5);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.card__footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: var(--space-3);
+
+  padding: var(--space-5);
+
+  border-top: 1px solid var(--border);
+
+  background: var(--surface-alt);
+}
+
+/* ==========================================================
+   IMAGE
+========================================================== */
+
+.card__image {
+  width: 100%;
+
+  display: block;
+}
+
+/* ==========================================================
+   ICON
+========================================================== */
+
+.card__icon {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  width: 52px;
+
+  height: 52px;
+
+  border-radius: var(--radius-md);
+
+  background: rgba(37, 99, 235, 0.08);
+
+  color: var(--primary);
+
+  font-size: 1.4rem;
+}
+
+/* ==========================================================
+   COMPACT
+========================================================== */
+
+.card--compact .card__header,
+.card--compact .card__body,
+.card--compact .card__footer {
+  padding: var(--space-4);
+}
+
+/* ==========================================================
+   PRIMARY
+========================================================== */
+
+.card--primary {
+  border-left: 5px solid var(--primary);
+}
+
+/* ==========================================================
+   SUCCESS
+========================================================== */
+
+.card--success {
+  border-left: 5px solid var(--success);
+}
+
+/* ==========================================================
+   WARNING
+========================================================== */
+
+.card--warning {
+  border-left: 5px solid var(--warning);
+}
+
+/* ==========================================================
+   DANGER
+========================================================== */
+
+.card--danger {
+  border-left: 5px solid var(--danger);
+}
+
+/* ==========================================================
+   GOLD
+========================================================== */
+
+.card--gold {
+  border-left: 5px solid var(--gold);
+}
+
+/* ==========================================================
+   FLAT
+========================================================== */
+
+.card--flat {
+  box-shadow: none;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+  .card__header,
+  .card__body,
+  .card__footer {
+    padding: var(--space-4);
+  }
+
+  .card__header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: var(--space-3);
+  }
+}
