@@ -1,55 +1,63 @@
 <?php
-// helpers/View.php
 
-if (!function_exists('render')) {
-
-    /**
-     * Render a full view.
-     */
-    function render(string $view, array $data = []): string
-    {
-        extract($data, EXTR_SKIP);
-
-        ob_start();
-
-        require dirname(__DIR__) . "/views/{$view}.php";
-
-        return ob_get_clean();
-    }
+if (!defined('ALLOW_ACCESS')) {
+    exit('Direct access to this file is prohibited.');
 }
 
-if (!function_exists('component')) {
+/**
+ * ----------------------------------------------------------
+ * Render View
+ * ----------------------------------------------------------
+ */
+function render(
+    string $view,
+    array $data = []
+): string {
 
-    /**
-     * Render a reusable component.
-     */
-    function component(string $component, array $data = []): void
-    {
-        extract($data, EXTR_SKIP);
+    extract($data);
 
-        require dirname(__DIR__) . "/views/components/{$component}.php";
-    }
+    ob_start();
+
+    require __DIR__
+        . '/../views/'
+        . $view
+        . '.php';
+
+    return ob_get_clean();
 }
 
-if (!function_exists('c')) {
+/**
+ * ----------------------------------------------------------
+ * Render Component
+ * ----------------------------------------------------------
+ */
+function c(
+    string $component,
+    array $data = []
+): void {
 
-    /**
-     * Short alias for component()
-     */
-    function c(string $component, array $data = []): void
-    {
-        component($component, $data);
-    }
+    extract($data);
+
+    require __DIR__
+        . '/../views/components/'
+        . $component
+        . '.php';
 }
 
-if (!function_exists('capture')) {
+/**
+ * ----------------------------------------------------------
+ * Render Form Component
+ * ----------------------------------------------------------
+ */
+function form(
+    string $component,
+    array $data = []
+): void {
 
-    function capture(callable $callback): string
-    {
-        ob_start();
+    extract($data);
 
-        $callback();
-
-        return ob_get_clean();
-    }
+    require __DIR__
+        . '/../views/components/forms/'
+        . $component
+        . '_field.php';
 }
