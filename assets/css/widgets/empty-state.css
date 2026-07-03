@@ -1,0 +1,29 @@
+.empty-state{
+
+    text-align:center;
+
+    padding:64px 24px;
+
+}
+
+.empty-state__icon{
+
+    font-size:3rem;
+
+    color:#bbb;
+
+}
+
+.empty-state__title{
+
+    margin:20px 0 10px;
+
+}
+
+.empty-state__text{
+
+    color:var(--text-muted);
+
+    margin-bottom:24px;
+
+}

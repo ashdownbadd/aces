@@ -1,205 +1,65 @@
-/* ==========================================================================
-   GLOBAL STYLESHEET (style.css)
-   ========================================================================== */
+/* ===========================
+   BASE
+=========================== */
 
-/* Base & Layout */
-body {
-  font-family: Arial, sans-serif;
-  color: #333;
-  background-color: #fff;
-  margin: 0;
-  padding: 0;
-}
+@import url("base/variables.css");
+@import url("base/reset.css");
+@import url("base/typography.css");
+@import url("base/utilities.css");
 
-.container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+/* ===========================
+   LAYOUT
+=========================== */
 
-.header-actions {
-  float: right;
-  text-align: right;
-}
+@import url("layout/container.css");
+@import url("layout/page.css");
+@import url("layout/app.css");
+@import url("layout/grid.css");
+@import url("layout/navbar.css");
+@import url("layout/header.css");
+@import url("layout/footer.css");
 
-hr {
-  margin: 20px 0;
-  border: 0;
-  border-top: 1px solid #ddd;
-}
+/* ===========================
+   COMPONENTS
+=========================== */
 
-/* Alerts & Messages */
-.alert {
-  padding: 10px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-}
-.alert-success {
-  background: #efe;
-  border-color: green;
-  color: green;
-}
-.alert-error {
-  background: #fee;
-  border-color: red;
-  color: red;
-}
-.alert-warning {
-  background: #fff3f3;
-  border-color: #ffcdd2;
-  color: #c62828;
-}
+@import url("components/buttons.css");
+@import url("components/cards.css");
+@import url("components/forms.css");
+@import url("components/tables.css");
+@import url("components/alerts.css");
+@import url("components/badges.css");
+@import url("components/toolbar.css");
+@import url("components/navigation.css");
+@import url("components/breadcrumbs.css");
+@import url("components/pagination.css");
+@import url("components/modal.css");
 
-/* Buttons */
-.btn {
-  padding: 6px 12px;
-  font-weight: bold;
-  border-radius: 4px;
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
-  border: none;
-  font-size: 0.9em;
-}
-.btn-primary {
-  background: #337ab7;
-  color: white;
-}
-.btn-success {
-  background: #5cb85c;
-  color: white;
-}
-.btn-danger {
-  background: #d9534f;
-  color: white;
-}
-.btn-warning {
-  background: #f0ad4e;
-  color: white;
-}
-.btn-info {
-  background: #17a2b8;
-  color: white;
-}
-.btn i {
-  margin-right: 8px;
-}
+/* ===========================
+   WIDGETS
+=========================== */
 
-.icon-menu {
-  margin-right: 10px;
-  width: 20px;
-  text-align: center;
-}
+@import url("widgets/stat-card.css");
+@import url("widgets/profile-card.css");
+@import url("widgets/member-summary.css");
+@import url("widgets/loan-summary.css");
+@import url("widgets/ledger-summary.css");
 
-/* Tables */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  text-align: left;
-}
-.table th,
-.table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-.table thead th {
-  background-color: #f2f2f2;
-}
-.table tbody tr:border-bottom {
-  border-bottom: 1px solid #ddd;
-}
+/* ===========================
+   PAGES
+=========================== */
 
-/* Badges / Tags */
-.badge {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.85em;
-  font-weight: bold;
-  display: inline-block;
-}
-.badge-admin {
-  background: #d9534f;
-  color: white;
-}
-.badge-staff {
-  background: #337ab7;
-  color: white;
-}
-.badge-pending {
-  background: #fff3cd;
-  color: #856404;
-}
-.badge-approved {
-  background: #d4edda;
-  color: #155724;
-}
-.badge-light {
-  background: #eee;
-  color: #333;
-}
+@import url("pages/login.css");
+@import url("pages/dashboard.css");
+@import url("pages/members.css");
+@import url("pages/member-profile.css");
+@import url("pages/member-add.css");
+@import url("pages/admins.css");
+@import url("pages/ledger.css");
+@import url("pages/amortization.css");
 
-/* Dashboard Cards (Grid) */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 30px;
-}
-.card {
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-.card h3 {
-  margin-top: 0;
-}
-.card-light {
-  background: #f4f4f4;
-}
-.card-blue {
-  background: #eef7ff;
-  border-color: #b3d7ff;
-}
-.card-green {
-  background: #e8f5e9;
-  border-color: #c8e6c9;
-}
-.card-purple {
-  background: #f3e5f5;
-  border-color: #e1bee7;
-}
-.card-yellow {
-  background: #fff3cd;
-  border-color: #ffeeba;
-}
+/* ===========================
+   THEME
+=========================== */
 
-/* Forms */
-.form-group {
-  margin-bottom: 15px;
-}
-.form-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-.form-control {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-.form-inline {
-  background: #f5f5f5;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
+@import url("themes/default.css");

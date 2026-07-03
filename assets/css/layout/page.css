@@ -1,0 +1,111 @@
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:var(--space-6);
+
+}
+
+/* ==========================================================
+   PAGE HEADER
+========================================================== */
+
+.page__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:var(--space-5);
+
+    flex-wrap:wrap;
+
+}
+
+/* ==========================================================
+   PAGE TITLE GROUP
+========================================================== */
+
+.page__heading{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.page__title{
+
+    margin-bottom:var(--space-2);
+
+}
+
+.page__subtitle{
+
+    color:var(--text-muted);
+
+    margin-bottom:0;
+
+}
+
+/* ==========================================================
+   PAGE ACTIONS
+========================================================== */
+
+.page__actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:var(--space-3);
+
+    flex-wrap:wrap;
+
+}
+
+/* ==========================================================
+   PAGE CONTENT
+========================================================== */
+
+.page__content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:var(--space-5);
+
+}
+
+/* ==========================================================
+   SECTION
+========================================================== */
+
+.page__section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:var(--space-4);
+
+}
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
+
+.page__divider{
+
+    border-top:1px solid var(--border-color);
+
+}

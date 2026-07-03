@@ -1,0 +1,44 @@
+/* ==========================================================
+   FOOTER
+   Integrated Cooperative System
+========================================================== */
+
+.page-footer {
+  margin-top: var(--space-8);
+
+  padding-top: var(--space-5);
+
+  border-top: 1px solid var(--border-color);
+
+  color: var(--text-muted);
+
+  font-size: 0.9rem;
+}
+
+.page-footer__content {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: var(--space-4);
+
+  flex-wrap: wrap;
+}
+
+.page-footer__left {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-3);
+}
+
+.page-footer__right {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-3);
+}

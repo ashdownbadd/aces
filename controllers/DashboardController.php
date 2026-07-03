@@ -1,24 +1,46 @@
 <?php
-function handleDashboard($pdo)
+function handleDashboard(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
-    // 1. Fetch Membership Type Breakdown
-    $stmt = $pdo->query("SELECT membership_type, COUNT(*) as count FROM members GROUP BY membership_type");
+    $stmt = $pdo->query("
+        SELECT membership_type,
+               COUNT(*) AS count
+        FROM members
+        GROUP BY membership_type
+    ");
+
     $types = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-    // 2. Fetch Status Breakdown
-    $stmt = $pdo->query("SELECT status, COUNT(*) as count FROM members GROUP BY status");
+    $stmt = $pdo->query("
+        SELECT status,
+               COUNT(*) AS count
+        FROM members
+        GROUP BY status
+    ");
+
     $status = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-    // 3. Fetch Gender Breakdown (via member_profiles)
-    $stmt = $pdo->query("SELECT sex, COUNT(*) as count FROM member_profiles GROUP BY sex");
+    $stmt = $pdo->query("
+        SELECT sex,
+               COUNT(*) AS count
+        FROM member_profiles
+        GROUP BY sex
+    ");
+
     $gender = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-    // 4. Total Members
-    $total_members = $pdo->query("SELECT COUNT(*) FROM members")->fetchColumn();
+    $total_members = $pdo
+        ->query("SELECT COUNT(*) FROM members")
+        ->fetchColumn();
 
-    include dirname(__DIR__) . '/views/dashboard.php';
+    return render('dashboard', [
+        'pdo' => $pdo,
+        'types' => $types,
+        'status' => $status,
+        'gender' => $gender,
+        'total_members' => $total_members
+    ]);
 }
 
 function getSystemAlerts($pdo)

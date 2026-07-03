@@ -1,0 +1,35 @@
+.activity{
+
+    background:#fff;
+
+    border:1px solid var(--border-color);
+
+    border-radius:var(--radius-lg);
+
+    padding:24px;
+
+}
+
+.activity__title{
+
+    margin-bottom:20px;
+
+}
+
+.activity__item{
+
+    display:flex;
+
+    gap:12px;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.activity__item:last-child{
+
+    border:none;
+
+}

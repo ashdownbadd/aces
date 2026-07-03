@@ -1,0 +1,194 @@
+/* ==========================================================
+   TABLES
+   Integrated Cooperative System
+========================================================== */
+
+/* ==========================================================
+   TABLE WRAPPER
+========================================================== */
+
+.table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border-color);
+
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================
+   BASE TABLE
+========================================================== */
+
+.table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 0.95rem;
+
+  background: #fff;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.table thead {
+  background: var(--gray-100);
+}
+
+.table th {
+  padding: 14px 18px;
+
+  text-align: left;
+
+  font-weight: 600;
+
+  color: var(--text-color);
+
+  border-bottom: 2px solid var(--border-color);
+
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+.table td {
+  padding: 14px 18px;
+
+  border-bottom: 1px solid var(--border-color);
+
+  vertical-align: middle;
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ==========================================================
+   STRIPED
+========================================================== */
+
+.table--striped tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* ==========================================================
+   BORDERED
+========================================================== */
+
+.table--bordered td,
+.table--bordered th {
+  border: 1px solid var(--border-color);
+}
+
+/* ==========================================================
+   COMPACT
+========================================================== */
+
+.table--compact td,
+.table--compact th {
+  padding: 10px 12px;
+}
+
+/* ==========================================================
+   CENTER
+========================================================== */
+
+.table__cell--center {
+  text-align: center;
+}
+
+/* ==========================================================
+   RIGHT
+========================================================== */
+
+.table__cell--right {
+  text-align: right;
+}
+
+/* ==========================================================
+   CODE COLUMN
+========================================================== */
+
+.table__code {
+  font-family: Consolas, monospace;
+
+  background: #f4f4f4;
+
+  padding: 3px 6px;
+
+  border-radius: 4px;
+}
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+
+.table__empty {
+  text-align: center;
+
+  color: var(--text-muted);
+
+  padding: 40px;
+
+  font-style: italic;
+}
+
+/* ==========================================================
+   ACTION COLUMN
+========================================================== */
+
+.table__actions {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+/* ==========================================================
+   STATUS COLORS
+========================================================== */
+
+.table__status {
+  font-weight: 600;
+}
+
+.table__status--success {
+  color: var(--color-success);
+}
+
+.table__status--warning {
+  color: var(--color-warning);
+}
+
+.table__status--danger {
+  color: var(--color-danger);
+}
+
+.table__status--info {
+  color: var(--color-info);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+  .table {
+    min-width: 700px;
+  }
+}

@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Cooperative System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+
+    <?php include __DIR__ . '/partials/head.php'; ?>
+
 </head>
+
+
 <body>
+
+    <?php include __DIR__ . '/partials/header.php'; ?>
+
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <?php include __DIR__ . '/partials/navbar.php'; ?>
+    <?php endif; ?>
+
     <div class="container">
-        <?php echo $content; ?>
+
+        <?= $content ?>
+
     </div>
+
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+
+    <?php include __DIR__ . '/partials/scripts.php'; ?>
+
 </body>
+
 </html>

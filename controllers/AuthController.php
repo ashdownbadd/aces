@@ -10,29 +10,39 @@ if (!defined('ALLOW_ACCESS')) {
  * Handles processing of the registration form submission
  * @param PDO $pdo The active database connection instance
  */
-function handleRegistration($pdo)
+function handleRegistration(PDO $pdo): string
 {
+    // Show the registration page
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header("Location: index.php?route=register");
-        exit;
+        return render('register');
     }
 
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $role_id  = intval($_POST['role_id'] ?? 0);
+    $role_id  = (int)($_POST['role_id'] ?? 0);
 
-    if (empty($username) || empty($email) || empty($password) || empty($role_id)) {
-        die("Error: All form fields are required.");
+    if (
+        $username === '' ||
+        $email === '' ||
+        $password === '' ||
+        $role_id <= 0
+    ) {
+        $_SESSION['error_message'] = 'All fields are required.';
+
+        return render('register');
     }
 
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
     try {
-        $sql = "INSERT INTO users (role_id, username, email, password_hash) 
-                VALUES (:role_id, :username, :email, :password_hash)";
 
-        $stmt = $pdo->prepare($sql);
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $pdo->prepare("
+            INSERT INTO users
+                (role_id, username, email, password_hash)
+            VALUES
+                (:role_id, :username, :email, :password_hash)
+        ");
 
         $stmt->execute([
             ':role_id'       => $role_id,
@@ -41,11 +51,17 @@ function handleRegistration($pdo)
             ':password_hash' => $hashedPassword,
         ]);
 
-        $_SESSION['success_message'] = "Registration successful! You can now log in.";
-        header("Location: index.php?route=login");
+        $_SESSION['success_message'] =
+            'Registration successful! You can now log in.';
+
+        header('Location: index.php?route=login');
         exit;
     } catch (PDOException $e) {
-        die("Database error during registration: " . $e->getMessage());
+
+        $_SESSION['error_message'] =
+            'Registration failed. ' . $e->getMessage();
+
+        return render('register');
     }
 }
 
@@ -53,54 +69,72 @@ function handleRegistration($pdo)
  * Handles authentication checks and processing for user login attempts
  * @param PDO $pdo The active database connection instance
  */
-function handleLogin($pdo)
+function handleLogin(PDO $pdo): string
 {
-    // If the user is already logged in, redirect them away from the login panel to the dashboard
+    // Already logged in
     if (isset($_SESSION['user_id'])) {
         header("Location: index.php?route=dashboard");
         exit;
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $_SESSION['error_message'] = "Both fields are strictly required.";
+        if ($username === '' || $password === '') {
+
+            $_SESSION['error_message'] =
+                "Both fields are required.";
+
             header("Location: index.php?route=login");
             exit;
         }
 
         try {
-            $sql = "SELECT * FROM users WHERE username = :username LIMIT 1";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':username' => $username]);
+
+            $stmt = $pdo->prepare("
+                SELECT *
+                FROM users
+                WHERE username = ?
+                LIMIT 1
+            ");
+
+            $stmt->execute([$username]);
+
             $user = $stmt->fetch();
 
-            if ($user && password_verify($password, $user['password_hash'])) {
-                if (isset($user['status']) && $user['status'] === 'suspended') {
-                    $_SESSION['error_message'] = "Your administrative access has been deactivated.";
-                    header("Location: index.php?route=login");
-                    exit;
-                }
+            if (!$user || !password_verify($password, $user['password_hash'])) {
 
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role_id'] = $user['role_id'];
+                $_SESSION['error_message'] =
+                    "Invalid username or password.";
 
-                header("Location: index.php?route=dashboard");
-                exit;
-            } else {
-                $_SESSION['error_message'] = "Invalid administrative credentials provided.";
                 header("Location: index.php?route=login");
                 exit;
             }
+
+            if ($user['status'] !== 'active') {
+
+                $_SESSION['error_message'] =
+                    "Your account has been deactivated.";
+
+                header("Location: index.php?route=login");
+                exit;
+            }
+
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role_id'] = $user['role_id'];
+
+            header("Location: index.php?route=dashboard");
+            exit;
         } catch (PDOException $e) {
-            die("Database error during login processing: " . $e->getMessage());
+
+            die($e->getMessage());
         }
     }
 
-    include dirname(__DIR__) . '/views/login.php';
+    return render('login');
 }
 
 /**

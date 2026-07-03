@@ -1,0 +1,258 @@
+/* ==========================================================
+   UTILITIES
+   Integrated Cooperative System
+========================================================== */
+
+/* ==========================================================
+   DISPLAY
+========================================================== */
+
+.u-block {
+  display: block;
+}
+.u-inline {
+  display: inline;
+}
+.u-inline-block {
+  display: inline-block;
+}
+
+.u-flex {
+  display: flex;
+}
+.u-grid {
+  display: grid;
+}
+
+.u-hidden {
+  display: none;
+}
+
+/* ==========================================================
+   FLEX
+========================================================== */
+
+.u-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.u-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.u-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.u-align-center {
+  align-items: center;
+}
+
+.u-justify-center {
+  justify-content: center;
+}
+
+.u-justify-between {
+  justify-content: space-between;
+}
+
+.u-flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* ==========================================================
+   WIDTH
+========================================================== */
+
+.u-w-100 {
+  width: 100%;
+}
+
+.u-w-auto {
+  width: auto;
+}
+
+/* ==========================================================
+   TEXT
+========================================================== */
+
+.u-text-left {
+  text-align: left;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.u-text-right {
+  text-align: right;
+}
+
+.u-text-muted {
+  color: var(--text-muted);
+}
+
+.u-text-primary {
+  color: var(--color-primary);
+}
+
+.u-text-success {
+  color: var(--color-success);
+}
+
+.u-text-warning {
+  color: var(--color-warning);
+}
+
+.u-text-danger {
+  color: var(--color-danger);
+}
+
+.u-text-bold {
+  font-weight: 700;
+}
+
+.u-text-uppercase {
+  text-transform: uppercase;
+}
+
+/* ==========================================================
+   MARGIN TOP
+========================================================== */
+
+.u-mt-0 {
+  margin-top: 0;
+}
+.u-mt-1 {
+  margin-top: var(--space-1);
+}
+.u-mt-2 {
+  margin-top: var(--space-2);
+}
+.u-mt-3 {
+  margin-top: var(--space-3);
+}
+.u-mt-4 {
+  margin-top: var(--space-4);
+}
+.u-mt-5 {
+  margin-top: var(--space-5);
+}
+.u-mt-6 {
+  margin-top: var(--space-6);
+}
+.u-mt-7 {
+  margin-top: var(--space-7);
+}
+
+/* ==========================================================
+   MARGIN BOTTOM
+========================================================== */
+
+.u-mb-0 {
+  margin-bottom: 0;
+}
+.u-mb-1 {
+  margin-bottom: var(--space-1);
+}
+.u-mb-2 {
+  margin-bottom: var(--space-2);
+}
+.u-mb-3 {
+  margin-bottom: var(--space-3);
+}
+.u-mb-4 {
+  margin-bottom: var(--space-4);
+}
+.u-mb-5 {
+  margin-bottom: var(--space-5);
+}
+.u-mb-6 {
+  margin-bottom: var(--space-6);
+}
+.u-mb-7 {
+  margin-bottom: var(--space-7);
+}
+
+/* ==========================================================
+   PADDING
+========================================================== */
+
+.u-p-1 {
+  padding: var(--space-1);
+}
+.u-p-2 {
+  padding: var(--space-2);
+}
+.u-p-3 {
+  padding: var(--space-3);
+}
+.u-p-4 {
+  padding: var(--space-4);
+}
+.u-p-5 {
+  padding: var(--space-5);
+}
+.u-p-6 {
+  padding: var(--space-6);
+}
+
+/* ==========================================================
+   GAP
+========================================================== */
+
+.u-gap-1 {
+  gap: var(--space-1);
+}
+.u-gap-2 {
+  gap: var(--space-2);
+}
+.u-gap-3 {
+  gap: var(--space-3);
+}
+.u-gap-4 {
+  gap: var(--space-4);
+}
+.u-gap-5 {
+  gap: var(--space-5);
+}
+.u-gap-6 {
+  gap: var(--space-6);
+}
+
+/* ==========================================================
+   BORDER RADIUS
+========================================================== */
+
+.u-rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.u-rounded {
+  border-radius: var(--radius-md);
+}
+
+.u-rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+/* ==========================================================
+   SHADOW
+========================================================== */
+
+.u-shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.u-shadow {
+  box-shadow: var(--shadow-md);
+}
+
+.u-shadow-lg {
+  box-shadow: var(--shadow-lg);
+}

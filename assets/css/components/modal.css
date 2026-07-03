@@ -1,0 +1,55 @@
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:100;
+
+}
+
+.modal--show{
+
+    display:flex;
+
+}
+
+.modal__dialog{
+
+    width:min(600px,95%);
+
+    background:#fff;
+
+    border-radius:var(--radius-lg);
+
+    padding:28px;
+
+    box-shadow:0 25px 60px rgba(0,0,0,.15);
+
+}
+
+.modal__header{
+
+    margin-bottom:20px;
+
+}
+
+.modal__footer{
+
+    margin-top:24px;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+}

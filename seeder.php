@@ -12,22 +12,62 @@ if ($conn->connect_error) {
 }
 
 $firstNames = [
-    "John","Michael","James","Robert","David",
-    "Daniel","Joseph","Mark","Anthony","Joshua",
-    "Kevin","Brian","Paul","Ryan","Nathan",
-    "Angela","Maria","Christine","Rose","Grace",
-    "Nicole","Patricia","Jessica","Karen","Michelle"
+    "John",
+    "Michael",
+    "James",
+    "Robert",
+    "David",
+    "Daniel",
+    "Joseph",
+    "Mark",
+    "Anthony",
+    "Joshua",
+    "Kevin",
+    "Brian",
+    "Paul",
+    "Ryan",
+    "Nathan",
+    "Angela",
+    "Maria",
+    "Christine",
+    "Rose",
+    "Grace",
+    "Nicole",
+    "Patricia",
+    "Jessica",
+    "Karen",
+    "Michelle"
 ];
 
 $middleNames = [
-    "Santos","Reyes","Garcia","Torres","Lopez",
-    "Cruz","Dela Cruz","Bautista","Mendoza","Flores"
+    "Santos",
+    "Reyes",
+    "Garcia",
+    "Torres",
+    "Lopez",
+    "Cruz",
+    "Dela Cruz",
+    "Bautista",
+    "Mendoza",
+    "Flores"
 ];
 
 $lastNames = [
-    "Santos","Reyes","Garcia","Torres","Lopez",
-    "Cruz","Mendoza","Flores","Aquino","Ramos",
-    "Diaz","Castro","Navarro","Villanueva","Fernandez"
+    "Santos",
+    "Reyes",
+    "Garcia",
+    "Torres",
+    "Lopez",
+    "Cruz",
+    "Mendoza",
+    "Flores",
+    "Aquino",
+    "Ramos",
+    "Diaz",
+    "Castro",
+    "Navarro",
+    "Villanueva",
+    "Fernandez"
 ];
 
 $barangays = [
@@ -106,31 +146,31 @@ $relations = [
     "Spouse"
 ];
 
-for($i=1; $i<=25; $i++){
+for ($i = 1; $i <= 25; $i++) {
 
     $first = $firstNames[array_rand($firstNames)];
     $middle = $middleNames[array_rand($middleNames)];
     $last = $lastNames[array_rand($lastNames)];
 
-    $sex = rand(0,1) ? "Male" : "Female";
+    $sex = rand(0, 1) ? "Male" : "Female";
 
-    if($sex=="Female"){
-        $first = ["Angela","Maria","Christine","Rose","Grace","Nicole","Patricia","Jessica","Karen","Michelle"][array_rand(["Angela","Maria","Christine","Rose","Grace","Nicole","Patricia","Jessica","Karen","Michelle"])];
+    if ($sex == "Female") {
+        $first = ["Angela", "Maria", "Christine", "Rose", "Grace", "Nicole", "Patricia", "Jessica", "Karen", "Michelle"][array_rand(["Angela", "Maria", "Christine", "Rose", "Grace", "Nicole", "Patricia", "Jessica", "Karen", "Michelle"])];
     }
 
     $memberNo = str_pad($i, 4, "0", STR_PAD_LEFT);
 
-    $membership = rand(0,1) ? "Regular" : "Associate";
+    $membership = rand(0, 1) ? "Regular" : "Associate";
 
-    $subscription = rand(0,1) ? "Active" : "Inactive";
+    $subscription = rand(0, 1) ? "Active" : "Inactive";
 
-    $status = rand(0,1) ? "Active" : "Inactive";
+    $status = rand(0, 1) ? "Active" : "Inactive";
 
-    $dob = date("Y-m-d", strtotime("-".rand(22,60)." years"));
+    $dob = date("Y-m-d", strtotime("-" . rand(22, 60) . " years"));
 
-    $dom = date("Y-m-d", strtotime("-".rand(1,10)." years"));
+    $dom = date("Y-m-d", strtotime("-" . rand(1, 10) . " years"));
 
-    $nickname = substr($first,0,3);
+    $nickname = substr($first, 0, 3);
 
     $remarks = "Seed Data";
 
@@ -186,11 +226,11 @@ for($i=1; $i<=25; $i++){
 
     // ADDRESS
 
-    $house = rand(1,999);
+    $house = rand(1, 999);
     $street = "Sample Street";
     $barangay = $barangays[array_rand($barangays)];
-    $zone = rand(1,10);
-    $district = "District ".rand(1,6);
+    $zone = rand(1, 10);
+    $district = "District " . rand(1, 6);
     $city = $cities[array_rand($cities)];
 
     $conn->query("
@@ -228,7 +268,7 @@ for($i=1; $i<=25; $i++){
     $bmiddle = $middleNames[array_rand($middleNames)];
     $blast = $lastNames[array_rand($lastNames)];
 
-    $bdob = date("Y-m-d", strtotime("-".rand(15,65)." years"));
+    $bdob = date("Y-m-d", strtotime("-" . rand(15, 65) . " years"));
 
     $relation = $relations[array_rand($relations)];
 
@@ -263,9 +303,9 @@ for($i=1; $i<=25; $i++){
 
     // CONTACT
 
-    $phone = "09".rand(10,99).rand(1000000,9999999);
+    $phone = "09" . rand(10, 99) . rand(1000000, 9999999);
 
-    $email = strtolower($first).".".$last.$i."@gmail.com";
+    $email = strtolower($first) . "." . $last . $i . "@gmail.com";
 
     $conn->query("
         INSERT INTO member_contact
@@ -293,8 +333,8 @@ for($i=1; $i<=25; $i++){
     $school = $schools[array_rand($schools)];
     $program = $programs[array_rand($programs)];
 
-    $start = rand(2000,2015)."-06-01";
-    $end = rand(2016,2023)."-04-30";
+    $start = rand(2000, 2015) . "-06-01";
+    $end = rand(2016, 2023) . "-04-30";
 
     $conn->query("
         INSERT INTO member_education
@@ -322,7 +362,7 @@ for($i=1; $i<=25; $i++){
     $job = $jobs[array_rand($jobs)];
     $org = $organizations[array_rand($organizations)];
 
-    $jobStart = rand(2015,2020)."-01-01";
+    $jobStart = rand(2015, 2020) . "-01-01";
     $jobEnd = date("Y-m-d");
 
     $conn->query("
@@ -346,13 +386,13 @@ for($i=1; $i<=25; $i++){
 
     // PROFILE
 
-    $height = rand(150,190);
-    $weight = rand(50,90);
+    $height = rand(150, 190);
+    $weight = rand(50, 90);
     $complexion = $complexions[array_rand($complexions)];
 
-    $marital = rand(0,1) ? "Single" : "Married";
+    $marital = rand(0, 1) ? "Single" : "Married";
 
-    $tin = rand(100,999)."-".rand(100,999)."-".rand(100,999);
+    $tin = rand(100, 999) . "-" . rand(100, 999) . "-" . rand(100, 999);
 
     $conn->query("
         INSERT INTO member_profiles
@@ -382,11 +422,8 @@ for($i=1; $i<=25; $i++){
             '$city'
         )
     ");
-
 }
 
 echo "25 members successfully seeded.";
 
 $conn->close();
-
-?>

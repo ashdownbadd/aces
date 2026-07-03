@@ -9,32 +9,46 @@ if (!defined('ALLOW_ACCESS')) {
  * Fetches all registered system operators along with their descriptive role names
  * SECURED: Only administrators can view this listing
  */
-function handleAdminList($pdo)
+function handleAdminList(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
-    // CRITICAL ACCESS LOCK: Deny staff members from accessing the user management directory
-    if (!isset($_SESSION['role_id']) || intval($_SESSION['role_id']) !== 1) {
-        $_SESSION['error_message'] = "Access Denied: Administrative security privileges required.";
+    if (($_SESSION['role_id'] ?? 0) != 1) {
+        $_SESSION['error_message'] =
+            "Access Denied: Administrative security privileges required.";
+
         header("Location: index.php?route=dashboard");
         exit;
     }
 
     try {
-        $sql = "SELECT u.id, u.username, u.email, u.status, u.role_id, r.role_name 
-                FROM users u
-                INNER JOIN roles r ON u.role_id = r.id
-                ORDER BY u.id DESC";
 
-        $stmt = $pdo->query($sql);
-        $members = $stmt->fetchAll();
+        $stmt = $pdo->query("
+            SELECT
+                u.id,
+                u.username,
+                u.email,
+                u.status,
+                u.role_id,
+                r.role_name
+            FROM users u
+            INNER JOIN roles r
+                ON u.role_id = r.id
+            ORDER BY u.id DESC
+        ");
+
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        ob_start();
 
         include dirname(__DIR__) . '/views/admin.php';
+
+        return ob_get_clean();
     } catch (PDOException $e) {
+
         die("Database error fetching administrator records: " . $e->getMessage());
     }
 }
-
 /**
  * Toggles an administrator's status between 'active' and 'suspended'
  * SECURED: Restricts staff from altering any status accounts
