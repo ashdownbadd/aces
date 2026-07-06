@@ -1,229 +1,246 @@
 /* ==========================================================
    FORM
-   ICS UI Framework
-========================================================== */
-
-/* ==========================================================
-   FORM
-========================================================== */
+   ========================================================== */
 
 .form {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--space-5);
 }
 
 /* ==========================================================
    GROUP
-========================================================== */
+   ========================================================== */
 
-.form__group {
+.form-group {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--space-2);
 }
 
 /* ==========================================================
-   ROW
-========================================================== */
-
-.form__row {
-  display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-
-  gap: var(--space-5);
-}
-
-/* ==========================================================
    LABEL
-========================================================== */
+   ========================================================== */
 
-.form__label {
-  color: var(--text);
+.form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 
   font-size: var(--text-sm);
 
   font-weight: var(--fw-semibold);
+
+  color: var(--text);
 }
 
-/* ==========================================================
-   REQUIRED
-========================================================== */
+.form-label--required::after {
+  content: "*";
 
-.form__required {
   color: var(--danger);
+
+  font-weight: var(--fw-bold);
 }
 
 /* ==========================================================
    INPUTS
-========================================================== */
+   ========================================================== */
 
-.form__control,
-.form__select,
-.form__textarea {
+.form-control {
   width: 100%;
 
-  padding: 12px 16px;
+  min-height: 44px;
 
-  background: var(--surface);
-
-  color: var(--text);
+  padding: 0 var(--space-4);
 
   border: 1px solid var(--border);
 
   border-radius: var(--radius-md);
 
-  font-family: var(--font-main);
+  background: var(--surface);
+
+  color: var(--text);
 
   font-size: var(--text-md);
 
-  transition: var(--transition);
+  font-family: inherit;
 
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
+
+  appearance: none;
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-control:hover {
+  border-color: var(--border-dark);
+}
+
+.form-control:focus {
   outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.form-control:disabled {
+  background: var(--raised);
+  color: var(--text-light);
+  cursor: not-allowed;
 }
 
 /* ==========================================================
    TEXTAREA
-========================================================== */
+   ========================================================== */
 
-.form__textarea {
+textarea.form-control {
+  min-height: 140px;
+
   resize: vertical;
 
-  min-height: 140px;
+  padding: var(--space-4);
 }
 
 /* ==========================================================
-   FOCUS
-========================================================== */
+   SELECT
+   ========================================================== */
 
-.form__control:focus,
-.form__select:focus,
-.form__textarea:focus {
-  border-color: var(--primary);
+select.form-control {
+  cursor: pointer;
 
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-light) 50%),
+    linear-gradient(135deg, var(--text-light) 50%, transparent 50%);
+
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 12px) calc(50% - 3px);
+
+  background-size: 6px 6px;
+
+  background-repeat: no-repeat;
+
+  padding-right: 42px;
 }
 
 /* ==========================================================
-   PLACEHOLDER
-========================================================== */
+   FILE
+   ========================================================== */
 
-.form__control::placeholder,
-.form__textarea::placeholder {
-  color: var(--text-muted);
+input[type="file"].form-control {
+  padding: var(--space-3);
+
+  cursor: pointer;
 }
 
-/* ==========================================================
-   DISABLED
-========================================================== */
+input[type="file"]::file-selector-button {
+  margin-right: var(--space-4);
 
-.form__control:disabled,
-.form__select:disabled,
-.form__textarea:disabled {
-  background: var(--raised);
+  padding: var(--space-2) var(--space-4);
 
-  cursor: not-allowed;
+  border: none;
 
-  opacity: 0.7;
+  border-radius: var(--radius-sm);
+
+  background: var(--primary);
+
+  color: white;
+
+  font-weight: var(--fw-medium);
+
+  cursor: pointer;
+
+  transition: background var(--transition);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #1d4ed8;
 }
 
 /* ==========================================================
    HELP TEXT
-========================================================== */
+   ========================================================== */
 
-.form__help {
+.form-help {
+  font-size: var(--text-xs);
+
   color: var(--text-light);
-
-  font-size: var(--text-xs);
 }
 
 /* ==========================================================
-   ERROR
-========================================================== */
+   VALIDATION
+   ========================================================== */
 
-.form__error {
+.form-error {
+  font-size: var(--text-xs);
+
   color: var(--danger);
+}
 
-  font-size: var(--text-xs);
+.form-control.is-invalid {
+  border-color: var(--danger);
+}
 
-  font-weight: var(--fw-medium);
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+.form-control.is-valid {
+  border-color: var(--success);
+}
+
+.form-control.is-valid:focus {
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
 }
 
 /* ==========================================================
-   CHECKBOX / RADIO
-========================================================== */
+   INLINE
+   ========================================================== */
 
-.form__check {
+.form-inline {
   display: flex;
-
-  align-items: center;
-
-  gap: var(--space-2);
-}
-
-.form__check input {
-  width: 18px;
-
-  height: 18px;
-}
-
-/* ==========================================================
-   ACTIONS
-========================================================== */
-
-.form__actions {
-  display: flex;
-
-  justify-content: flex-end;
 
   align-items: center;
 
   gap: var(--space-3);
-
-  padding-top: var(--space-3);
 }
 
 /* ==========================================================
-   SEARCH
-========================================================== */
+   GRID
+   ========================================================== */
 
-.form__search {
-  position: relative;
+.form-grid {
+  display: grid;
+
+  gap: var(--space-4);
 }
 
-.form__search i {
-  position: absolute;
-
-  top: 50%;
-
-  left: 16px;
-
-  transform: translateY(-50%);
-
-  color: var(--text-muted);
+.form-grid--2 {
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.form__search .form__control {
-  padding-left: 44px;
+.form-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.form-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 /* ==========================================================
    RESPONSIVE
-========================================================== */
+   ========================================================== */
 
 @media (max-width: 768px) {
-  .form__row {
+  .form-grid--2,
+  .form-grid--3,
+  .form-grid--4 {
     grid-template-columns: 1fr;
-  }
-
-  .form__actions {
-    flex-direction: column;
-
-    align-items: stretch;
   }
 }

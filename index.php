@@ -46,7 +46,7 @@ require_once __DIR__ . '/controllers/AdminController.php';
 require_once __DIR__ . '/controllers/MemberController.php';
 require_once __DIR__ . '/controllers/LedgerController.php';
 require_once __DIR__ . '/controllers/AmortizationController.php';
-
+require_once __DIR__ . '/controllers/ActivityController.php';
 /*
 |--------------------------------------------------------------------------
 | Routes

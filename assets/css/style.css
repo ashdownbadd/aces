@@ -55,11 +55,11 @@
 @import url("pages/login.css");
 @import url("pages/dashboard.css");
 @import url("pages/members.css");
-@import url("pages/member-profile.css");
-@import url("pages/member-add.css");
-@import url("pages/admins.css");
+@import url("pages/admin.css");
 @import url("pages/ledger.css");
-@import url("pages/amortization.css");
+@import url("pages/loan.css");
+@import url("pages/reports.css");
+@import url("pages/activity.css");
 
 /* ===========================
    THEME

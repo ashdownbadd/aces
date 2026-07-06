@@ -1,113 +1,178 @@
+/**
+ * ==========================================================
+ * Loan Creation
+ * Integrated Cooperative System
+ * ==========================================================
+ */
+
 let isInterestManuallyEdited = false;
 
+/* ==========================================================
+ * Helpers
+ * ========================================================== */
+
+const $ = (id) => document.getElementById(id);
+
+const show = (element) => {
+  if (!element) return;
+
+  element.classList.remove("loan-hidden");
+};
+
+const hide = (element) => {
+  if (!element) return;
+
+  element.classList.add("loan-hidden");
+};
+
+const peso = (value) => `₱${value.toFixed(2)}`;
+
+/* ==========================================================
+ * Loan Type
+ * ========================================================== */
+
 function handleLoanTypeChange() {
-  const loanType = document.getElementById("loan_type").value;
-  const rateInput = document.getElementById("interest_rate");
-  const freqPanel = document.getElementById("frequency_panel");
-  const amortSelect = document.getElementById("amortization_type");
+  const loanType = $("loan_type").value;
+
+  const rateInput = $("interest_rate");
+
+  const frequencyPanel = $("frequency_panel");
+
+  const amortization = $("amortization_type");
 
   if (loanType === "Micro-Finance Loan") {
     rateInput.value = "5.00";
+
     isInterestManuallyEdited = false;
-    freqPanel.style.display = "block";
 
-    // Lock select option
-    amortSelect.value = "Straight-line";
-    amortSelect.style.backgroundColor = "#eee";
-    amortSelect.disabled = true;
-    amortSelect.removeAttribute("name");
+    show(frequencyPanel);
 
-    // Hidden fallback input
-    if (!document.getElementById("hidden_amort_type")) {
-      const hiddenInput = document.createElement("input");
-      hiddenInput.type = "hidden";
-      hiddenInput.id = "hidden_amort_type";
-      hiddenInput.name = "amortization_type";
-      hiddenInput.value = "Straight-line";
-      amortSelect.parentNode.appendChild(hiddenInput);
+    amortization.value = "Straight-line";
+
+    amortization.disabled = true;
+
+    amortization.removeAttribute("name");
+
+    if (!$("hidden_amort_type")) {
+      const input = document.createElement("input");
+
+      input.type = "hidden";
+
+      input.id = "hidden_amort_type";
+
+      input.name = "amortization_type";
+
+      input.value = "Straight-line";
+
+      amortization.parentNode.appendChild(input);
     }
   } else {
     if (!isInterestManuallyEdited) {
       rateInput.value = "2.00";
     }
 
-    freqPanel.style.display = "none";
+    hide(frequencyPanel);
 
-    amortSelect.disabled = false;
-    amortSelect.style.backgroundColor = "#fff";
-    amortSelect.setAttribute("name", "amortization_type");
+    amortization.disabled = false;
 
-    const hiddenInput = document.getElementById("hidden_amort_type");
+    amortization.name = "amortization_type";
 
-    if (hiddenInput) {
-      hiddenInput.remove();
+    const hidden = $("hidden_amort_type");
+
+    if (hidden) {
+      hidden.remove();
     }
   }
 
   handleAmortTypeChange();
+
   calculateLiveDeductions();
 }
+
+/* ==========================================================
+ * Interest
+ * ========================================================== */
 
 function flagManualInterest() {
   isInterestManuallyEdited = true;
 }
 
-function handleAmortTypeChange() {
-  const type = document.getElementById("amortization_type").value;
-  const manualPanel = document.getElementById("manual_payment_panel");
+/* ==========================================================
+ * Amortization
+ * ========================================================== */
 
-  if (manualPanel) {
-    manualPanel.style.display = type === "Manual" ? "block" : "none";
+function handleAmortTypeChange() {
+  const panel = $("manual_payment_panel");
+
+  if ($("amortization_type").value === "Manual") {
+    show(panel);
+  } else {
+    hide(panel);
   }
 }
+
+/* ==========================================================
+ * Collateral
+ * ========================================================== */
 
 function handleCollateralChange() {
-  const classVal = document.getElementById("collateral").value;
-  const propertyPanel = document.getElementById("real_property_panel");
+  const panel = $("real_property_panel");
 
-  if (propertyPanel) {
-    propertyPanel.style.display =
-      classVal === "Real Property" ? "block" : "none";
+  if ($("collateral").value === "Real Property") {
+    show(panel);
+  } else {
+    hide(panel);
   }
 }
+
+/* ==========================================================
+ * Loan Projection
+ * ========================================================== */
 
 function calculateLiveDeductions() {
-  const principal = parseFloat(document.getElementById("principal").value) || 0;
+  const principal = parseFloat($("principal").value) || 0;
 
-  const terms = parseInt(document.getElementById("terms").value) || 0;
+  const terms = parseInt($("terms").value) || 0;
 
-  const processingLabel = document.getElementById("lbl_processing");
+  if (principal <= 0 || terms <= 0) {
+    $("lbl_processing").textContent = "₱0.00";
 
-  const insuranceLabel = document.getElementById("lbl_insurance");
+    $("lbl_insurance").textContent = "₱0.00";
 
-  const notarialLabel = document.getElementById("lbl_notarial");
+    $("lbl_notarial").textContent = "₱0.00";
 
-  const netLabel = document.getElementById("lbl_net");
+    $("lbl_net").textContent = "₱0.00";
 
-  if (principal > 0 && terms > 0) {
-    const processing = principal * 0.02;
-
-    const insurance = (principal / 1000) * 1.2 * terms;
-
-    const notarial = 400.0;
-
-    const net = principal - processing - insurance - notarial;
-
-    processingLabel.textContent = `₱${processing.toFixed(2)}`;
-
-    insuranceLabel.textContent = `₱${insurance.toFixed(2)}`;
-
-    notarialLabel.textContent = `₱${notarial.toFixed(2)}`;
-
-    netLabel.textContent = `₱${net.toFixed(2)}`;
-  } else {
-    processingLabel.textContent = "₱0.00";
-    insuranceLabel.textContent = "₱0.00";
-    notarialLabel.textContent = "₱0.00";
-    netLabel.textContent = "₱0.00";
+    return;
   }
+
+  const processing = principal * 0.02;
+
+  const insurance = (principal / 1000) * 1.2 * terms;
+
+  const notarial = 400;
+
+  const net = principal - processing - insurance - notarial;
+
+  $("lbl_processing").textContent = peso(processing);
+
+  $("lbl_insurance").textContent = peso(insurance);
+
+  $("lbl_notarial").textContent = peso(notarial);
+
+  $("lbl_net").textContent = peso(net);
 }
+
+/* ==========================================================
+ * Initialize
+ * ========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
   handleLoanTypeChange();
+
+  handleCollateralChange();
+
+  handleAmortTypeChange();
+
+  calculateLiveDeductions();
 });

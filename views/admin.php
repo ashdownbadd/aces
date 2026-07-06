@@ -1,226 +1,257 @@
 <?php
+
 if (!defined('ALLOW_ACCESS')) {
-    die('Direct access to this file is prohibited.');
+    exit('Direct access to this file is prohibited.');
 }
 
 $admins = $members ?? [];
+
 ?>
 
-<div class="container">
+<div class="page">
 
-    <div class="header-actions">
-        <p>
-            <a href="index.php?route=dashboard">
-                ← Back to Dashboard
-            </a>
-        </p>
+    <?php
+
+    c('page_header', [
+
+        'title' => 'System Administration',
+
+        'description' =>
+        'Manage administrator accounts, user roles, and system access.'
+
+    ]);
+
+    ?>
+
+    <?php c('flash_messages'); ?>
+
+    <div class="page__actions">
+
+        <a
+            href="<?= url('dashboard') ?>"
+            class="btn btn--secondary">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
     </div>
 
-    <h2>System Operators &amp; Admin Directory</h2>
+    <section class="section">
 
-    <p>
-        Reviewing all registered system administration access configurations,
-        staff credentials, and platform access states.
-    </p>
+        <div class="section__header">
 
-    <?php if (isset($_SESSION['success_message'])): ?>
+            <div>
 
-        <div class="alert alert--success">
+                <h2 class="section__title">
 
-            <?= htmlspecialchars($_SESSION['success_message']); ?>
+                    Administrator Accounts
 
-            <?php unset($_SESSION['success_message']); ?>
+                </h2>
 
-        </div>
+                <p class="section__description">
 
-    <?php endif; ?>
+                    Review administrator privileges, account status, and role assignments.
 
-    <?php if (isset($_SESSION['error_message'])): ?>
+                </p>
 
-        <div class="alert alert--danger">
-
-            <?= htmlspecialchars($_SESSION['error_message']); ?>
-
-            <?php unset($_SESSION['error_message']); ?>
+            </div>
 
         </div>
 
-    <?php endif; ?>
+        <div class="section__body">
 
-    <table class="table">
+            <table class="table">
 
-        <thead>
-
-            <tr>
-
-                <th>Operator ID</th>
-
-                <th>Username Reference</th>
-
-                <th>Email Address</th>
-
-                <th>System Role Assignment</th>
-
-                <th>Network Operational Status</th>
-
-                <th>Administrative Actions Overrides</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <?php if (empty($admins)): ?>
-
-                <tr>
-
-                    <td colspan="6" class="table__empty">
-
-                        No accounts found in the system matrix.
-
-                    </td>
-
-                </tr>
-
-            <?php else: ?>
-
-                <?php foreach ($admins as $admin): ?>
+                <thead>
 
                     <tr>
 
-                        <td>
+                        <th>ID</th>
 
-                            <code class="code">
+                        <th>Username</th>
 
-                                #<?= htmlspecialchars($admin['id']); ?>
+                        <th>Email</th>
 
-                            </code>
+                        <th>Role</th>
 
-                        </td>
+                        <th>Status</th>
 
-                        <td>
-
-                            <strong>
-
-                                <?= htmlspecialchars($admin['username']); ?>
-
-                            </strong>
-
-                        </td>
-
-                        <td>
-
-                            <?= htmlspecialchars($admin['email']); ?>
-
-                        </td>
-
-                        <td>
-
-                            <?php if (
-                                intval($admin['role_id']) === 1 ||
-                                $admin['role_name'] === 'Admin'
-                            ): ?>
-
-                                <span class="badge badge-admin">
-
-                                    ADMINISTRATOR
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <span class="badge badge-staff">
-
-                                    STANDARD STAFF
-
-                                </span>
-
-                            <?php endif; ?>
-
-                        </td>
-
-                        <td>
-
-                            <?php if ($admin['status'] === 'active'): ?>
-
-                                <span class="status status--active">
-
-                                    ● Active
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <span class="status status--inactive">
-
-                                    ● Inactive
-
-                                </span>
-
-                            <?php endif; ?>
-
-                        </td>
-
-                        <td>
-
-                            <?php if ($admin['id'] == $_SESSION['user_id']): ?>
-
-                                <span class="status status--self">
-
-                                    Current Session (Self)
-
-                                </span>
-
-                            <?php else: ?>
-
-                                <div class="action-group">
-
-                                    <a
-                                        href="index.php?route=toggle_status&id=<?= $admin['id']; ?>"
-                                        class="btn <?= ($admin['status'] === 'active') ? 'btn--danger' : 'btn--success'; ?>"
-                                        onclick="return confirm('Are you sure?');">
-
-                                        <?php if ($admin['status'] === 'active'): ?>
-
-                                            <i class="fas fa-ban"></i>
-
-                                            Suspend
-
-                                        <?php else: ?>
-
-                                            <i class="fas fa-check"></i>
-
-                                            Activate
-
-                                        <?php endif; ?>
-
-                                    </a>
-
-                                    <a
-                                        href="index.php?route=toggle_role&id=<?= $admin['id']; ?>"
-                                        class="btn btn--warning">
-
-                                        <i class="fas fa-sync-alt"></i>
-
-                                        Toggle Role
-
-                                    </a>
-
-                                </div>
-
-                            <?php endif; ?>
-
-                        </td>
+                        <th>Actions</th>
 
                     </tr>
 
-                <?php endforeach; ?>
+                </thead>
 
-            <?php endif; ?>
+                <tbody>
 
-        </tbody>
+                    <?php if (empty($admins)): ?>
 
-    </table>
+                        <tr>
+
+                            <td colspan="6" class="table__empty">
+
+                                No administrator accounts found.
+
+                            </td>
+
+                        </tr>
+
+                    <?php else: ?>
+
+                        <?php foreach ($admins as $admin): ?>
+
+                            <tr>
+
+                                <td>
+
+                                    <code>
+
+                                        #<?= (int) $admin['id'] ?>
+
+                                    </code>
+
+                                </td>
+
+                                <td>
+
+                                    <strong>
+
+                                        <?= htmlspecialchars(
+                                            $admin['username']
+                                        ) ?>
+
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <?= htmlspecialchars(
+                                        $admin['email']
+                                    ) ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?php
+
+                                    $isAdmin =
+                                        (int) $admin['role_id'] === 1
+                                        || $admin['role_name'] === 'Admin';
+
+                                    ?>
+
+                                    <span
+                                        class="badge <?= $isAdmin
+                                                            ? 'badge--danger'
+                                                            : 'badge--secondary' ?>">
+
+                                        <?= $isAdmin
+                                            ? 'Administrator'
+                                            : 'Staff' ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <?php
+
+                                    $isActive =
+                                        $admin['status'] === 'active';
+
+                                    ?>
+
+                                    <span
+                                        class="status <?= $isActive
+                                                            ? 'status--active'
+                                                            : 'status--inactive' ?>">
+
+                                        <?= $isActive
+                                            ? '● Active'
+                                            : '● Inactive' ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <?php if ($admin['id'] == $_SESSION['user_id']): ?>
+
+                                        <span class="status status--self">
+
+                                            Current Session
+
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <div class="action-group">
+
+                                            <a
+                                                href="<?= url(
+                                                            'toggle_status&id='
+                                                                . (int) $admin['id']
+                                                        ) ?>"
+                                                class="btn <?= $isActive
+                                                                ? 'btn--danger'
+                                                                : 'btn--success' ?>"
+                                                onclick="return confirm('Are you sure you want to <?= $isActive ? 'suspend' : 'activate' ?> this account?');">
+
+                                                <?php if ($isActive): ?>
+
+                                                    <i class="fas fa-ban"></i>
+
+                                                    Suspend
+
+                                                <?php else: ?>
+
+                                                    <i class="fas fa-check"></i>
+
+                                                    Activate
+
+                                                <?php endif; ?>
+
+                                            </a>
+
+                                            <a
+                                                href="<?= url(
+                                                            'toggle_role&id='
+                                                                . (int) $admin['id']
+                                                        ) ?>"
+                                                class="btn btn--warning"
+                                                onclick="return confirm('Toggle this user's role?');">
+
+                                                <i class="fas fa-sync-alt"></i>
+
+                                                Toggle Role
+
+                                            </a>
+
+                                        </div>
+
+                                    <?php endif; ?>
+
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
 
 </div>

@@ -1,112 +1,435 @@
 <?php
-// views/amortization_dashboard.php
+
 if (!defined('ALLOW_ACCESS')) {
-    die('Direct access to this file is prohibited.');
+    exit('Direct access to this file is prohibited.');
 }
+
 ?>
 
-<div class="container" style="font-family: Arial, sans-serif; padding: 20px;">
-    <div style="float: right; text-align: right;">
-        <p><a href="index.php?route=dashboard">← Back to Main Control Room</a></p>
-    </div>
+<div class="page loan-page">
 
-    <h2>Amortization Calculators Portfolio Suite</h2>
-    <p>Formulate multi-frequency repayment matrices, trigger late penalty calculations, and monitor executive credit summaries.</p>
-    <hr>
+    <?php
 
-    <?php if (isset($_SESSION['success_message'])): ?>
-        <p style="color: green; font-weight: bold; background: #efe; padding: 8px; border: 1px solid green; margin-bottom: 15px; border-radius: 4px;">
-            <?php echo htmlspecialchars($_SESSION['success_message']);
-            unset($_SESSION['success_message']); ?>
-        </p>
-    <?php endif; ?>
+    c('page_header', [
 
-    <?php if (isset($_SESSION['error_message'])): ?>
-        <p style="color: red; font-weight: bold; background: #f9f2f2; padding: 8px; border: 1px solid red; margin-bottom: 15px; border-radius: 4px;">
-            <?php echo htmlspecialchars($_SESSION['error_message']);
-            unset($_SESSION['error_message']); ?>
-        </p>
-    <?php endif; ?>
+        'title' => 'Loan Portfolio',
 
-    <div style="display: flex; gap: 15px; margin-bottom: 25px; margin-top:15px;">
-        <div style="flex: 1; background: #2c3e50; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <small style="text-transform: uppercase; font-size: 0.75em; opacity: 0.8;">Total Capital Disbursed</small>
-            <h2 style="margin: 5px 0 0 0;">₱<?php echo number_format($totalDisbursed, 2); ?></h2>
-        </div>
-        <div style="flex: 1; background: #18bc9c; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <small style="text-transform: uppercase; font-size: 0.75em; opacity: 0.8;">Projected Interest Income</small>
-            <h2 style="margin: 5px 0 0 0;">₱<?php echo number_format($projectedRevenue, 2); ?></h2>
-        </div>
-        <div style="flex: 1; background: #3498db; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <small style="text-transform: uppercase; font-size: 0.75em; opacity: 0.8;">Collected Cash to Date</small>
-            <h2 style="margin: 5px 0 0 0;">₱<?php echo number_format($collectedToDate, 2); ?></h2>
-        </div>
-        <div style="flex: 1; background: #e74c3c; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <small style="text-transform: uppercase; font-size: 0.75em; opacity: 0.8;">Portfolio at Risk (PAR)</small>
-            <h2 style="margin: 5px 0 0 0;">₱<?php echo number_format($portfolioAtRisk, 2); ?></h2>
-        </div>
-    </div>
+        'description' => 'Manage cooperative loan accounts, monitor portfolio performance, and access borrower statements.'
 
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 25px;">
-        <a href="index.php?route=create_loan" style="background: #337ab7; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px; display:inline-block;">
-            + Generate New Amortization Loan Account
+    ]);
+
+    ?>
+
+    <?php c('flash_messages'); ?>
+
+    <div class="page__actions">
+
+        <a
+            href="<?= url('dashboard') ?>"
+            class="btn btn--secondary">
+            ← Back to Dashboard
         </a>
 
-        <?php if (isset($_SESSION['role_id']) && intval($_SESSION['role_id']) === 1): ?>
-            <a href="index.php?route=pending_loans_queue" style="background: #f0ad4e; color: white; padding: 8px 12px; text-decoration: none; font-weight: bold; border-radius: 4px; display:inline-block;">
-                ⚠️ View Pending Loans Verification Queue
-            </a>
-        <?php endif; ?>
     </div>
-    <br>
 
-    <h3>Active Credit Accounts Portfolio Directory</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-        <thead>
-            <tr style="background: #f2f2f2; border-bottom: 2px solid #ddd;">
-                <th style="padding: 10px; text-align: left;">Borrower Account</th>
-                <th style="padding: 10px; text-align: left;">Loan Class Type</th>
-                <th style="padding: 10px; text-align: left;">Amortization Setup Matrix</th>
-                <th style="padding: 10px; text-align: left;">Principal</th>
-                <th style="padding: 10px; text-align: left;">Life Timeline</th>
-                <th style="padding: 10px; text-align: left;">Account Status</th>
-                <th style="padding: 10px; text-align: left;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($loans)): ?>
-                <tr>
-                    <td colspan="7" style="padding: 15px; text-align: center; color: #777;">No active loan ledger registrations found inside database rows.</td>
-                </tr>
-            <?php else: ?>
-                <?php foreach ($loans as $l): ?>
-                    <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;">
-                            <strong><?php echo htmlspecialchars($l['last_name'] . ', ' . $l['first_name']); ?></strong><br>
-                            <small style="color:#666;">(<?php echo htmlspecialchars($l['member_number']); ?>)</small>
-                        </td>
-                        <td style="padding: 10px;"><?php echo htmlspecialchars($l['loan_type']); ?></td>
-                        <td style="padding: 10px;">
-                            <span style="background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.9em;">
-                                <?php echo htmlspecialchars($l['amortization_type']); ?>
-                                <?php if ($l['loan_type'] === 'Micro-Finance Loan') echo ' (' . $l['payment_frequency'] . ')'; ?>
-                            </span>
-                        </td>
-                        <td style="padding: 10px;"><strong>₱<?php echo number_format($l['principal'], 2); ?></strong></td>
-                        <td style="padding: 10px;"><?php echo htmlspecialchars($l['terms']); ?> Months</td>
-                        <td style="padding: 10px;">
-                            <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; background: <?php echo $l['soa_status'] === 'Fully Paid' ? '#d4edda; color:#155724;' : '#fff3cd; color:#856404;'; ?>">
-                                <?php echo htmlspecialchars($l['soa_status']); ?>
-                            </span>
-                        </td>
-                        <td style="padding: 10px;">
-                            <a href="index.php?route=view_loan&id=<?php echo $l['id']; ?>" style="background: #5cb85c; color: white; padding: 4px 8px; text-decoration: none; font-weight: bold; border-radius: 4px; font-size: 0.9em;">
-                                View Account Statement 📊
-                            </a>
-                        </td>
+    <section class="section">
+
+        <div class="section__header">
+
+            <div>
+
+                <h2 class="section__title">
+
+                    Portfolio Overview
+
+                </h2>
+
+                <p class="section__description">
+
+                    Current financial position of all approved loans.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="section__body">
+
+            <div class="stats">
+
+                <div class="stats__card stats__card--primary">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Total Disbursed
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            ₱<?= number_format($totalDisbursed, 2) ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Released loan principal
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-hand-holding-dollar"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="stats__card stats__card--success">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Projected Revenue
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            ₱<?= number_format($projectedRevenue, 2) ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Expected interest income
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-chart-line"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="stats__card stats__card--info">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Collected
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            ₱<?= number_format($collectedToDate, 2) ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Payments received
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-money-bill-wave"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="stats__card stats__card--danger">
+
+                    <div class="stats__content">
+
+                        <span class="stats__label">
+
+                            Portfolio At Risk
+
+                        </span>
+
+                        <span class="stats__value">
+
+                            ₱<?= number_format($portfolioAtRisk, 2) ?>
+
+                        </span>
+
+                        <span class="stats__description">
+
+                            Outstanding overdue balance
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats__icon">
+
+                        <i class="fas fa-triangle-exclamation"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <div class="section__header">
+
+            <div>
+
+                <h2 class="section__title">
+
+                    Loan Portfolio
+
+                </h2>
+
+                <p class="section__description">
+
+                    Active cooperative loan accounts.
+
+                </p>
+
+            </div>
+
+            <div class="loan-toolbar">
+
+                <div class="loan-toolbar__actions">
+
+                    <a
+                        href="<?= url('create_loan') ?>"
+                        class="btn btn--primary">
+                        <i class="fas fa-plus"></i>
+
+                        New Loan
+                    </a>
+
+                    <?php if ((int) ($_SESSION['role_id'] ?? 0) === 1): ?>
+
+                        <a
+                            href="<?= url('pending_loans_queue') ?>"
+                            class="btn btn--warning">
+                            <i class="fas fa-clock"></i>
+
+                            Pending Queue
+                        </a>
+
+                    <?php endif; ?>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section__body">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Borrower</th>
+
+                        <th>Loan Type</th>
+
+                        <th>Amortization</th>
+
+                        <th>Principal</th>
+
+                        <th>Term</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
                     </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
+
+                </thead>
+
+                <tbody>
+
+                    <?php if (empty($loans)): ?>
+
+                        <tr>
+
+                            <td colspan="7" class="table__empty">
+
+                                No approved loan accounts found.
+
+                            </td>
+
+                        </tr>
+
+                    <?php else: ?>
+
+                        <?php foreach ($loans as $loan): ?>
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="loan-table__member">
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $loan['last_name']
+                                                    . ', '
+                                                    . $loan['first_name']
+                                            ) ?>
+
+                                        </strong>
+
+                                        <small>
+
+                                            <?= htmlspecialchars(
+                                                $loan['member_number']
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <?= htmlspecialchars(
+                                        $loan['loan_type']
+                                    ) ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?php
+                                    $amortization = $loan['amortization_type'];
+
+                                    if (
+                                        $loan['loan_type']
+                                        === 'Micro-Finance Loan'
+                                    ) {
+
+                                        $amortization .=
+                                            ' (' .
+                                            $loan['payment_frequency'] .
+                                            ')';
+                                    }
+                                    ?>
+
+                                    <span class="badge">
+
+                                        <?= htmlspecialchars(
+                                            $amortization
+                                        ) ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="loan-table__amount">
+
+                                        ₱<?= number_format(
+                                                $loan['principal'],
+                                                2
+                                            ) ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <?= (int) $loan['terms'] ?>
+
+                                    Months
+
+                                </td>
+
+                                <td>
+
+                                    <?php
+
+                                    $status =
+                                        strtolower(
+                                            $loan['soa_status']
+                                        );
+
+                                    $class =
+                                        $status === 'fully paid'
+                                        ? 'loan-status--paid'
+                                        : 'loan-status--active';
+
+                                    ?>
+
+                                    <span
+                                        class="loan-status <?= $class ?>">
+
+                                        <?= htmlspecialchars(
+                                            $loan['soa_status']
+                                        ) ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="loan-table__actions">
+
+                                        <a
+                                            href="<?= url(
+                                                        'view_loan&id='
+                                                            . $loan['id']
+                                                    ) ?>"
+                                            class="btn btn--success">
+
+                                            <i class="fas fa-eye"></i>
+
+                                            View
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
 </div>

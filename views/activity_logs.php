@@ -1,55 +1,210 @@
 <?php
-// views/activity_logs.php
+
 if (!defined('ALLOW_ACCESS')) {
-    die('Direct access to this file is prohibited.');
+    exit('Direct access to this file is prohibited.');
 }
+
 ?>
 
-<div class="container" style="font-family: Arial, sans-serif; padding: 20px;">
-    <div style="float: right; text-align: right;">
-        <p><a href="index.php?route=dashboard">← Back to Dashboard</a></p>
+<div class="page">
+
+    <?php
+
+    c('page_header', [
+
+        'title' => 'Activity Logs',
+
+        'description' =>
+        'Review administrator actions, security events, and system activity history.'
+
+    ]);
+
+    ?>
+
+    <div class="page__actions">
+
+        <a
+            href="<?= url('dashboard') ?>"
+            class="btn btn--secondary">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
     </div>
 
-    <h2>🛡️ System Security Audit Logs</h2>
-    <p>Reviewing recent automated administrative task updates, security authorizations, loan allocations, and operational event triggers.</p>
+    <section class="section">
 
-    <?php if (empty($logs)): ?>
-        <div style="background: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b; padding: 15px; border-radius: 4px;">
-            No audit records or activity history items found in the logging dataset.
+        <div class="section__header">
+
+            <div>
+
+                <h2 class="section__title">
+
+                    Audit Trail
+
+                </h2>
+
+                <p class="section__description">
+
+                    Complete chronological history of system events.
+
+                </p>
+
+            </div>
+
         </div>
-    <?php else: ?>
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th style="width: 8%;">Log ID</th>
-                    <th style="width: 12%;">Operator</th>
-                    <th style="width: 15%;">Action Node</th>
-                    <th>Activity Details</th>
-                    <th style="width: 15%;">IP Address</th>
-                    <th style="width: 18%;">Timestamp</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($logs as $log): ?>
-                    <tr>
-                        <td><strong>#<?php echo htmlspecialchars($log['id']); ?></strong></td>
-                        <td>
-                            <span style="color: #337ab7; font-weight: bold;">
-                                <?php echo htmlspecialchars($log['username'] ?? 'System'); ?>
-                            </span>
-                            <br><small style="color: #666;">UID: <?php echo htmlspecialchars($log['user_id'] ?? 'N/A'); ?></small>
-                        </td>
-                        <td>
-                            <span style="background: #eef7ff; color: #31708f; padding: 3px 8px; border-radius: 3px; font-family: monospace; font-size: 0.9em; font-weight: bold; border: 1px solid #bce8f1;">
-                                <?php echo htmlspecialchars($log['action']); ?>
-                            </span>
-                        </td>
-                        <td><?php echo htmlspecialchars($log['details']); ?></td>
-                        <td><small style="font-family: monospace;"><?php echo htmlspecialchars($log['ip_address'] ?? '0.0.0.0'); ?></small></td>
-                        <td><small style="color: #555;"><?php echo htmlspecialchars($log['created_at'] ?? 'Unknown'); ?></small></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+
+        <div class="section__body">
+
+            <?php if (empty($logs)): ?>
+
+                <div class="empty-state">
+
+                    <div class="empty-state__icon">
+
+                        <i class="fas fa-history"></i>
+
+                    </div>
+
+                    <h3>
+
+                        No activity logs found
+
+                    </h3>
+
+                    <p>
+
+                        No audit records are currently available.
+
+                    </p>
+
+                </div>
+
+            <?php else: ?>
+
+                <table class="table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>User</th>
+
+                            <th>Action</th>
+
+                            <th>Details</th>
+
+                            <th>IP Address</th>
+
+                            <th>Date & Time</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <?php foreach ($logs as $log): ?>
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+
+                                        #<?= (int) $log['id'] ?>
+
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="loan-table__member">
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $log['username'] ?? 'System'
+                                            ) ?>
+
+                                        </strong>
+
+                                        <small>
+
+                                            UID:
+
+                                            <?= htmlspecialchars(
+                                                $log['user_id'] ?? 'N/A'
+                                            ) ?>
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge badge--secondary">
+
+                                        <?= htmlspecialchars(
+                                            $log['action']
+                                        ) ?>
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <?= htmlspecialchars(
+                                        $log['details']
+                                    ) ?>
+
+                                </td>
+
+                                <td>
+
+                                    <code>
+
+                                        <?= htmlspecialchars(
+                                            $log['ip_address'] ?? '0.0.0.0'
+                                        ) ?>
+
+                                    </code>
+
+                                </td>
+
+                                <td>
+
+                                    <small>
+
+                                        <?= htmlspecialchars(
+                                            $log['created_at'] ?? 'Unknown'
+                                        ) ?>
+
+                                    </small>
+
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    </tbody>
+
+                </table>
+
+            <?php endif; ?>
+
+        </div>
+
+    </section>
+
 </div>
