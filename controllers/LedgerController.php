@@ -444,166 +444,162 @@ function handleLedgerDashboard(PDO $pdo): string
  * Create Ledger Entry
  * ==========================================================
  */
+
 function handleCreateLedgerEntry(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return render('ledger_entry_add', [
+            'members' => $pdo
+                ->query("
+                    SELECT
+                        id,
+                        member_number,
+                        first_name,
+                        last_name
+                    FROM members
+                    ORDER BY last_name
+                ")
+                ->fetchAll(PDO::FETCH_ASSOC)
+        ]);
+    }
 
-        $member_id   = (int) ($_POST['member_id'] ?? 0);
-        $entry_type  = trim($_POST['entry_type'] ?? '');
-        $amount      = (float) ($_POST['amount'] ?? 0);
-        $particulars = trim($_POST['particulars'] ?? 'Manual ledger entry');
+    $member_id   = (int) ($_POST['member_id'] ?? 0);
+    $entry_type  = trim($_POST['entry_type'] ?? '');
+    $amount      = (float) ($_POST['amount'] ?? 0);
+    $particulars = trim($_POST['particulars'] ?? 'Manual ledger entry');
+    $reference_number = trim($_POST['reference_number'] ?? '');
 
-        $reference_number = trim($_POST['reference_number'] ?? '');
+    if ($reference_number !== '') {
 
-        if ($reference_number !== '') {
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM journal_vouchers
+            WHERE reference_number = ?
+        ");
 
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM journal_vouchers
-                WHERE reference_number=?
-            ");
+        $stmt->execute([$reference_number]);
 
-            $stmt->execute([$reference_number]);
+        if ($stmt->fetch(PDO::FETCH_ASSOC)) {
 
-            if ($stmt->fetch()) {
+            flashError(
+                'Reference number already exists.'
+            );
 
-                $_SESSION['error_message'] =
-                    "Reference Number already exists.";
-
-                header("Location:index.php?route=add_ledger_entry");
-                exit;
-            }
-        } else {
-
-            $reference_number =
-                'JV-' . strtoupper(uniqid());
-        }
-
-        try {
-
-            $pdo->beginTransaction();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Voucher
-            |--------------------------------------------------------------------------
-            */
-
-            $stmt = $pdo->prepare("
-                INSERT INTO journal_vouchers
-                (
-                    reference_number,
-                    transaction_date,
-                    particulars,
-                    created_by,
-                    status
-                )
-
-                VALUES
-                (
-                    ?,
-                    NOW(),
-                    ?,
-                    ?,
-                    'pending'
-                )
-            ");
-
-            $stmt->execute([
-
-                $reference_number,
-                $particulars,
-                $_SESSION['user_id']
-
+            return render('ledger_entry_add', [
+                'members' => $pdo
+                    ->query("
+                        SELECT
+                            id,
+                            member_number,
+                            first_name,
+                            last_name
+                        FROM members
+                        ORDER BY last_name
+                    ")
+                    ->fetchAll(PDO::FETCH_ASSOC)
             ]);
-
-            $voucher_id = $pdo->lastInsertId();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Ledger Entry
-            |--------------------------------------------------------------------------
-            */
-
-            $credit = in_array($entry_type, ['deposit', 'dividend'])
-                ? $amount
-                : 0;
-
-            $debit = in_array($entry_type, ['deposit', 'dividend'])
-                ? 0
-                : $amount;
-
-            $stmt = $pdo->prepare("
-                INSERT INTO ledger_entries
-                (
-                    voucher_id,
-                    member_id,
-                    entry_type,
-                    debit,
-                    credit
-                )
-
-                VALUES
-                (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?
-                )
-            ");
-
-            $stmt->execute([
-
-                $voucher_id,
-                $member_id,
-                $entry_type,
-                $debit,
-                $credit
-
-            ]);
-
-            $pdo->commit();
-
-            $_SESSION['success_message'] =
-                "Voucher {$reference_number} submitted for approval.";
-
-            header("Location:index.php?route=ledger");
-            exit;
-        } catch (PDOException $e) {
-
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
-
-            die("Database transaction aborted: " . $e->getMessage());
         }
+    } else {
+
+        $reference_number = 'JV-' . strtoupper(uniqid());
     }
 
     try {
 
-        $members = $pdo
-            ->query("
-                SELECT
-                    id,
-                    member_number,
-                    first_name,
-                    last_name
-                FROM members
-                ORDER BY last_name
-            ")
-            ->fetchAll();
+        $pdo->beginTransaction();
 
-        return render('ledger_entry_add', [
+        $stmt = $pdo->prepare("
+            INSERT INTO journal_vouchers
+            (
+                reference_number,
+                transaction_date,
+                particulars,
+                created_by,
+                status
+            )
+            VALUES
+            (
+                ?,
+                NOW(),
+                ?,
+                ?,
+                'pending'
+            )
+        ");
 
-            'members' => $members
-
+        $stmt->execute([
+            $reference_number,
+            $particulars,
+            $_SESSION['user_id']
         ]);
+
+        $voucher_id = (int) $pdo->lastInsertId();
+
+        $credit = in_array(
+            $entry_type,
+            ['deposit', 'dividend'],
+            true
+        ) ? $amount : 0;
+
+        $debit = in_array(
+            $entry_type,
+            ['deposit', 'dividend'],
+            true
+        ) ? 0 : $amount;
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ledger_entries
+            (
+                voucher_id,
+                member_id,
+                entry_type,
+                debit,
+                credit
+            )
+            VALUES (?, ?, ?, ?, ?)
+        ");
+
+        $stmt->execute([
+            $voucher_id,
+            $member_id,
+            $entry_type,
+            $debit,
+            $credit
+        ]);
+
+        $pdo->commit();
+
+        redirectSuccess(
+            'ledger',
+            "Voucher {$reference_number} submitted for approval."
+        );
     } catch (PDOException $e) {
 
-        die("Database error: " . $e->getMessage());
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        error_log($e->getMessage());
+
+        flashError(
+            'Unable to create the ledger entry.'
+        );
+
+        return render('ledger_entry_add', [
+            'members' => $pdo
+                ->query("
+                    SELECT
+                        id,
+                        member_number,
+                        first_name,
+                        last_name
+                    FROM members
+                    ORDER BY last_name
+                ")
+                ->fetchAll(PDO::FETCH_ASSOC)
+        ]);
     }
 }
 
@@ -637,10 +633,14 @@ function handleLedgerStatement(PDO $pdo): string
 
         $stmt->execute([$member_id]);
 
-        $member = $stmt->fetch();
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$member) {
-            die("Member not found.");
+
+            redirectError(
+                'ledger',
+                'Member not found.'
+            );
         }
 
         /*
@@ -651,11 +651,9 @@ function handleLedgerStatement(PDO $pdo): string
 
         $sql = "
             SELECT
-
                 le.entry_type,
                 le.debit,
                 le.credit,
-
                 jv.transaction_date,
                 jv.reference_number,
                 jv.particulars
@@ -695,22 +693,26 @@ function handleLedgerStatement(PDO $pdo): string
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
-        $history = $stmt->fetchAll();
+        $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return render('ledger_statement', [
 
-            'member'      => $member,
-            'history'     => $history,
-            'start_date'  => $start_date,
-            'end_date'    => $end_date
+            'member'     => $member,
+            'history'    => $history,
+            'start_date' => $start_date,
+            'end_date'   => $end_date
 
         ]);
     } catch (PDOException $e) {
 
-        die("Database error: " . $e->getMessage());
+        error_log($e->getMessage());
+
+        redirectError(
+            'ledger',
+            'Unable to load the ledger statement.'
+        );
     }
 }
-
 
 /**
  * ==========================================================
@@ -726,11 +728,10 @@ function handlePendingApprovals(PDO $pdo): string
         !in_array((int) $_SESSION['role_id'], [1, 2], true)
     ) {
 
-        $_SESSION['error_message'] =
-            "Access denied.";
-
-        header("Location:index.php?route=ledger");
-        exit;
+        redirectError(
+            'ledger',
+            'Access denied.'
+        );
     }
 
     try {
@@ -755,13 +756,15 @@ function handlePendingApprovals(PDO $pdo): string
             INNER JOIN members m
                 ON le.member_id = m.id
 
-            WHERE jv.status='pending'
+            WHERE
+                jv.status = 'pending'
 
             ORDER BY
                 jv.transaction_date ASC
         ");
 
-        $pending_vouchers = $stmt->fetchAll();
+        $pending_vouchers =
+            $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return render('ledger_pending', [
 
@@ -770,7 +773,12 @@ function handlePendingApprovals(PDO $pdo): string
         ]);
     } catch (PDOException $e) {
 
-        die("Database error: " . $e->getMessage());
+        error_log($e->getMessage());
+
+        redirectError(
+            'ledger',
+            'Unable to load pending approvals.'
+        );
     }
 }
 

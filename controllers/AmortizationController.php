@@ -198,17 +198,16 @@ function handleCreateLoan(PDO $pdo): string
 
         if (
             $member_id <= 0 ||
-            empty($loan_type) ||
+            $loan_type === '' ||
             $principal <= 0 ||
             $terms <= 0 ||
             $interest_rate < 0
         ) {
 
-            $_SESSION['error_message'] =
-                'Please complete all required loan information.';
-
-            header('Location: index.php?route=create_loan');
-            exit;
+            redirectError(
+                'create_loan',
+                'Please complete all required loan information.'
+            );
         }
 
         try {
@@ -255,28 +254,26 @@ function handleCreateLoan(PDO $pdo): string
                 "Created loan application for member #{$member_id}"
             );
 
-            $_SESSION['success_message'] =
-                'Loan application submitted successfully.';
+            if ((int) ($_SESSION['role_id'] ?? 0) === 1) {
 
-            if (
-                isset($_SESSION['role_id']) &&
-                (int) $_SESSION['role_id'] === 1
-            ) {
-
-                header('Location: index.php?route=pending_loans_queue');
-            } else {
-
-                header('Location: index.php?route=amortization_dashboard');
+                redirectSuccess(
+                    'pending_loans_queue',
+                    'Loan application submitted successfully.'
+                );
             }
 
-            exit;
+            redirectSuccess(
+                'amortization_dashboard',
+                'Loan application submitted successfully.'
+            );
         } catch (PDOException $e) {
 
-            $_SESSION['error_message'] =
-                'Database error: ' . $e->getMessage();
+            error_log($e->getMessage());
 
-            header('Location: index.php?route=create_loan');
-            exit;
+            redirectError(
+                'create_loan',
+                'Unable to create the loan application.'
+            );
         }
     }
 
@@ -290,9 +287,12 @@ function handleCreateLoan(PDO $pdo): string
         ORDER BY last_name ASC
     ");
 
-    return render('loan_create', [
-        'members' => $stmt->fetchAll()
-    ]);
+    return render(
+        'loan_create',
+        [
+            'members' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+        ]
+    );
 }
 
 /**
@@ -306,12 +306,20 @@ function handleViewLoan(PDO $pdo): string
     $loan_id = (int) ($_GET['id'] ?? 0);
 
     if ($loan_id <= 0) {
-        $_SESSION['error_message'] = 'Invalid loan selected.';
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+
+        redirectError(
+            'amortization_dashboard',
+            'Invalid loan selected.'
+        );
     }
 
     try {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Loan Information
+        |--------------------------------------------------------------------------
+        */
 
         $stmtLoan = $pdo->prepare("
             SELECT
@@ -328,14 +336,21 @@ function handleViewLoan(PDO $pdo): string
 
         $stmtLoan->execute([$loan_id]);
 
-        $loan = $stmtLoan->fetch();
+        $loan = $stmtLoan->fetch(PDO::FETCH_ASSOC);
 
         if (!$loan) {
 
-            $_SESSION['error_message'] = 'Loan record not found.';
-            header('Location: index.php?route=amortization_dashboard');
-            exit;
+            redirectError(
+                'amortization_dashboard',
+                'Loan record not found.'
+            );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Amortization Schedule
+        |--------------------------------------------------------------------------
+        */
 
         $stmtSchedule = $pdo->prepare("
             SELECT *
@@ -346,7 +361,13 @@ function handleViewLoan(PDO $pdo): string
 
         $stmtSchedule->execute([$loan_id]);
 
-        $schedule = $stmtSchedule->fetchAll();
+        $schedule = $stmtSchedule->fetchAll(PDO::FETCH_ASSOC);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Ledger
+        |--------------------------------------------------------------------------
+        */
 
         $stmtLedger = $pdo->prepare("
             SELECT
@@ -359,41 +380,53 @@ function handleViewLoan(PDO $pdo): string
 
         $stmtLedger->execute([$loan_id]);
 
-        $ledger = $stmtLedger->fetchAll();
+        $ledger = $stmtLedger->fetchAll(PDO::FETCH_ASSOC);
 
-        return render('loan_view', [
+        return render(
+            'loan_view',
+            [
 
-            'loan'      => $loan,
-            'loanData'  => $loan,
-            'schedule'  => $schedule,
-            'rows'      => $schedule,
-            'ledger'    => $ledger
+                'loan'     => $loan,
+                'loanData' => $loan,
+                'schedule' => $schedule,
+                'rows'     => $schedule,
+                'ledger'   => $ledger
 
-        ]);
+            ]
+        );
     } catch (PDOException $e) {
 
-        $_SESSION['error_message'] =
-            'Unable to load loan details.';
+        error_log($e->getMessage());
 
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+        redirectError(
+            'amortization_dashboard',
+            'Unable to load loan details.'
+        );
     }
 }
 
 /**
  * Generates the printable Statement of Account.
  */
-function handlePrintSOA(PDO $pdo)
+function handlePrintSOA(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
     $loanId = (int) ($_GET['id'] ?? 0);
 
     if ($loanId <= 0) {
-        $_SESSION['error_message'] = 'Invalid loan selected.';
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+
+        redirectError(
+            'amortization_dashboard',
+            'Invalid loan selected.'
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Loan Information
+    |--------------------------------------------------------------------------
+    */
 
     $stmt = $pdo->prepare("
         SELECT
@@ -402,20 +435,28 @@ function handlePrintSOA(PDO $pdo)
             m.last_name,
             m.member_number
         FROM loans l
-        JOIN members m
+        INNER JOIN members m
             ON l.member_id = m.id
         WHERE l.id = ?
     ");
 
     $stmt->execute([$loanId]);
 
-    $loanData = $stmt->fetch();
+    $loanData = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$loanData) {
-        $_SESSION['error_message'] = 'Loan not found.';
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+
+        redirectError(
+            'amortization_dashboard',
+            'Loan not found.'
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Schedule
+    |--------------------------------------------------------------------------
+    */
 
     $stmt = $pdo->prepare("
         SELECT *
@@ -426,7 +467,13 @@ function handlePrintSOA(PDO $pdo)
 
     $stmt->execute([$loanId]);
 
-    $rows = $stmt->fetchAll();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Ledger
+    |--------------------------------------------------------------------------
+    */
 
     $stmt = $pdo->prepare("
         SELECT
@@ -439,44 +486,45 @@ function handlePrintSOA(PDO $pdo)
 
     $stmt->execute([$loanId]);
 
-    $ledger = $stmt->fetchAll();
+    $ledger = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return render('loan_print', compact(
-        'loanData',
-        'rows',
-        'ledger'
-    ));
+    return render(
+        'loan_print',
+        compact(
+            'loanData',
+            'rows',
+            'ledger'
+        )
+    );
 }
 
 /**
  * Allows an administrator to manually adjust a schedule penalty.
  */
-function handleEditSchedulePeriod(PDO $pdo)
+function handleEditSchedulePeriod(PDO $pdo): void
 {
     checkAuthenticated($pdo);
+    requireAdmin();
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
-    }
 
-    if ((int) ($_SESSION['role_id'] ?? 0) !== 1) {
-        $_SESSION['error_message'] = 'Administrator privileges required.';
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+        redirect(
+            'amortization_dashboard'
+        );
     }
 
     $scheduleId = (int) ($_POST['schedule_id'] ?? 0);
-    $loanId = (int) ($_POST['loan_id'] ?? 0);
-    $penalty = (float) ($_POST['rem_penalty'] ?? 0);
+    $loanId     = (int) ($_POST['loan_id'] ?? 0);
+    $penalty    = (float) ($_POST['rem_penalty'] ?? 0);
 
     try {
 
         $stmt = $pdo->prepare("
             UPDATE loan_schedules
             SET rem_penalty = ?
-            WHERE id = ?
-              AND loan_id = ?
+            WHERE
+                id = ?
+                AND loan_id = ?
         ");
 
         $stmt->execute([
@@ -485,71 +533,79 @@ function handleEditSchedulePeriod(PDO $pdo)
             $loanId
         ]);
 
-        $_SESSION['success_message'] = 'Penalty updated successfully.';
+        redirectSuccess(
+            "view_loan&id={$loanId}",
+            'Penalty updated successfully.'
+        );
     } catch (PDOException $e) {
 
-        $_SESSION['error_message'] = $e->getMessage();
+        error_log($e->getMessage());
+
+        redirectError(
+            "view_loan&id={$loanId}",
+            'Unable to update the penalty.'
+        );
     }
-
-    header("Location: index.php?route=view_loan&id={$loanId}");
-    exit;
 }
-
 /**
  * Displays all pending loan applications awaiting approval.
  */
-function handlePendingLoansQueue(PDO $pdo)
+function handlePendingLoansQueue(PDO $pdo): string
 {
     checkAuthenticated($pdo);
+    requireAdmin();
 
-    if ((int) ($_SESSION['role_id'] ?? 0) !== 1) {
+    try {
 
-        $_SESSION['error_message'] =
-            'Administrator privileges required.';
+        $stmt = $pdo->query("
+            SELECT
+                l.*,
+                m.first_name,
+                m.last_name,
+                m.member_number
 
-        header('Location: index.php?route=dashboard');
-        exit;
+            FROM loans l
+
+            INNER JOIN members m
+                ON l.member_id = m.id
+
+            WHERE l.loan_status = 'Pending'
+
+            ORDER BY
+                l.id
+        ");
+
+        $pending_loans =
+            $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return render(
+            'loan_pending',
+            compact('pending_loans')
+        );
+    } catch (PDOException $e) {
+
+        error_log($e->getMessage());
+
+        redirectError(
+            'dashboard',
+            'Unable to load pending loan applications.'
+        );
     }
-
-    $stmt = $pdo->query("
-        SELECT
-            l.*,
-            m.first_name,
-            m.last_name,
-            m.member_number
-        FROM loans l
-        JOIN members m
-            ON l.member_id = m.id
-        WHERE l.loan_status='Pending'
-        ORDER BY l.id
-    ");
-
-    $pending_loans = $stmt->fetchAll();
-
-    return render('loan_pending', compact(
-        'pending_loans'
-    ));
 }
 
 /**
  * Approves or rejects a pending loan application.
  */
-function handleProcessLoanApproval(PDO $pdo)
+function handleProcessLoanApproval(PDO $pdo): void
 {
     checkAuthenticated($pdo);
+    requireAdmin();
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: index.php?route=pending_loans_queue');
-        exit;
-    }
 
-    if ((int) ($_SESSION['role_id'] ?? 0) !== 1) {
-
-        $_SESSION['error_message'] =
-            'Administrator privileges required.';
-
-        header('Location: index.php?route=dashboard');
-        exit;
+        redirect(
+            'pending_loans_queue'
+        );
     }
 
     $loanId = (int) ($_POST['loan_id'] ?? 0);
@@ -559,43 +615,61 @@ function handleProcessLoanApproval(PDO $pdo)
 
         $pdo->beginTransaction();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Lock Pending Loan
+        |--------------------------------------------------------------------------
+        */
+
         $stmt = $pdo->prepare("
             SELECT *
             FROM loans
-            WHERE id = ?
-              AND loan_status='Pending'
+            WHERE
+                id = ?
+                AND loan_status = 'Pending'
             FOR UPDATE
         ");
 
         $stmt->execute([$loanId]);
 
-        $loan = $stmt->fetch();
+        $loan = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$loan) {
-            throw new Exception('Loan no longer exists.');
+            throw new Exception(
+                'Loan no longer exists.'
+            );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Approve Loan
+        |--------------------------------------------------------------------------
+        */
 
         if ($action === 'Approve') {
 
             $stmt = $pdo->prepare("
                 UPDATE loans
                 SET
-                    loan_status='Approved',
-                    soa_status='Active'
-                WHERE id=?
+                    loan_status = 'Approved',
+                    soa_status = 'Active'
+                WHERE id = ?
             ");
 
             $stmt->execute([$loanId]);
 
-            $schedule = AmortizationEngine::generateSchedule([
-                'principal' => (float) $loan['principal'],
-                'interest_rate' => (float) $loan['interest_rate'],
-                'terms' => (int) $loan['terms'],
-                'payment_frequency' => $loan['payment_frequency'],
-                'amortization_type' => $loan['amortization_type'],
-                'start_date' => $loan['start_date'],
-                'manual_payment' => (float) $loan['manual_payment']
-            ]);
+            $schedule =
+                AmortizationEngine::generateSchedule([
+
+                    'principal'          => (float) $loan['principal'],
+                    'interest_rate'      => (float) $loan['interest_rate'],
+                    'terms'              => (int) $loan['terms'],
+                    'payment_frequency'  => $loan['payment_frequency'],
+                    'amortization_type'  => $loan['amortization_type'],
+                    'start_date'         => $loan['start_date'],
+                    'manual_payment'     => (float) $loan['manual_payment']
+
+                ]);
 
             $insert = $pdo->prepare("
                 INSERT INTO loan_schedules
@@ -621,13 +695,18 @@ function handleProcessLoanApproval(PDO $pdo)
             foreach ($schedule as $row) {
 
                 $insert->execute([
+
                     $loanId,
+
                     $row['period'],
                     $row['due_date'],
+
                     $row['principal'],
                     $row['interest'],
+
                     $row['principal'],
                     $row['interest']
+
                 ]);
             }
 
@@ -637,14 +716,19 @@ function handleProcessLoanApproval(PDO $pdo)
                 "Approved Loan #{$loanId}"
             );
 
-            $_SESSION['success_message'] =
-                'Loan approved successfully.';
+            $message = 'Loan approved successfully.';
         } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reject Loan
+            |--------------------------------------------------------------------------
+            */
 
             $stmt = $pdo->prepare("
                 UPDATE loans
-                SET loan_status='Rejected'
-                WHERE id=?
+                SET loan_status = 'Rejected'
+                WHERE id = ?
             ");
 
             $stmt->execute([$loanId]);
@@ -655,41 +739,53 @@ function handleProcessLoanApproval(PDO $pdo)
                 "Rejected Loan #{$loanId}"
             );
 
-            $_SESSION['success_message'] =
-                'Loan rejected successfully.';
+            $message = 'Loan rejected successfully.';
         }
 
         $pdo->commit();
+
+        redirectSuccess(
+            'pending_loans_queue',
+            $message
+        );
     } catch (Throwable $e) {
 
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
 
-        $_SESSION['error_message'] =
-            $e->getMessage();
-    }
+        error_log($e->getMessage());
 
-    header('Location: index.php?route=pending_loans_queue');
-    exit;
+        redirectError(
+            'pending_loans_queue',
+            'Unable to process the loan application.'
+        );
+    }
 }
 
-function handleApplyPayment(PDO $pdo)
+function handleApplyPayment(PDO $pdo): void
 {
     checkAuthenticated($pdo);
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: index.php?route=amortization_dashboard');
-        exit;
+
+        redirect(
+            'amortization_dashboard'
+        );
     }
 
-    $loanId = (int) ($_POST['loan_id'] ?? 0);
+    $loanId        = (int) ($_POST['loan_id'] ?? 0);
     $paymentAmount = (float) ($_POST['payment_amount'] ?? 0);
 
     if ($loanId <= 0 || $paymentAmount <= 0) {
-        $_SESSION['error_message'] = 'Invalid payment information.';
-        header("Location: index.php?route=view_loan&id={$loanId}");
-        exit;
+
+        redirectError(
+            'view_loan',
+            'Invalid payment information.',
+            [
+                'id' => $loanId
+            ]
+        );
     }
 
     try {
@@ -705,8 +801,9 @@ function handleApplyPayment(PDO $pdo)
         $stmt = $pdo->prepare("
             SELECT *
             FROM loan_schedules
-            WHERE loan_id = ?
-              AND status <> 'paid'
+            WHERE
+                loan_id = ?
+                AND status <> 'paid'
             ORDER BY due_date ASC
             FOR UPDATE
         ");
@@ -716,14 +813,16 @@ function handleApplyPayment(PDO $pdo)
         $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$schedules) {
-            throw new Exception('Loan is already fully paid.');
+            throw new Exception(
+                'Loan is already fully paid.'
+            );
         }
 
         $remainingPayment = round($paymentAmount, 2);
 
-        $allocatedPenalty = 0;
-        $allocatedInterest = 0;
-        $allocatedPrincipal = 0;
+        $allocatedPenalty   = 0.0;
+        $allocatedInterest  = 0.0;
+        $allocatedPrincipal = 0.0;
 
         /*
         |--------------------------------------------------------------------------
@@ -737,8 +836,8 @@ function handleApplyPayment(PDO $pdo)
                 break;
             }
 
-            $remainingPenalty = (float) $schedule['rem_penalty'];
-            $remainingInterest = (float) $schedule['rem_interest'];
+            $remainingPenalty   = (float) $schedule['rem_penalty'];
+            $remainingInterest  = (float) $schedule['rem_interest'];
             $remainingPrincipal = (float) $schedule['rem_principal'];
 
             /*
@@ -747,7 +846,10 @@ function handleApplyPayment(PDO $pdo)
 
             if ($remainingPenalty > 0 && $remainingPayment > 0) {
 
-                $amount = min($remainingPenalty, $remainingPayment);
+                $amount = min(
+                    $remainingPenalty,
+                    $remainingPayment
+                );
 
                 $remainingPenalty -= $amount;
                 $remainingPayment -= $amount;
@@ -761,7 +863,10 @@ function handleApplyPayment(PDO $pdo)
 
             if ($remainingInterest > 0 && $remainingPayment > 0) {
 
-                $amount = min($remainingInterest, $remainingPayment);
+                $amount = min(
+                    $remainingInterest,
+                    $remainingPayment
+                );
 
                 $remainingInterest -= $amount;
                 $remainingPayment -= $amount;
@@ -775,7 +880,10 @@ function handleApplyPayment(PDO $pdo)
 
             if ($remainingPrincipal > 0 && $remainingPayment > 0) {
 
-                $amount = min($remainingPrincipal, $remainingPayment);
+                $amount = min(
+                    $remainingPrincipal,
+                    $remainingPayment
+                );
 
                 $remainingPrincipal -= $amount;
                 $remainingPayment -= $amount;
@@ -784,7 +892,9 @@ function handleApplyPayment(PDO $pdo)
             }
 
             $status =
-                ($remainingPenalty + $remainingInterest + $remainingPrincipal <= 0.01)
+                ($remainingPenalty +
+                    $remainingInterest +
+                    $remainingPrincipal <= 0.01)
                 ? 'paid'
                 : 'partial';
 
@@ -799,11 +909,13 @@ function handleApplyPayment(PDO $pdo)
             ");
 
             $update->execute([
+
                 $remainingPenalty,
                 $remainingInterest,
                 $remainingPrincipal,
                 $status,
                 $schedule['id']
+
             ]);
         }
 
@@ -834,13 +946,18 @@ function handleApplyPayment(PDO $pdo)
         ");
 
         $ledger->execute([
+
             $loanId,
             $paymentAmount,
+
             $allocatedPenalty,
             $allocatedInterest,
             $allocatedPrincipal,
+
             max(0, $remainingPayment),
+
             'Global Waterfall Repayment'
+
         ]);
 
         /*
@@ -852,15 +969,18 @@ function handleApplyPayment(PDO $pdo)
         $stmt = $pdo->prepare("
             SELECT COUNT(*)
             FROM loan_schedules
-            WHERE loan_id = ?
-              AND status <> 'paid'
+            WHERE
+                loan_id = ?
+                AND status <> 'paid'
         ");
 
         $stmt->execute([$loanId]);
 
-        $remainingSchedules = (int) $stmt->fetchColumn();
+        $remainingSchedules =
+            (int) $stmt->fetchColumn();
 
-        $loanStatus = ($remainingSchedules === 0)
+        $loanStatus =
+            $remainingSchedules === 0
             ? 'Fully Paid'
             : 'Active';
 
@@ -871,8 +991,10 @@ function handleApplyPayment(PDO $pdo)
         ");
 
         $stmt->execute([
+
             $loanStatus,
             $loanId
+
         ]);
 
         /*
@@ -889,20 +1011,29 @@ function handleApplyPayment(PDO $pdo)
 
         $pdo->commit();
 
-        $_SESSION['success_message'] =
-            ($remainingSchedules === 0)
-            ? 'Loan fully paid successfully.'
-            : 'Payment applied successfully.';
+        redirectSuccess(
+            'view_loan',
+            $remainingSchedules === 0
+                ? 'Loan fully paid successfully.'
+                : 'Payment applied successfully.',
+            [
+                'id' => $loanId
+            ]
+        );
     } catch (Throwable $e) {
 
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
 
-        $_SESSION['error_message'] =
-            'Unable to process payment: ' . $e->getMessage();
-    }
+        error_log($e->getMessage());
 
-    header("Location: index.php?route=view_loan&id={$loanId}");
-    exit;
+        redirectError(
+            'view_loan',
+            'Unable to process payment.',
+            [
+                'id' => $loanId
+            ]
+        );
+    }
 }

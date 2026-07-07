@@ -4,11 +4,6 @@ if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
 
-/**
- * ==========================================================
- * Activity Logs
- * ==========================================================
- */
 function handleActivityLogs(PDO $pdo): string
 {
     checkAuthenticated($pdo);
@@ -37,11 +32,15 @@ function handleActivityLogs(PDO $pdo): string
 
         error_log($e->getMessage());
 
-        $_SESSION['error_message'] =
-            'Unable to load activity logs.';
+        flashError(
+            'Unable to load activity logs.'
+        );
 
-        return render('activity_logs', [
-            'logs' => []
-        ]);
+        return render(
+            'activity_logs',
+            [
+                'logs' => []
+            ]
+        );
     }
 }

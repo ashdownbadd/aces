@@ -89,26 +89,15 @@ function handleCoopMemberList(PDO $pdo): string
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
-        $members = $stmt->fetchAll();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Table View Model
-        |--------------------------------------------------------------------------
-        */
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $headers = [
 
             'Member No.',
-
             'Full Name',
-
             'Email',
-
             'Phone',
-
             'Share Capital',
-
             'Status'
 
         ];
@@ -119,7 +108,7 @@ function handleCoopMemberList(PDO $pdo): string
 
             $profileUrl =
                 'index.php?route=member_profile&id='
-                . (int)$member['id'];
+                . (int) $member['id'];
 
             $status = strtolower($member['status'] ?? '');
 
@@ -151,17 +140,13 @@ function handleCoopMemberList(PDO $pdo): string
                     )
                     . '</a>',
 
-                htmlspecialchars(
-                    $member['email'] ?: 'N/A'
-                ),
+                htmlspecialchars($member['email'] ?: 'N/A'),
 
-                htmlspecialchars(
-                    $member['phone'] ?: 'N/A'
-                ),
+                htmlspecialchars($member['phone'] ?: 'N/A'),
 
                 '<strong>₱'
                     . number_format(
-                        (float)$member['share_capital'],
+                        (float) $member['share_capital'],
                         2
                     )
                     . '</strong>',
@@ -174,90 +159,149 @@ function handleCoopMemberList(PDO $pdo): string
         return render('member', [
 
             'headers' => $headers,
-
             'rows' => $rows,
-
             'searchTerm' => $searchTerm
 
         ]);
     } catch (PDOException $e) {
 
-        $_SESSION['error_message'] =
-            'Unable to retrieve cooperative members.';
-
         error_log($e->getMessage());
+
+        flashError(
+            'Unable to retrieve cooperative members.'
+        );
 
         return render('member', [
 
             'headers' => [],
-
             'rows' => [],
-
             'searchTerm' => $searchTerm
 
         ]);
     }
 }
 
-function handleMemberProfile(PDO $pdo)
+function handleMemberProfile(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
-    $member_id = intval($_GET['id'] ?? 0);
+    $member_id = (int) ($_GET['id'] ?? 0);
 
     try {
 
-        $stmt = $pdo->prepare("SELECT * FROM members WHERE id = ?");
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM members
+            WHERE id = ?
+        ");
+
         $stmt->execute([$member_id]);
 
-        $member = $stmt->fetch();
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$member) {
-            die("Member profile not found.");
+
+            redirectError(
+                'members',
+                'Member profile not found.'
+            );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | One-to-One Relations
+        |--------------------------------------------------------------------------
+        */
+
         $relations = [
+
             'profile' => 'member_profiles',
+
             'contact' => 'member_contact',
+
             'address' => 'member_addresses'
+
         ];
 
         foreach ($relations as $key => $table) {
 
-            $s = $pdo->prepare("SELECT * FROM {$table} WHERE member_id = ?");
-            $s->execute([$member_id]);
+            $stmt = $pdo->prepare("
+                SELECT *
+                FROM {$table}
+                WHERE member_id = ?
+            ");
 
-            $member[$key] = $s->fetch() ?: [];
+            $stmt->execute([$member_id]);
+
+            $member[$key] =
+                $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | One-to-Many Relations
+        |--------------------------------------------------------------------------
+        */
+
         $lists = [
+
             'education',
+
             'experience',
+
             'beneficiaries'
+
         ];
 
         foreach ($lists as $list) {
 
-            $s = $pdo->prepare("SELECT * FROM member_{$list} WHERE member_id = ?");
-            $s->execute([$member_id]);
+            $stmt = $pdo->prepare("
+                SELECT *
+                FROM member_{$list}
+                WHERE member_id = ?
+            ");
 
-            $member[$list] = $s->fetchAll() ?: [];
+            $stmt->execute([$member_id]);
+
+            $member[$list] =
+                $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Share Capital
+        |--------------------------------------------------------------------------
+        */
 
         $stmtLedger = $pdo->prepare("
             SELECT
-                COALESCE(SUM(le.credit) - SUM(le.debit),0)
+                COALESCE(
+                    SUM(le.credit)
+                    -
+                    SUM(le.debit),
+                    0
+                )
+
             FROM ledger_entries le
-            JOIN journal_vouchers jv
+
+            INNER JOIN journal_vouchers jv
                 ON le.voucher_id = jv.id
+
             WHERE
                 le.member_id = ?
-                AND jv.status='approved'
+                AND jv.status = 'approved'
         ");
 
         $stmtLedger->execute([$member_id]);
 
-        $member['ledger_balance'] = $stmtLedger->fetchColumn() ?: 0;
+        $member['ledger_balance'] =
+            (float) $stmtLedger->fetchColumn();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Active Loan
+        |--------------------------------------------------------------------------
+        */
 
         $stmtLoan = $pdo->prepare("
             SELECT
@@ -267,32 +311,42 @@ function handleMemberProfile(PDO $pdo)
             FROM loans l
 
             LEFT JOIN loan_schedules s
-                ON l.id=s.loan_id
-                AND s.due_date>=CURDATE()
+                ON l.id = s.loan_id
+                AND s.due_date >= CURDATE()
 
             WHERE
-                l.member_id=?
-                AND l.loan_status='approved'
+                l.member_id = ?
+                AND l.loan_status = 'approved'
 
-            ORDER BY s.due_date ASC
+            ORDER BY
+                s.due_date ASC
 
             LIMIT 1
         ");
 
         $stmtLoan->execute([$member_id]);
 
-        $member['active_loan'] = $stmtLoan->fetch() ?: null;
+        $member['active_loan'] =
+            $stmtLoan->fetch(PDO::FETCH_ASSOC) ?: null;
 
-        return render('member_profile', [
-            'member' => $member
-        ]);
+        return render(
+            'member_profile',
+            [
+                'member' => $member
+            ]
+        );
     } catch (PDOException $e) {
 
-        die("Database Error loading profile: " . $e->getMessage());
+        error_log($e->getMessage());
+
+        redirectError(
+            'members',
+            'Unable to load member profile.'
+        );
     }
 }
 
-function handleCreateCoopMember(PDO $pdo)
+function handleCreateCoopMember(PDO $pdo): string
 {
     checkAuthenticated($pdo);
 
@@ -308,13 +362,14 @@ function handleCreateCoopMember(PDO $pdo)
     $membership_type = trim($_POST['membership_type'] ?? 'Regular');
 
     if (
-        empty($first_name) ||
-        empty($last_name) ||
-        empty($date_of_birth)
+        $first_name === '' ||
+        $last_name === '' ||
+        $date_of_birth === ''
     ) {
 
-        $_SESSION['error_message'] =
-            "First name, last name, and date of birth are required.";
+        flashError(
+            'First name, last name, and date of birth are required.'
+        );
 
         return render('member_add');
     }
@@ -356,18 +411,23 @@ function handleCreateCoopMember(PDO $pdo)
             $membership_type
         ]);
 
-        $member_id = $pdo->lastInsertId();
+        $member_id = (int) $pdo->lastInsertId();
 
         $formatted_member_no =
-            "COOP-" .
-            date('Y') .
-            "-" .
-            str_pad($member_id, 4, "0", STR_PAD_LEFT);
+            'COOP-'
+            . date('Y')
+            . '-'
+            . str_pad(
+                (string) $member_id,
+                4,
+                '0',
+                STR_PAD_LEFT
+            );
 
         $pdo->prepare("
             UPDATE members
-            SET member_number=?
-            WHERE id=?
+            SET member_number = ?
+            WHERE id = ?
         ")->execute([
             $formatted_member_no,
             $member_id
@@ -375,7 +435,11 @@ function handleCreateCoopMember(PDO $pdo)
 
         $pdo->prepare("
             INSERT INTO member_profiles
-            (member_id, sex, marital_status)
+            (
+                member_id,
+                sex,
+                marital_status
+            )
             VALUES (?, ?, ?)
         ")->execute([
             $member_id,
@@ -431,19 +495,21 @@ function handleCreateCoopMember(PDO $pdo)
 
         $pdo->commit();
 
-        $_SESSION['success_message'] =
-            "Member successfully registered. Member ID: {$formatted_member_no}";
-
-        header("Location: index.php?route=members");
-        exit;
+        redirectSuccess(
+            'members',
+            "Member successfully registered. Member ID: {$formatted_member_no}"
+        );
     } catch (PDOException $e) {
 
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
 
-        $_SESSION['error_message'] =
-            "Database error: " . $e->getMessage();
+        error_log($e->getMessage());
+
+        flashError(
+            'Unable to register the member. Please try again.'
+        );
 
         return render('member_add');
     }

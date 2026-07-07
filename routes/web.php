@@ -1,5 +1,4 @@
 <?php
-// routes/web.php
 
 if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');

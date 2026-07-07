@@ -1,5 +1,4 @@
 <?php
-// controllers/DashboardController.php
 
 if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
@@ -299,7 +298,7 @@ function getNegativeEquityMembers(PDO $pdo): array
         HAVING balance < 0
     ");
 
-    return $stmt->fetchAll();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getPastDueLoans(PDO $pdo): array
@@ -333,5 +332,5 @@ function getPastDueLoans(PDO $pdo): array
             m.last_name
     ");
 
-    return $stmt->fetchAll();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
