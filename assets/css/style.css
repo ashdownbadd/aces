@@ -43,6 +43,7 @@
 =========================== */
 
 @import url("widgets/stat-card.css");
+@import url("widgets/stats-grid.css");
 @import url("widgets/profile-card.css");
 @import url("widgets/member-summary.css");
 @import url("widgets/loan-summary.css");

@@ -15,7 +15,7 @@ if (!defined('ALLOW_ACCESS')) {
         'title' => 'Cooperative Members',
 
         'description' =>
-        'Manage cooperative members, registrations, and shareholder information.'
+        'Register, search, and manage cooperative members.'
 
     ]);
 
@@ -27,13 +27,13 @@ if (!defined('ALLOW_ACCESS')) {
 
     ob_start();
 
-    if (isset($_SESSION['role_id']) && (int)$_SESSION['role_id'] === 1) {
+    if (isset($_SESSION['role_id']) && (int) $_SESSION['role_id'] === 1) {
 
         c('button', [
 
             'href' => url('add_member'),
 
-            'text' => 'Register New Member',
+            'text' => 'Register Member',
 
             'icon' => 'fas fa-user-plus',
 
@@ -79,19 +79,9 @@ if (!defined('ALLOW_ACCESS')) {
 
     <?php
 
-    c('section_header', [
-
-        'title' => 'Member Registry',
-
-        'description' => 'List of registered cooperative members.'
-
-    ]);
-
-    ?>
-
-    <?php
-
     c('table', [
+
+        'caption' => 'Members',
 
         'headers' => $headers,
 

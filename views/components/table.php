@@ -2,64 +2,105 @@
 
 $headers = $headers ?? [];
 $rows = $rows ?? [];
+
+$caption = $caption ?? '';
+
 $emptyMessage = $emptyMessage ?? 'No records found.';
 
 ?>
 
-<div class="table-wrapper">
+<div class="table">
 
-    <table class="table">
+    <?php if ($caption): ?>
 
-        <thead>
+        <div class="table__caption">
 
-            <tr>
+            <?= htmlspecialchars($caption) ?>
 
-                <?php foreach ($headers as $header): ?>
+        </div>
 
-                    <th><?= htmlspecialchars($header) ?></th>
+    <?php endif; ?>
 
-                <?php endforeach; ?>
+    <div class="table__scroll">
 
-            </tr>
+        <table>
 
-        </thead>
-
-        <tbody>
-
-            <?php if (empty($rows)): ?>
+            <thead>
 
                 <tr>
 
-                    <td
-                        colspan="<?= max(count($headers), 1) ?>"
-                        class="table__empty">
+                    <?php foreach ($headers as $header): ?>
 
-                        <?= htmlspecialchars($emptyMessage) ?>
+                        <th>
 
-                    </td>
+                            <?= htmlspecialchars($header) ?>
+
+                        </th>
+
+                    <?php endforeach; ?>
 
                 </tr>
 
-            <?php else: ?>
+            </thead>
 
-                <?php foreach ($rows as $row): ?>
+            <tbody>
+
+                <?php if (!$rows): ?>
 
                     <tr>
 
-                        <?php foreach ($row as $cell): ?>
+                        <td
+                            colspan="<?= max(count($headers), 1); ?>"
+                            class="table__empty">
 
-                            <td><?= $cell ?></td>
+                            <div class="table__empty-icon">
 
-                        <?php endforeach; ?>
+                                <i class="fas fa-folder-open"></i>
+
+                            </div>
+
+                            <div class="table__empty-title">
+
+                                <?= htmlspecialchars($emptyMessage) ?>
+
+                            </div>
+
+                            <div class="table__empty-description">
+
+                                There are currently no records to display.
+
+                            </div>
+
+                        </td>
 
                     </tr>
 
-                <?php endforeach; ?>
+                <?php else: ?>
 
-            <?php endif; ?>
+                    <?php foreach ($rows as $row): ?>
 
-        </tbody>
+                        <tr>
 
-    </table>
+                            <?php foreach ($row as $cell): ?>
+
+                                <td>
+
+                                    <?= $cell ?>
+
+                                </td>
+
+                            <?php endforeach; ?>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                <?php endif; ?>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>

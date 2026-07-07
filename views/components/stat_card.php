@@ -1,72 +1,52 @@
 <?php
 
-$title       = $title ?? '';
-$value       = $value ?? '';
-$subtitle    = $subtitle ?? '';
-$icon        = $icon ?? '';
-$color       = $color ?? 'primary';
-$url         = $url ?? '';
-$footer      = $footer ?? '';
-$description = $description ?? '';
+$title = $title ?? '';
+$value = $value ?? '';
+$subtitle = $subtitle ?? '';
+$icon = $icon ?? '';
+$color = $color ?? 'primary';
+$url = $url ?? '';
+$footer = $footer ?? '';
+
+$tag = $url ? 'a' : 'div';
 
 ?>
 
-<?php if ($url): ?>
+<<?= $tag ?>
+    <?= $url ? 'href="' . htmlspecialchars($url) . '"' : '' ?>
+    class="stat-card stat-card--<?= htmlspecialchars($color) ?>">
 
-    <a
-        href="<?= htmlspecialchars($url) ?>"
-        class="stat-card stat-card--<?= htmlspecialchars($color) ?>">
+    <div class="stat-card__body">
 
-    <?php else: ?>
+        <?php if ($icon): ?>
 
-        <div
-            class="stat-card stat-card--<?= htmlspecialchars($color) ?>">
+            <div class="stat-card__icon">
 
-        <?php endif; ?>
-
-        <div class="stat-card__body">
-
-            <div class="stat-card__content">
-
-                <span class="stat-card__title">
-
-                    <?= htmlspecialchars($title) ?>
-
-                </span>
-
-                <h2 class="stat-card__value">
-
-                    <?= htmlspecialchars((string)$value) ?>
-
-                </h2>
-
-                <?php if ($subtitle): ?>
-
-                    <span class="stat-card__subtitle">
-
-                        <?= htmlspecialchars($subtitle) ?>
-
-                    </span>
-
-                <?php endif; ?>
-
-                <?php if ($description): ?>
-
-                    <small class="stat-card__description">
-
-                        <?= htmlspecialchars($description) ?>
-
-                    </small>
-
-                <?php endif; ?>
+                <i class="<?= htmlspecialchars($icon) ?>"></i>
 
             </div>
 
-            <?php if ($icon): ?>
+        <?php endif; ?>
 
-                <div class="stat-card__icon">
+        <div class="stat-card__content">
 
-                    <i class="<?= htmlspecialchars($icon) ?>"></i>
+            <span class="stat-card__title">
+
+                <?= htmlspecialchars($title) ?>
+
+            </span>
+
+            <div class="stat-card__value">
+
+                <?= htmlspecialchars((string) $value) ?>
+
+            </div>
+
+            <?php if ($subtitle): ?>
+
+                <div class="stat-card__subtitle">
+
+                    <?= htmlspecialchars($subtitle) ?>
 
                 </div>
 
@@ -74,22 +54,16 @@ $description = $description ?? '';
 
         </div>
 
-        <?php if ($footer): ?>
-
-            <div class="stat-card__footer">
-
-                <?= $footer ?>
-
-            </div>
-
-        <?php endif; ?>
-
-        <?php if ($url): ?>
-
-    </a>
-
-<?php else: ?>
-
     </div>
 
-<?php endif; ?>
+    <?php if ($footer): ?>
+
+        <div class="stat-card__footer">
+
+            <?= $footer ?>
+
+        </div>
+
+    <?php endif; ?>
+
+</<?= $tag ?>>
