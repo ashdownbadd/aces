@@ -12,24 +12,59 @@ if (!function_exists('checkAuthenticated')) {
             SELECT status
             FROM users
             WHERE id = ?
+            LIMIT 1
         ");
 
-        $stmt->execute([$_SESSION['user_id']]);
+        $stmt->execute([
+            $_SESSION['user_id']
+        ]);
 
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$user || $user['status'] !== 'active') {
 
-            session_unset();
+            $_SESSION = [];
+
+            if (ini_get('session.use_cookies')) {
+
+                $params = session_get_cookie_params();
+
+                setcookie(
+                    session_name(),
+                    '',
+                    time() - 42000,
+                    $params['path'],
+                    $params['domain'],
+                    $params['secure'],
+                    $params['httponly']
+                );
+            }
+
             session_destroy();
 
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
 
             flashError(
                 'Your operator profile has been suspended or deactivated.'
             );
 
             redirect('login');
+        }
+    }
+}
+
+if (!function_exists('requireAdmin')) {
+
+    function requireAdmin(): void
+    {
+        if ((int) ($_SESSION['role_id'] ?? 0) !== 1) {
+
+            redirectError(
+                'dashboard',
+                'Administrator privileges required.'
+            );
         }
     }
 }

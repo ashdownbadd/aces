@@ -21,18 +21,35 @@ require_once __DIR__ . '/config/db.php';
 
 /*
 |--------------------------------------------------------------------------
-| Helpers
+| Core Helpers
 |--------------------------------------------------------------------------
+| These provide the application's core infrastructure.
+| They should be loaded before feature-specific helpers.
 */
 
 require_once __DIR__ . '/helpers/View.php';
-require_once __DIR__ . '/helpers/Session.php';
 require_once __DIR__ . '/helpers/Url.php';
-require_once __DIR__ . '/helpers/Auth.php';
-require_once __DIR__ . '/helpers/Logger.php';
+require_once __DIR__ . '/helpers/Response.php';
+
+/*
+|--------------------------------------------------------------------------
+| Session & Authentication
+|--------------------------------------------------------------------------
+| Authentication depends on sessions and redirects.
+*/
+
+require_once __DIR__ . '/helpers/Session.php';
 require_once __DIR__ . '/helpers/Flash.php';
 require_once __DIR__ . '/helpers/Redirect.php';
-require_once __DIR__ . '/helpers/Response.php';
+require_once __DIR__ . '/helpers/Auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| Application Helpers
+|--------------------------------------------------------------------------
+*/
+
+require_once __DIR__ . '/helpers/Logger.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +64,7 @@ require_once __DIR__ . '/controllers/MemberController.php';
 require_once __DIR__ . '/controllers/LedgerController.php';
 require_once __DIR__ . '/controllers/AmortizationController.php';
 require_once __DIR__ . '/controllers/ActivityController.php';
+
 /*
 |--------------------------------------------------------------------------
 | Routes
