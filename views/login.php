@@ -1,72 +1,133 @@
 <?php
+
 if (!defined('ALLOW_ACCESS')) {
-    die('Direct access to this file is prohibited.');
+    exit('Direct access to this file is prohibited.');
 }
+
 ?>
 
-<div class="login">
+<div class="login-page">
 
-    <?php if (isset($_GET['error']) && $_GET['error'] === 'suspended'): ?>
-        <div class="alert alert--danger">
-            <strong>Access Denied:</strong>
-            Your account has been suspended by an administrator.
-            Please contact support.
+    <div class="login-page__content">
+
+        <div class="login-brand">
+
+            <span class="login-brand__eyebrow">
+
+                COOPERATIVE MANAGEMENT
+
+            </span>
+
+            <h1 class="login-brand__title">
+
+                <?= htmlspecialchars($app['name']) ?>
+
+            </h1>
+
+            <p class="login-brand__subtitle">
+
+                <?= htmlspecialchars($app['full_name']) ?>
+
+            </p>
+
+            <span class="login-brand__portal">
+
+                <?= htmlspecialchars($app['portal']) ?>
+
+            </span>
+
         </div>
-    <?php endif; ?>
 
-    <?php if (isset($_SESSION['error_message'])): ?>
-        <div class="alert alert--danger">
-            <?= htmlspecialchars($_SESSION['error_message']); ?>
-            <?php unset($_SESSION['error_message']); ?>
-        </div>
-    <?php endif; ?>
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'suspended'): ?>
 
-    <?php if (isset($_SESSION['success_message'])): ?>
-        <div class="alert alert--info">
-            <?= htmlspecialchars($_SESSION['success_message']); ?>
-            <?php unset($_SESSION['success_message']); ?>
-        </div>
-    <?php endif; ?>
+            <div class="alert alert--danger">
 
-    <div class="login__card">
+                <strong>Access Denied.</strong>
 
-        <h2 class="login__title">
-            Administrative Login
-        </h2>
+                Your account has been suspended.
 
-        <form class="form" action="index.php?route=login" method="POST">
+            </div>
 
-            <div class="form__group">
-                <label class="form__label" for="username">
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error_message'])): ?>
+
+            <div class="alert alert--danger">
+
+                <?= htmlspecialchars($_SESSION['error_message']); ?>
+
+                <?php unset($_SESSION['error_message']); ?>
+
+            </div>
+
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['success_message'])): ?>
+
+            <div class="alert alert--info">
+
+                <?= htmlspecialchars($_SESSION['success_message']); ?>
+
+                <?php unset($_SESSION['success_message']); ?>
+
+            </div>
+
+        <?php endif; ?>
+
+        <form
+            class="login-form"
+            action="<?= url('login'); ?>"
+            method="POST">
+
+            <div class="form-group">
+
+                <label class="form-label">
+
                     Username
+
                 </label>
 
                 <input
-                    id="username"
-                    class="form__control"
+                    class="form-control"
                     type="text"
                     name="username"
+                    autocomplete="username"
                     required>
+
             </div>
 
-            <div class="form__group">
-                <label class="form__label" for="password">
+            <div class="form-group">
+
+                <label class="form-label">
+
                     Password
+
                 </label>
 
                 <input
-                    id="password"
-                    class="form__control"
+                    class="form-control"
                     type="password"
                     name="password"
+                    autocomplete="current-password"
                     required>
+
             </div>
 
-            <button class="btn btn--primary btn--block" type="submit">
-                Login
+            <button
+                class="btn btn--primary btn--block"
+                type="submit">
+
+                Sign In
+
             </button>
 
         </form>
+
+        <p class="login-page__copyright">
+
+            <?= htmlspecialchars($app['copyright']) ?>
+
+        </p>
 
     </div>
 

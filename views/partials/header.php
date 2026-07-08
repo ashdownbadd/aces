@@ -6,7 +6,21 @@
 
             <i class="fas fa-building"></i>
 
-            <span>Cooperative Management System</span>
+            <div class="app-header__brand-text">
+
+                <span class="app-header__title">
+
+                    <?= htmlspecialchars($app['name']) ?>
+
+                </span>
+
+                <span class="app-header__subtitle">
+
+                    <?= htmlspecialchars($app['full_name']) ?>
+
+                </span>
+
+            </div>
 
         </a>
 

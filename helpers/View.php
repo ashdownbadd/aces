@@ -14,6 +14,10 @@ function render(
     array $data = []
 ): string {
 
+    global $app;
+
+    $data['app'] = $app;
+
     extract($data);
 
     ob_start();
@@ -36,6 +40,10 @@ function c(
     array $data = []
 ): void {
 
+    global $app;
+
+    $data['app'] = $app;
+
     extract($data);
 
     require __DIR__
@@ -53,6 +61,10 @@ function form(
     string $component,
     array $data = []
 ): void {
+
+    global $app;
+
+    $data['app'] = $app;
 
     extract($data);
 
