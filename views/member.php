@@ -12,10 +12,9 @@ if (!defined('ALLOW_ACCESS')) {
 
     c('page_header', [
 
-        'title' => 'Cooperative Members',
+        'title' => 'Members',
 
-        'description' =>
-        'Register, search, and manage cooperative members.'
+        'description' => ''
 
     ]);
 
@@ -23,7 +22,85 @@ if (!defined('ALLOW_ACCESS')) {
 
     <?php c('flash_messages'); ?>
 
+    <div class="member-overview">
+
+        <?php
+
+        c('stat_card', [
+
+            'title' => 'Total Members',
+
+            'value' => number_format($totalMembers),
+
+            'icon' => 'fas fa-users',
+
+            'color' => 'primary'
+
+        ]);
+
+        c('stat_card', [
+
+            'title' => 'Active Members',
+
+            'value' => number_format($activeMembers),
+
+            'icon' => 'fas fa-user-check',
+
+            'color' => 'success'
+
+        ]);
+
+        c('stat_card', [
+
+            'title' => 'Inactive Members',
+
+            'value' => number_format($inactiveMembers),
+
+            'icon' => 'fas fa-user-times',
+
+            'color' => 'warning'
+
+        ]);
+
+        c('stat_card', [
+
+            'title' => 'Share Capital',
+
+            'value' => '₱' . number_format($totalShareCapital, 2),
+
+            'icon' => 'fas fa-piggy-bank',
+
+            'color' => 'secondary'
+
+        ]);
+
+        ?>
+
+    </div>
+
     <?php
+
+    /* ---------------------------------------------
+     * Search
+     * ------------------------------------------- */
+
+    ob_start();
+
+    c('search_box', [
+
+        'action' => 'index.php',
+
+        'value' => $searchTerm,
+
+        'placeholder' => 'Search by member name or member number...'
+
+    ]);
+
+    $search = ob_get_clean();
+
+    /* ---------------------------------------------
+     * Actions
+     * ------------------------------------------- */
 
     ob_start();
 
@@ -51,27 +128,13 @@ if (!defined('ALLOW_ACCESS')) {
         ]);
     }
 
-    $toolbarLeft = ob_get_clean();
-
-    ob_start();
-
-    c('search_box', [
-
-        'action' => 'index.php',
-
-        'value' => $searchTerm,
-
-        'placeholder' => 'Search by member name or member number...'
-
-    ]);
-
-    $toolbarRight = ob_get_clean();
+    $actions = ob_get_clean();
 
     c('toolbar', [
 
-        'left' => $toolbarLeft,
+        'left' => $search,
 
-        'right' => $toolbarRight
+        'right' => $actions
 
     ]);
 
@@ -81,7 +144,7 @@ if (!defined('ALLOW_ACCESS')) {
 
     c('table', [
 
-        'caption' => 'Members',
+        'caption' => '',
 
         'headers' => $headers,
 

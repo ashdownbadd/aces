@@ -119,8 +119,16 @@
     justify-content: flex-start;
   }
 
-  .toolbar__search {
-    width: 100%;
+  .toolbar__start {
+    flex: 1;
+  }
+
+  .toolbar__start .search-box {
+    max-width: 520px;
+  }
+
+  .toolbar__end {
+    margin-left: auto;
   }
 
   .toolbar__filter {

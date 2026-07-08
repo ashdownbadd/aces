@@ -1,9 +1,7 @@
 <?php
 
 $action = $action ?? '';
-
 $value = $value ?? '';
-
 $placeholder = $placeholder ?? 'Search...';
 
 ?>
@@ -11,33 +9,29 @@ $placeholder = $placeholder ?? 'Search...';
 <form
     action="<?= htmlspecialchars($action) ?>"
     method="GET"
-    class="search-box"
->
+    class="search-box">
 
     <input
         type="hidden"
         name="route"
-        value="<?= htmlspecialchars($_GET['route'] ?? '') ?>"
-    >
+        value="<?= htmlspecialchars($_GET['route'] ?? '') ?>">
 
-    <input
+    <div class="search-box__field">
 
-        class="search-box__input"
+        <i class="fas fa-search search-box__icon"></i>
 
-        type="text"
+        <input
 
-        name="search"
+            class="search-box__input"
 
-        value="<?= htmlspecialchars($value) ?>"
+            type="search"
 
-        placeholder="<?= htmlspecialchars($placeholder) ?>"
+            name="search"
 
-    >
+            value="<?= htmlspecialchars($value) ?>"
 
-    <button class="btn btn--primary">
+            placeholder="<?= htmlspecialchars($placeholder) ?>">
 
-        Search
-
-    </button>
+    </div>
 
 </form>

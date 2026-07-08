@@ -1,0 +1,805 @@
+/* ==========================================================
+   MEMBERS
+   ==========================================================
+
+   Member List
+   Member Profile
+   Member Add
+   Member Edit
+
+   ICS Ember Design System
+
+========================================================== */
+
+/* ==========================================================
+   MEMBER PROFILE
+========================================================== */
+
+/* ==========================================================
+   MEMBER HERO
+========================================================== */
+
+.member-hero {
+  margin-bottom: var(--space-8);
+}
+
+.member-hero__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  gap: var(--space-3);
+
+  padding: var(--space-8);
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.member-hero__avatar {
+  width: 72px;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+
+  color: #fff;
+
+  font-size: 1.5rem;
+
+  font-weight: var(--fw-bold);
+
+  margin-bottom: var(--space-4);
+}
+
+.member-hero__name {
+  margin: 0;
+
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+
+  font-weight: var(--fw-bold);
+
+  color: var(--text);
+
+  line-height: 1.2;
+}
+
+.member-hero__membership {
+  margin: 0;
+
+  color: var(--text-muted);
+
+  font-size: var(--text-lg);
+}
+
+.member-hero__number {
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: var(--text-sm);
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+.member-hero__status {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: var(--space-3);
+
+  margin-top: var(--space-2);
+
+  flex-wrap: wrap;
+}
+
+.member-hero__since {
+  color: var(--text-muted);
+
+  font-size: var(--text-sm);
+}
+
+/* ==========================================================
+   MEMBER SUMMARY
+========================================================== */
+
+.member-summary {
+  margin-bottom: var(--space-8);
+
+  padding: var(--space-8);
+
+  background: var(--surface);
+
+  border: none;
+
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-md);
+}
+
+.member-summary__title {
+  margin: 0 0 var(--space-6);
+
+  font-size: var(--text-xl);
+
+  font-weight: var(--fw-semibold);
+}
+
+.member-summary__grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: var(--space-8);
+}
+
+.member-summary__item {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.member-summary__label {
+  font-size: var(--text-sm);
+
+  color: var(--text-muted);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+}
+
+.member-summary__value {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+
+  font-weight: var(--fw-bold);
+
+  color: var(--text);
+}
+
+.member-summary__meta {
+  color: var(--text-muted);
+}
+
+.member-summary__link {
+  margin-top: var(--space-3);
+
+  font-size: var(--text-sm);
+
+  text-decoration: none;
+
+  color: var(--primary);
+
+  font-weight: var(--fw-medium);
+}
+
+.member-summary__link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .member-summary__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================
+   MEMBER SECTION
+========================================================== */
+
+.member-section {
+  padding: var(--space-8) 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.member-section:last-child {
+  border-bottom: none;
+}
+
+.member-section__title {
+  font-size: var(--text-lg);
+
+  letter-spacing: 0.03em;
+
+  margin-bottom: var(--space-8);
+}
+
+.member-definition-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+.member-definition-list__row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: var(--space-6);
+
+  padding-bottom: var(--space-5);
+}
+
+.member-definition-list__row span {
+  color: var(--text-muted);
+}
+
+.member-definition-list__row strong {
+  font-weight: var(--fw-medium);
+
+  text-align: right;
+}
+
+/* ==========================================================
+   MEMBER TOOLBAR
+========================================================== */
+
+.member-toolbar {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: var(--space-5);
+
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .member-toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+}
+
+/* ==========================================================
+   MEMBER LIST
+========================================================== */
+
+.member-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-4);
+}
+
+.member-list__item {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: var(--space-4) 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.member-list__item:last-child {
+  border-bottom: none;
+}
+
+.member-list__item strong {
+  font-weight: var(--fw-semibold);
+}
+
+.member-list__item span {
+  color: var(--text-muted);
+}
+
+.member-empty {
+  color: var(--text-muted);
+
+  font-style: italic;
+}
+
+.member-list__meta {
+  color: var(--text-muted);
+
+  font-size: var(--text-sm);
+
+  text-align: right;
+}
+
+/* ==========================================================
+   MEMBER OVERVIEW
+========================================================== */
+
+.member-overview {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: var(--space-6);
+
+  margin-bottom: var(--space-8);
+}
+
+@media (max-width: 992px) {
+  .member-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .member-overview {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================
+   MEMBER FORM
+========================================================== */
+
+.member-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-8);
+}
+
+.member-form .card {
+  overflow: hidden;
+}
+
+.member-form .card + .card {
+  margin-top: var(--space-2);
+}
+
+.member-form .card__header {
+  padding-bottom: var(--space-5);
+}
+
+.member-form .form-grid + .form-grid {
+  margin-top: var(--space-5);
+}
+
+.member-form__footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: var(--space-4);
+
+  margin-top: var(--space-2);
+
+  padding-bottom: var(--space-10);
+}
+
+.member-form__footer .btn {
+  min-width: 180px;
+}
+
+@media (max-width: 768px) {
+  .member-form__footer {
+    flex-direction: column-reverse;
+  }
+
+  .member-form__footer .btn {
+    width: 100%;
+  }
+}
+
+/* ==========================================================
+   MEMBER WIZARD
+========================================================== */
+
+.member-step {
+  display: none;
+}
+
+.member-step.is-active {
+  display: block;
+}
+
+.member-wizard {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-8);
+}
+
+.member-wizard__header {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-4);
+}
+
+.member-wizard__step-label {
+  display: inline-block;
+
+  margin-bottom: var(--space-2);
+
+  font-size: var(--text-sm);
+
+  color: var(--text-muted);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+}
+
+.member-wizard__title {
+  margin: 0;
+
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+}
+
+.member-wizard__progress {
+  width: 100%;
+
+  height: 8px;
+
+  background: var(--raised);
+
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+.member-wizard__progress-bar {
+  width: 25%;
+
+  height: 100%;
+
+  background: var(--gold);
+
+  transition: width 0.35s ease;
+}
+
+.member-wizard__footer {
+  display: flex;
+
+  justify-content: space-between;
+}
+
+.member-wizard__card {
+  overflow: hidden;
+}
+
+.member-wizard__content {
+  min-height: 420px;
+}
+
+.member-step__title {
+  margin: 0;
+
+  margin-bottom: 0.5rem;
+
+  font-size: 1.75rem;
+}
+
+.member-step__description {
+  margin-bottom: 2rem;
+
+  color: var(--text-muted);
+}
+
+.member-wizard__footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 1.5rem 2rem;
+
+  border-top: 1px solid var(--border);
+}
+
+/* ==========================================================
+   MEMBER ONBOARDING
+========================================================== */
+
+.member-onboarding {
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2rem;
+}
+
+.member-onboarding__header {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1rem;
+}
+
+.member-onboarding__hero {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.member-onboarding__eyebrow {
+  font-size: 0.75rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+
+  color: var(--gold);
+}
+
+.member-onboarding__title {
+  margin: 0;
+
+  font-size: 3rem;
+
+  line-height: 1.1;
+}
+
+.member-onboarding__description {
+  margin: 0;
+
+  color: var(--text-muted);
+
+  max-width: 620px;
+}
+
+.member-onboarding__progress {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+}
+
+.member-onboarding__progress-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.member-onboarding__step-label {
+  font-size: 0.8rem;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+
+  color: var(--text-muted);
+}
+
+.member-onboarding__step-title {
+  font-size: 1.1rem;
+
+  font-weight: 700;
+}
+
+.member-onboarding__progress-track {
+  width: 100%;
+
+  height: 10px;
+
+  background: #ececec;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+.member-onboarding__progress-bar {
+  width: 25%;
+
+  height: 100%;
+
+  background: var(--gold);
+
+  transition: width 0.35s ease;
+}
+
+.member-onboarding__card {
+  border-radius: 18px;
+
+  overflow: hidden;
+}
+
+.member-onboarding__card .card__body {
+  padding: 2.5rem;
+}
+
+.member-onboarding__footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 1.5rem 2.5rem;
+
+  border-top: 1px solid var(--border);
+}
+
+/* ==========================================================
+   MEMBER REVIEW
+========================================================== */
+
+.member-review {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-8);
+}
+
+.member-review__section {
+  padding-bottom: var(--space-6);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.member-review__section:last-child {
+  border-bottom: none;
+}
+
+.member-review__section h3 {
+  margin-bottom: var(--space-4);
+}
+
+.member-review__section p {
+  margin: 0.35rem 0;
+
+  color: var(--text-muted);
+}
+
+/* ==========================================================
+   REVIEW
+========================================================== */
+
+.review-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 1.5rem;
+}
+
+.review-card {
+  padding: 1.5rem;
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
+  background: var(--surface);
+}
+
+.review-card--full {
+  grid-column: 1 / -1;
+}
+
+.review-card__header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.75rem;
+
+  margin-bottom: 1.25rem;
+}
+
+.review-card__header i {
+  width: 42px;
+
+  height: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: rgba(227, 148, 18, 0.12);
+
+  color: var(--gold);
+}
+
+.review-card__header h3 {
+  margin: 0;
+}
+
+.review-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1rem;
+}
+
+.review-list__item {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding-bottom: 0.75rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.review-list__item:last-child {
+  border-bottom: none;
+
+  padding-bottom: 0;
+}
+
+.review-list dt {
+  font-weight: 600;
+
+  color: var(--text-muted);
+}
+
+.review-list dd {
+  margin: 0;
+
+  text-align: right;
+
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================
+   PROFILE GRID
+========================================================== */
+
+/* ==========================================================
+   INFORMATION CARDS
+========================================================== */
+
+/* ==========================================================
+   RECORD CARDS
+========================================================== */
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */

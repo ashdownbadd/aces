@@ -13,7 +13,9 @@ $tag = $url ? 'a' : 'div';
 ?>
 
 <<?= $tag ?>
+
     <?= $url ? 'href="' . htmlspecialchars($url) . '"' : '' ?>
+
     class="stat-card stat-card--<?= htmlspecialchars($color) ?>">
 
     <div class="stat-card__body">
@@ -28,31 +30,27 @@ $tag = $url ? 'a' : 'div';
 
         <?php endif; ?>
 
-        <div class="stat-card__content">
+        <div class="stat-card__value">
 
-            <span class="stat-card__title">
+            <?= htmlspecialchars((string) $value) ?>
 
-                <?= htmlspecialchars($title) ?>
+        </div>
 
-            </span>
+        <div class="stat-card__title">
 
-            <div class="stat-card__value">
+            <?= htmlspecialchars($title) ?>
 
-                <?= htmlspecialchars((string) $value) ?>
+        </div>
+
+        <?php if ($subtitle): ?>
+
+            <div class="stat-card__subtitle">
+
+                <?= htmlspecialchars($subtitle) ?>
 
             </div>
 
-            <?php if ($subtitle): ?>
-
-                <div class="stat-card__subtitle">
-
-                    <?= htmlspecialchars($subtitle) ?>
-
-                </div>
-
-            <?php endif; ?>
-
-        </div>
+        <?php endif; ?>
 
     </div>
 

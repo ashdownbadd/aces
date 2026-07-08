@@ -8,13 +8,13 @@ $right = $right ?? '';
 
 <div class="toolbar">
 
-    <div class="toolbar__left">
+    <div class="toolbar__start">
 
         <?= $left ?>
 
     </div>
 
-    <div class="toolbar__right">
+    <div class="toolbar__end">
 
         <?= $right ?>
 

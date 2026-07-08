@@ -91,6 +91,19 @@ function handleCoopMemberList(PDO $pdo): string
 
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $totalMembers = count($members);
+
+        $activeMembers = count(array_filter(
+            $members,
+            fn($member) => strtolower($member['status']) === 'active'
+        ));
+
+        $inactiveMembers = $totalMembers - $activeMembers;
+
+        $totalShareCapital = array_sum(
+            array_column($members, 'share_capital')
+        );
+
         $headers = [
 
             'Member No.',
@@ -112,17 +125,19 @@ function handleCoopMemberList(PDO $pdo): string
 
             $status = strtolower($member['status'] ?? '');
 
-            if ($status === 'active') {
+            ob_start();
 
-                $statusBadge =
-                    '<span class="status status--active">ACTIVE</span>';
-            } else {
+            c('badge', [
 
-                $statusBadge =
-                    '<span class="status status--inactive">'
-                    . htmlspecialchars(strtoupper($status ?: 'UNKNOWN'))
-                    . '</span>';
-            }
+                'type' => $status === 'active'
+                    ? 'success'
+                    : 'warning',
+
+                'text' => ucfirst($status ?: 'Unknown')
+
+            ]);
+
+            $statusBadge = ob_get_clean();
 
             $rows[] = [
 
@@ -160,7 +175,12 @@ function handleCoopMemberList(PDO $pdo): string
 
             'headers' => $headers,
             'rows' => $rows,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+
+            'totalMembers' => $totalMembers,
+            'activeMembers' => $activeMembers,
+            'inactiveMembers' => $inactiveMembers,
+            'totalShareCapital' => $totalShareCapital
 
         ]);
     } catch (PDOException $e) {
@@ -247,11 +267,19 @@ function handleMemberProfile(PDO $pdo): string
 
             'education',
 
-            'experience',
-
             'beneficiaries'
 
         ];
+
+        $stmt = $pdo->prepare("
+    SELECT *
+    FROM member_experience
+    WHERE member_id = ?
+");
+
+        $stmt->execute([$member_id]);
+
+        $member['employment'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($lists as $list) {
 

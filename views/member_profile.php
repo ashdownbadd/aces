@@ -15,486 +15,114 @@ if (!function_exists('display_value')) {
 
 <div class="container container--lg">
 
-    <div class="header-actions">
+    <div class="member-toolbar">
 
-        <p>
+        <?php
 
-            <a
-                href="index.php?route=members"
-                class="member-link">
+        c('button', [
 
-                ← Back to Member Registry
+            'href' => url('members'),
 
-            </a>
+            'text' => 'Members',
 
-        </p>
+            'icon' => 'fas fa-arrow-left',
+
+            'type' => 'secondary'
+
+        ]);
+
+        ?>
+
+        <?php
+
+        c('button', [
+
+            'href' => 'index.php?route=member_edit&id=' . ($member['id'] ?? ''),
+
+            'text' => 'Edit Member',
+
+            'icon' => 'fas fa-pen',
+
+            'type' => 'primary'
+
+        ]);
+
+        ?>
 
     </div>
 
-    <section class="profile-header">
+    <?php
 
-        <div>
+    c('member/hero', [
 
-            <h1>
+        'member' => $member
 
-                <?=
-                display_value(
-                    ($member['first_name'] ?? '') . ' ' .
-                        (!empty($member['middle_name'])
-                            ? $member['middle_name'] . ' '
-                            : '') .
-                        ($member['last_name'] ?? '')
-                );
-                ?>
+    ]);
 
-            </h1>
+    ?>
 
-            <div class="profile-header__meta">
+    <?php
 
-                ID:
+    c('member/financial_summary', [
 
-                <strong>
+        'member' => $member
 
-                    <?= display_value($member['member_number'] ?? null); ?>
+    ]);
 
-                </strong>
+    ?>
 
-                |
+    <section class="member-sections">
 
-                Type:
+        <?php
 
-                <strong>
+        c('member/personal_information', [
 
-                    <?= display_value($member['membership_type'] ?? null); ?>
+            'member' => $member
 
-                </strong>
+        ]);
 
-            </div>
+        ?>
 
-        </div>
+        <?php
 
-        <div class="profile-status">
+        c('member/contact_information', [
 
-            <?php
+            'member' => $member
 
-            $status = $member['status'] ?? 'inactive';
+        ]);
 
-            if ($status === 'active') {
+        ?>
 
-                $badgeClass = 'status-badge status-badge--active';
-            } elseif ($status === 'inactive') {
+        <?php
 
-                $badgeClass = 'status-badge status-badge--inactive';
-            } else {
+        c('member/beneficiaries', [
 
-                $badgeClass = 'status-badge status-badge--disabled';
-            }
+            'member' => $member
 
-            ?>
+        ]);
 
-            <span class="<?= $badgeClass; ?>">
+        ?>
 
-                <?= display_value($status); ?>
+        <?php
 
-            </span>
+        c('member/employment_history', [
 
-            <div class="profile-joined">
+            'member' => $member
 
-                Joined:
+        ]);
 
-                <?= display_value($member['date_of_membership'] ?? null); ?>
+        ?>
 
-            </div>
+        <?php
 
-        </div>
+        c('member/educational_background', [
+
+            'member' => $member
+
+        ]);
+
+        ?>
 
     </section>
-
-    <section class="summary-grid">
-
-        <article class="summary-card summary-card--success">
-
-            <h3 class="summary-card__title">
-
-                Share Capital Balance
-
-            </h3>
-
-            <div class="summary-card__value">
-
-                $<?= number_format($member['ledger_balance'] ?? 0, 2); ?>
-
-            </div>
-
-            <a
-                class="summary-card__link"
-                href="index.php?route=ledger_statement&id=<?= $member['id'] ?? ''; ?>">
-
-                View Detailed Statement →
-
-            </a>
-
-        </article>
-
-        <article class="summary-card summary-card--warning">
-
-            <h3 class="summary-card__title">
-
-                Active Loan Status
-
-            </h3>
-
-            <?php if (!empty($member['active_loan'])): ?>
-
-                <div class="summary-card__value">
-
-                    $<?= number_format($member['active_loan']['remaining_balance'] ?? 0, 2); ?>
-
-                </div>
-
-                <p>
-
-                    Next Due:
-
-                    <strong>
-
-                        <?= display_value($member['active_loan']['next_due_date'] ?? null); ?>
-
-                    </strong>
-
-                </p>
-
-                <a
-                    class="summary-card__link"
-                    href="index.php?route=view_loan&id=<?= $member['active_loan']['id'] ?? ''; ?>">
-
-                    View Schedule →
-
-                </a>
-
-            <?php else: ?>
-
-                <p class="u-text-muted">
-
-                    No active loan records.
-
-                </p>
-
-            <?php endif; ?>
-
-        </article>
-
-    </section>
-
-    <div class="profile-grid">
-
-        <div>
-
-            <section class="info-card">
-
-                <h3 class="info-card__title">
-
-                    Personal Information
-
-                </h3>
-
-                <table class="info-table">
-
-                    <tr>
-
-                        <td>Date of Birth</td>
-
-                        <td>
-                            <strong>
-                                <?= display_value($member['date_of_birth'] ?? null); ?>
-                            </strong>
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>Sex</td>
-
-                        <td>
-                            <strong>
-                                <?= display_value($member['profile']['sex'] ?? null); ?>
-                            </strong>
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>Marital Status</td>
-
-                        <td>
-                            <strong>
-                                <?= display_value($member['profile']['marital_status'] ?? null); ?>
-                            </strong>
-                        </td>
-
-                    </tr>
-
-                </table>
-
-            </section>
-
-            <section class="info-card">
-
-                <h3 class="info-card__title">
-
-                    Contact &amp; Address
-
-                </h3>
-
-                <div class="info-list">
-
-                    <p>
-
-                        <strong>Email:</strong>
-
-                        <?= display_value($member['contact']['email'] ?? null); ?>
-
-                    </p>
-
-                    <p>
-
-                        <strong>Primary Phone:</strong>
-
-                        <?= display_value($member['contact']['phone_no_1'] ?? null); ?>
-
-                    </p>
-
-                    <p>
-
-                        <strong>Secondary Phone:</strong>
-
-                        <?= display_value($member['contact']['phone_no_2'] ?? null); ?>
-
-                    </p>
-
-                </div>
-
-                <h4 class="info-subtitle">
-
-                    Registered Address
-
-                </h4>
-
-                <?php if (empty($member['address']['town_city'])): ?>
-
-                    <p class="u-text-muted">
-
-                        No address info recorded.
-
-                    </p>
-
-                <?php else: ?>
-
-                    <p>
-
-                        <strong>Type:</strong>
-
-                        <?= display_value($member['address']['address_type'] ?? 'Home'); ?>
-
-                    </p>
-
-                    <p class="address-text">
-
-                        <?php
-
-                        $addressParts = array_filter([
-
-                            $member['address']['house_number'] ?? '',
-
-                            $member['address']['street'] ?? '',
-
-                            !empty($member['address']['barangay'])
-                                ? 'Brgy. ' . $member['address']['barangay']
-                                : '',
-
-                            $member['address']['zone'] ?? '',
-
-                            $member['address']['district'] ?? '',
-
-                            $member['address']['town_city'] ?? '',
-
-                            $member['address']['province'] ?? '',
-
-                            $member['address']['region'] ?? ''
-
-                        ], 'trim');
-
-                        echo htmlspecialchars(implode(', ', $addressParts));
-
-                        ?>
-
-                    </p>
-
-                <?php endif; ?>
-
-            </section>
-
-        </div>
-
-        <div>
-
-            <section class="record-card record-card--beneficiaries">
-
-                <h3 class="record-card__title">
-
-                    Beneficiaries
-
-                </h3>
-
-                <?php if (empty($member['beneficiaries'])): ?>
-
-                    <p class="empty-state">
-
-                        No beneficiaries registered.
-
-                    </p>
-
-                <?php else: ?>
-
-                    <ul class="record-list">
-
-                        <?php foreach ($member['beneficiaries'] as $ben): ?>
-
-                            <li>
-
-                                <strong>
-
-                                    <?= display_value(
-                                        ($ben['first_name'] ?? '') . ' ' .
-                                            ($ben['last_name'] ?? '')
-                                    ); ?>
-
-                                </strong>
-
-                                <span class="record-meta">
-
-                                    (<?= display_value($ben['relation'] ?? null); ?>)
-
-                                </span>
-
-                            </li>
-
-                        <?php endforeach; ?>
-
-                    </ul>
-
-                <?php endif; ?>
-
-            </section>
-
-            <section class="record-card record-card--employment">
-
-                <h3 class="record-card__title">
-
-                    Employment / Experience
-
-                </h3>
-
-                <?php if (empty($member['experience'])): ?>
-
-                    <p class="empty-state">
-
-                        No experience records found.
-
-                    </p>
-
-                <?php else: ?>
-
-                    <?php foreach ($member['experience'] as $exp): ?>
-
-                        <div class="record-item">
-
-                            <strong>
-
-                                <?= display_value($exp['job_title'] ?? null); ?>
-
-                            </strong>
-
-                            at
-
-                            <?= display_value($exp['organization'] ?? null); ?>
-
-                            <br>
-
-                            <span class="record-meta">
-
-                                Duration:
-
-                                <?= display_value($exp['date_started'] ?? 'Unknown'); ?>
-
-                                to
-
-                                <?= display_value($exp['date_ended'] ?? 'Present'); ?>
-
-                            </span>
-
-                        </div>
-
-                    <?php endforeach; ?>
-
-                <?php endif; ?>
-
-            </section>
-
-            <section class="record-card record-card--education">
-
-                <h3 class="record-card__title">
-
-                    Educational Background
-
-                </h3>
-
-                <?php if (empty($member['education'])): ?>
-
-                    <p class="empty-state">
-
-                        No educational records found.
-
-                    </p>
-
-                <?php else: ?>
-
-                    <?php foreach ($member['education'] as $edu): ?>
-
-                        <div class="record-item">
-
-                            <strong>
-
-                                <?= display_value($edu['program'] ?? null); ?>
-
-                            </strong>
-
-                            <br>
-
-                            <?= display_value($edu['school_university'] ?? null); ?>
-
-                            <br>
-
-                            <span class="record-meta">
-
-                                Ended:
-
-                                <?= display_value($edu['date_ended'] ?? 'N/A'); ?>
-
-                            </span>
-
-                        </div>
-
-                    <?php endforeach; ?>
-
-                <?php endif; ?>
-
-            </section>
-
-        </div>
-
-    </div>
 
 </div>
