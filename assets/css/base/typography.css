@@ -1,6 +1,6 @@
 /* ==========================================================
    TYPOGRAPHY
-   Integrated Cooperative System
+   ACES UI Design System
 ========================================================== */
 
 /* ---------- Body ---------- */
@@ -22,55 +22,55 @@ h3,
 h4,
 h5,
 h6 {
+  margin-bottom: var(--space-4);
   font-family: var(--font-heading);
   font-weight: var(--fw-bold);
-  color: var(--text);
   line-height: var(--leading-tight);
-  margin-bottom: var(--space-4);
+  color: var(--text);
 }
 
 h1 {
-  font-size: 2rem; /* 32px */
+  font-size: var(--text-4xl);
 }
 
 h2 {
-  font-size: 1.75rem; /* 28px */
+  font-size: var(--text-3xl);
 }
 
 h3 {
-  font-size: 1.375rem; /* 22px */
+  font-size: var(--text-2xl);
 }
 
 h4 {
-  font-size: 1.125rem; /* 18px */
+  font-size: var(--text-xl);
 }
 
 h5 {
-  font-size: 1rem; /* 16px */
+  font-size: var(--text-lg);
 }
 
 h6 {
-  font-size: 0.875rem; /* 14px */
+  font-size: var(--text-md);
 }
 
 /* ---------- Paragraph ---------- */
 
 p {
   margin-bottom: var(--space-4);
-  color: var(--text-color);
+  color: var(--text);
 }
 
 /* ---------- Small Text ---------- */
 
 small {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
 /* ---------- Strong ---------- */
 
 strong {
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 /* ---------- Emphasis ---------- */
@@ -84,45 +84,40 @@ em {
 label {
   display: block;
   margin-bottom: var(--space-2);
-
-  font-size: 0.95rem;
-  font-weight: 600;
-
-  color: var(--text-color);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
 }
 
 /* ---------- Links ---------- */
 
 a {
-  color: var(--color-primary);
+  color: var(--primary);
+  transition: color var(--transition);
 }
 
 a:hover {
-  color: var(--color-primary-light);
+  color: var(--primary-hover);
 }
 
 /* ---------- Code ---------- */
 
 code {
   padding: 2px 6px;
-
-  background: var(--gray-100);
-
-  border: 1px solid var(--gray-300);
-
+  background: var(--raised);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-
-  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 
 pre {
   padding: var(--space-5);
-
-  overflow: auto;
-
-  background: var(--gray-100);
-
+  overflow-x: auto;
+  background: var(--raised);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  font-family: var(--font-mono);
 }
 
 code,
@@ -134,14 +129,13 @@ pre {
 
 hr {
   margin: var(--space-7) 0;
-
   border: 0;
-
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
 }
 
 /* ---------- Text Selection ---------- */
 
 ::selection {
-  background: rgba(15, 76, 129, 0.15);
+  background: var(--gold-soft);
+  color: var(--text);
 }

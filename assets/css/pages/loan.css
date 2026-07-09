@@ -332,9 +332,9 @@
    ========================================================== */
 
 .loan-view {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 /* ==========================================================
@@ -342,15 +342,15 @@
    ========================================================== */
 
 .loan-summary {
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 
-    gap: var(--space-5);
+  gap: var(--space-5);
 }
 
 .loan-summary .loan-panel {
-    height: 100%;
+  height: 100%;
 }
 
 /* ==========================================================
@@ -358,19 +358,19 @@
    ========================================================== */
 
 .loan-payment {
-    display: flex;
+  display: flex;
 
-    align-items: end;
+  align-items: end;
 
-    gap: var(--space-4);
+  gap: var(--space-4);
 
-    flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .loan-payment .form-group {
-    flex: 1;
+  flex: 1;
 
-    min-width: 220px;
+  min-width: 220px;
 }
 
 /* ==========================================================
@@ -378,17 +378,17 @@
    ========================================================== */
 
 .loan-schedule small {
-    display: block;
+  display: block;
 
-    margin-top: .25rem;
+  margin-top: 0.25rem;
 
-    color: var(--text-light);
+  color: var(--text-light);
 
-    font-size: var(--text-xs);
+  font-size: var(--text-xs);
 }
 
 .loan-schedule .loan-status {
-    width: 110px;
+  width: 110px;
 }
 
 /* ==========================================================
@@ -396,25 +396,21 @@
    ========================================================== */
 
 .loan-inline-form {
-    display: flex;
+  display: flex;
 
-    align-items: center;
+  align-items: center;
 
-    gap: var(--space-2);
+  gap: var(--space-2);
 
-    flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .loan-inline-form .form-control {
-
-    min-width: 100px;
-
+  min-width: 100px;
 }
 
 .loan-inline-form button {
-
-    white-space: nowrap;
-
+  white-space: nowrap;
 }
 
 /* ==========================================================
@@ -422,15 +418,11 @@
    ========================================================== */
 
 .loan-ledger td {
-
-    vertical-align: middle;
-
+  vertical-align: middle;
 }
 
 .loan-ledger td:first-child {
-
-    white-space: nowrap;
-
+  white-space: nowrap;
 }
 
 .loan-ledger td:nth-child(2),
@@ -438,11 +430,9 @@
 .loan-ledger td:nth-child(4),
 .loan-ledger td:nth-child(5),
 .loan-ledger td:nth-child(6) {
+  text-align: right;
 
-    text-align: right;
-
-    font-weight: var(--fw-medium);
-
+  font-weight: var(--fw-medium);
 }
 
 /* ==========================================================
@@ -450,37 +440,25 @@
    ========================================================== */
 
 @media (max-width: 992px) {
-
-    .loan-summary {
-
-        grid-template-columns: 1fr;
-
-    }
-
+  .loan-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
+  .loan-payment {
+    flex-direction: column;
 
-    .loan-payment {
+    align-items: stretch;
+  }
 
-        flex-direction: column;
+  .loan-inline-form {
+    flex-direction: column;
 
-        align-items: stretch;
+    align-items: stretch;
+  }
 
-    }
-
-    .loan-inline-form {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-    }
-
-    .loan-inline-form .form-control {
-
-        width: 100%;
-
-    }
-
+  .loan-inline-form .form-control {
+    width: 100%;
+  }
 }
