@@ -1,9 +1,17 @@
 <?php
 
-if (!defined('ALLOW_ACCESS')) {
-    exit('Direct access to this file is prohibited.');
-}
+$route = $_GET['route'] ?? '';
 
 ?>
 
-<script src="assets/js/member-wizard.js"></script>
+<?php if ($route === 'add_member'): ?>
+
+    <script src="assets/js/member-wizard.js"></script>
+
+<?php endif; ?>
+
+<?php if ($route === 'login'): ?>
+
+    <script src="assets/js/login.js"></script>
+
+<?php endif; ?>

@@ -66,8 +66,9 @@
   font-family: inherit;
 
   transition:
-    border-color var(--transition),
-    box-shadow var(--transition);
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   appearance: none;
 }
@@ -86,6 +87,8 @@
   border-color: var(--gold);
 
   box-shadow: 0 0 0 4px rgba(227, 148, 18, 0.12);
+
+  transform: translateY(-1px);
 }
 
 .form-control--error {
@@ -98,6 +101,48 @@
   background: var(--raised);
   color: var(--text-light);
   cursor: not-allowed;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field .form-control {
+  padding-right: 52px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  top: 50%;
+
+  right: 16px;
+
+  transform: translateY(-50%);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 36px;
+
+  height: 36px;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--text-light);
+
+  cursor: pointer;
+
+  transition: color var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--gold);
 }
 
 /* ==========================================================
@@ -254,12 +299,6 @@ input[type="file"]::file-selector-button:hover {
 
 .form-grid--2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (max-width: 768px) {
-  .form-grid--2 {
-    grid-template-columns: 1fr;
-  }
 }
 
 .form-grid--4 {

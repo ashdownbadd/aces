@@ -27,21 +27,27 @@
 
   align-items: center;
 
-  gap: 12px;
-
-  color: var(--text-color);
+  gap: 0.75rem;
 
   text-decoration: none;
 
-  font-size: 1.25rem;
+  color: var(--text-color);
 
-  font-weight: 700;
+  font-size: 1.5rem;
+
+  font-weight: 800;
+
+  letter-spacing: -0.03em;
 }
 
 .app-header__logo i {
-  color: var(--color-primary);
+  color: var(--gold);
 
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.app-header__title {
+  font-size: 1.6rem;
 }
 
 .app-header__user {

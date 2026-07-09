@@ -100,80 +100,13 @@ function handleDashboard(PDO $pdo): string
 
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Quick Actions
-    |--------------------------------------------------------------------------
-    */
-
-    $modules = [
-
-        [
-
-            'title'       => 'Members',
-
-            'description' => 'Manage cooperative members.',
-
-            'icon'        => 'fas fa-users',
-
-            'url'         => url('members'),
-
-            'color'       => 'primary'
-
-        ],
-
-        [
-
-            'title'       => 'Ledger',
-
-            'description' => 'Accounting and journal vouchers.',
-
-            'icon'        => 'fas fa-book',
-
-            'url'         => url('ledger'),
-
-            'color'       => 'success'
-
-        ],
-
-        [
-
-            'title'       => 'Loans',
-
-            'description' => 'Loan and amortization management.',
-
-            'icon'        => 'fas fa-money-bill-wave',
-
-            'url'         => url('amortization_dashboard'),
-
-            'color'       => 'warning'
-
-        ],
-
-        [
-
-            'title'       => 'Activity Logs',
-
-            'description' => 'View system audit trail.',
-
-            'icon'        => 'fas fa-history',
-
-            'url'         => url('activity_logs'),
-
-            'color'       => 'secondary'
-
-        ]
-
-    ];
-
     return render(
         'dashboard',
         array_merge(
             $stats,
             [
                 'alerts' => $alerts,
-                'cards' => $cards,
-                'modules' => $modules
+                'cards' => $cards
             ]
         )
     );

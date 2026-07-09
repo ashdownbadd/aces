@@ -1,111 +1,105 @@
 /* ==========================================================
+   APP MAIN
+========================================================== */
+
+.app-main {
+  flex: 1;
+
+  display: flex;
+}
+
+/* ==========================================================
    PAGE
 ========================================================== */
 
-.page{
+.page {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
+  gap: 2rem;
 
-    gap:var(--space-6);
-
+  padding-block: 2.5rem 4rem;
 }
 
 /* ==========================================================
    PAGE HEADER
 ========================================================== */
 
-.page__header{
+.page__header {
+  display: flex;
 
-    display:flex;
+  justify-content: space-between;
 
-    justify-content:space-between;
+  align-items: flex-start;
 
-    align-items:flex-start;
+  gap: var(--space-5);
 
-    gap:var(--space-5);
-
-    flex-wrap:wrap;
-
+  flex-wrap: wrap;
 }
 
 /* ==========================================================
    PAGE TITLE GROUP
 ========================================================== */
 
-.page__heading{
+.page__heading {
+  display: flex;
 
-    display:flex;
-
-    flex-direction:column;
-
+  flex-direction: column;
 }
 
-.page__title{
-
-    margin-bottom:var(--space-2);
-
+.page__title {
+  margin-bottom: var(--space-2);
 }
 
-.page__subtitle{
+.page__subtitle {
+  color: var(--text-muted);
 
-    color:var(--text-muted);
-
-    margin-bottom:0;
-
+  margin-bottom: 0;
 }
 
 /* ==========================================================
    PAGE ACTIONS
 ========================================================== */
 
-.page__actions{
+.page__actions {
+  display: flex;
 
-    display:flex;
+  align-items: center;
 
-    align-items:center;
+  gap: var(--space-3);
 
-    gap:var(--space-3);
-
-    flex-wrap:wrap;
-
+  flex-wrap: wrap;
 }
 
 /* ==========================================================
    PAGE CONTENT
 ========================================================== */
 
-.page__content{
+.page__content {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
-
-    gap:var(--space-5);
-
+  gap: var(--space-5);
 }
 
 /* ==========================================================
    SECTION
 ========================================================== */
 
-.page__section{
+.page__section {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
-
-    gap:var(--space-4);
-
+  gap: var(--space-4);
 }
 
 /* ==========================================================
    DIVIDER
 ========================================================== */
 
-.page__divider{
-
-    border-top:1px solid var(--border-color);
-
+.page__divider {
+  border-top: 1px solid var(--border-color);
 }

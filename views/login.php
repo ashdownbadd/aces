@@ -10,6 +10,12 @@ if (!defined('ALLOW_ACCESS')) {
 
     <div class="login-page__content">
 
+        <div class="login-logo">
+
+            <i class="fas fa-building-columns"></i>
+
+        </div>
+
         <div class="login-brand">
 
             <span class="login-brand__eyebrow">
@@ -88,10 +94,17 @@ if (!defined('ALLOW_ACCESS')) {
                 </label>
 
                 <input
+
                     class="form-control"
+
                     type="text"
+
                     name="username"
+
                     autocomplete="username"
+
+                    autofocus
+
                     required>
 
             </div>
@@ -104,12 +117,37 @@ if (!defined('ALLOW_ACCESS')) {
 
                 </label>
 
-                <input
-                    class="form-control"
-                    type="password"
-                    name="password"
-                    autocomplete="current-password"
-                    required>
+                <div class="password-field">
+
+                    <input
+
+                        id="password"
+
+                        class="form-control"
+
+                        type="password"
+
+                        name="password"
+
+                        autocomplete="current-password"
+
+                        required>
+
+                    <button
+
+                        type="button"
+
+                        class="password-toggle"
+
+                        id="togglePassword"
+
+                        aria-label="Show password">
+
+                        <i class="fas fa-eye"></i>
+
+                    </button>
+
+                </div>
 
             </div>
 

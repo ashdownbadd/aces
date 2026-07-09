@@ -34,9 +34,13 @@ $isLoginPage = in_array($route, ['login'], true);
 
         <?php endif; ?>
 
-        <main class="container">
+        <main class="app-main">
 
-            <?= $content ?>
+            <div class="container">
+
+                <?= $content ?>
+
+            </div>
 
         </main>
 

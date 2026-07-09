@@ -12,6 +12,6 @@ return [
 
     'portal' => 'Member Portal',
 
-    'copyright' => '© 2026 ACES'
+    'copyright' => '© ' . date('Y') . ' ACES'
 
 ];
