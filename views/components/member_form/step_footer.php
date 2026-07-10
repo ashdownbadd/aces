@@ -11,9 +11,9 @@ if (!defined('ALLOW_ACCESS')) {
     class="btn btn--secondary"
     id="wizardPrevious">
 
-    <i class="fas fa-arrow-left"></i>
+    <i class="fas fa-times"></i>
 
-    Previous
+    Cancel
 
 </button>
 
@@ -33,7 +33,8 @@ if (!defined('ALLOW_ACCESS')) {
     <button
         type="submit"
         class="btn btn--success"
-        id="wizardSubmit">
+        id="wizardSubmit"
+        hidden>
 
         <i class="fas fa-save"></i>
 

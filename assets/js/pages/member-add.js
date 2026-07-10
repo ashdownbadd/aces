@@ -118,11 +118,26 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateButtons() {
-    previousButton.hidden = currentStep === 0;
+    const isFirstStep = currentStep === 0;
+    const isLastStep = currentStep === steps.length - 1;
 
-    nextButton.hidden = currentStep === steps.length - 1;
+    previousButton.innerHTML = isFirstStep
+      ? `
+            <i class="fas fa-times"></i>
+            Cancel
+        `
+      : `
+            <i class="fas fa-arrow-left"></i>
+            Previous
+        `;
 
-    submitButton.hidden = currentStep !== steps.length - 1;
+    if (isLastStep) {
+      nextButton.hidden = true;
+      submitButton.hidden = false;
+    } else {
+      nextButton.hidden = false;
+      submitButton.hidden = true;
+    }
   }
 
   function updateHeader() {
@@ -163,10 +178,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   previousButton.addEventListener("click", () => {
-    if (currentStep > 0) {
-      currentStep--;
-      updateWizard();
+    if (currentStep === 0) {
+      const confirmed = confirm(
+        "Discard this member registration and return to the Members page?",
+      );
+
+      if (confirmed) {
+        window.location.href = "index.php?route=members";
+      }
+
+      return;
     }
+
+    currentStep--;
+
+    updateWizard();
   });
 
   wizard.querySelectorAll("input, select, textarea").forEach((field) => {

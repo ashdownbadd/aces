@@ -88,3 +88,9 @@ pre {
   outline: 3px solid rgba(30, 107, 184, 0.35);
   outline-offset: 2px;
 }
+
+/* ---------- Hidden ---------- */
+
+[hidden] {
+  display: none !important;
+}
