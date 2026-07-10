@@ -45,17 +45,19 @@ if (!defined('ALLOW_ACCESS')) {
             'placeholder' => '0917 123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
-            'maxlength' => 20
+            'maxlength' => 20,
+            'mask' => 'mobile'
         ]);
 
         c('form/input', [
             'type' => 'tel',
             'label' => 'Secondary Phone',
             'name' => 'phone_no_2',
-            'placeholder' => '0918 123 4567',
+            'placeholder' => '0917 123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
-            'maxlength' => 20
+            'maxlength' => 20,
+            'mask' => 'mobile'
         ]);
 
         c('form/input', [
@@ -65,17 +67,19 @@ if (!defined('ALLOW_ACCESS')) {
             'placeholder' => '(02) 8123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
-            'maxlength' => 20
+            'maxlength' => 20,
+            'mask' => 'telephone'
         ]);
 
         c('form/input', [
             'type' => 'tel',
             'label' => 'Secondary Telephone',
             'name' => 'telephone_no_2',
-            'placeholder' => '(02) 8123 4568',
+            'placeholder' => '(02) 8123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
-            'maxlength' => 20
+            'maxlength' => 20,
+            'mask' => 'telephone'
         ]);
 
         ?>

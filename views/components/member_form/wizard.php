@@ -26,13 +26,14 @@ $steps = [
 
     <?php c('member_form/step_progress'); ?>
 
-    <div class="card member-onboarding__card">
+    <section class="member-panel">
 
-        <div class="card__body">
+        <div class="member-panel__body">
 
             <?php foreach ($steps as $index => $step): ?>
 
-                <section class="member-step <?= $index === 0 ? 'is-active' : '' ?>">
+                <section
+                    class="member-step <?= $index === 0 ? 'is-active' : '' ?>">
 
                     <?php c("member_form/step_{$step}"); ?>
 
@@ -42,8 +43,12 @@ $steps = [
 
         </div>
 
-        <?php c('member_form/step_footer'); ?>
+        <footer class="member-panel__footer">
 
-    </div>
+            <?php c('member_form/step_footer'); ?>
+
+        </footer>
+
+    </section>
 
 </form>

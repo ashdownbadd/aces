@@ -4,21 +4,29 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$steps = [
+    'Personal',
+    'Contact',
+    'Address',
+    'Employment',
+    'Education',
+    'Beneficiaries',
+    'Review'
+];
+
 ?>
 
-<div class="member-onboarding__progress">
+<section class="member-stepper">
 
-    <div class="member-onboarding__progress-header">
+    <div class="member-stepper__header">
 
-        <span class="member-onboarding__step-label">
-
-            STEP <span id="wizardStepNumber">1</span> OF 4
-
+        <span class="member-stepper__label">
+            Step <span id="wizardStepNumber">1</span>
         </span>
 
         <h2
-            class="member-onboarding__step-title"
-            id="wizardStepTitle">
+            id="wizardStepTitle"
+            class="member-stepper__title">
 
             Personal Information
 
@@ -26,12 +34,26 @@ if (!defined('ALLOW_ACCESS')) {
 
     </div>
 
-    <div class="member-onboarding__progress-track">
+    <div class="member-stepper__timeline">
 
-        <div
-            class="member-onboarding__progress-bar"
-            id="wizardProgressBar"></div>
+        <?php foreach ($steps as $index => $step): ?>
+
+            <div
+                class="member-stepper__item <?= $index === 0 ? 'is-active' : '' ?>"
+                data-step="<?= $index ?>">
+
+                <div class="member-stepper__dot"></div>
+
+                <span class="member-stepper__text">
+
+                    <?= htmlspecialchars($step) ?>
+
+                </span>
+
+            </div>
+
+        <?php endforeach; ?>
 
     </div>
 
-</div>
+</section>

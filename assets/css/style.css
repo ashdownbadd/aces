@@ -32,7 +32,7 @@
 @import url("components/badge.css");
 @import url("components/toolbar.css");
 @import url("components/navigation.css");
-@import url("components/breadcrumbs.css");
+@import url("components/breadcrumb.css");
 @import url("components/stats.css");
 @import url("components/pagination.css");
 @import url("components/modal.css");
@@ -55,7 +55,7 @@
 
 @import url("pages/login.css");
 @import url("pages/dashboard.css");
-@import url("pages/members.css");
+@import url("pages/member.css");
 @import url("pages/admin.css");
 @import url("pages/ledger.css");
 @import url("pages/loan.css");

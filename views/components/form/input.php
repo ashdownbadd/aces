@@ -26,6 +26,11 @@ $step = $step ?? null;
 $pattern = $pattern ?? null;
 $inputmode = $inputmode ?? null;
 
+$mask = $mask ?? '';
+
+$trim = $trim ?? false;
+$transform = $transform ?? '';
+
 $error = $error ?? '';
 $help = $help ?? '';
 
@@ -53,13 +58,21 @@ $help = $help ?? '';
         value="<?= htmlspecialchars($value) ?>"
         placeholder="<?= htmlspecialchars($placeholder) ?>"
         autocomplete="<?= htmlspecialchars($autocomplete) ?>"
+
         <?= $inputmode ? 'inputmode="' . htmlspecialchars($inputmode) . '"' : '' ?>
         <?= $pattern ? 'pattern="' . htmlspecialchars($pattern) . '"' : '' ?>
+
         <?= $maxlength !== null ? 'maxlength="' . (int) $maxlength . '"' : '' ?>
         <?= $minlength !== null ? 'minlength="' . (int) $minlength . '"' : '' ?>
+
         <?= $min !== null ? 'min="' . htmlspecialchars($min) . '"' : '' ?>
         <?= $max !== null ? 'max="' . htmlspecialchars($max) . '"' : '' ?>
         <?= $step !== null ? 'step="' . htmlspecialchars($step) . '"' : '' ?>
+
+        <?= $mask ? 'data-mask="' . htmlspecialchars($mask) . '"' : '' ?>
+        <?= $trim ? 'data-trim' : '' ?>
+        <?= $transform ? 'data-transform="' . htmlspecialchars($transform) . '"' : '' ?>
+
         <?= $required ? 'required' : '' ?>
         <?= $readonly ? 'readonly' : '' ?>
         <?= $disabled ? 'disabled' : '' ?>>

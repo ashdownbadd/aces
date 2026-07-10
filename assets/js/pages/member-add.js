@@ -104,19 +104,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateProgress() {
-    const percentage = ((currentStep + 1) / steps.length) * 100;
+    const items = document.querySelectorAll(".member-stepper__item");
 
-    progressBar.style.width = `${percentage}%`;
+    items.forEach((item, index) => {
+      item.classList.remove("is-active", "is-complete");
+
+      if (index < currentStep) {
+        item.classList.add("is-complete");
+      } else if (index === currentStep) {
+        item.classList.add("is-active");
+      }
+    });
   }
 
   function updateButtons() {
-    previousButton.style.display = currentStep === 0 ? "none" : "inline-flex";
+    previousButton.hidden = currentStep === 0;
 
-    nextButton.style.display =
-      currentStep === steps.length - 1 ? "none" : "inline-flex";
+    nextButton.hidden = currentStep === steps.length - 1;
 
-    submitButton.style.display =
-      currentStep === steps.length - 1 ? "inline-flex" : "none";
+    submitButton.hidden = currentStep !== steps.length - 1;
   }
 
   function updateHeader() {
@@ -125,6 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateSteps() {
+    const steps = document.querySelectorAll(".member-step");
+
     steps.forEach((step, index) => {
       step.classList.toggle("is-active", index === currentStep);
     });

@@ -6,48 +6,34 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="member-onboarding__header">
+<header class="member-onboarding__header">
 
-    <div class="member-onboarding__back">
+    <?php
 
-        <?php
+    c('breadcrumb', [
+        'items' => [
+            [
+                'label' => 'Members',
+                'href' => url('members')
+            ],
+            [
+                'label' => 'Create Member'
+            ]
+        ]
+    ]);
 
-        c('button', [
-
-            'href' => url('members'),
-
-            'text' => 'Back to Members',
-
-            'icon' => 'fas fa-arrow-left',
-
-            'type' => 'secondary'
-
-        ]);
-
-        ?>
-
-    </div>
+    ?>
 
     <div class="member-onboarding__hero">
 
-        <span class="member-onboarding__eyebrow">
-
-            MEMBER REGISTRATION
-
-        </span>
-
         <h1 class="member-onboarding__title">
-
             Create Member
-
         </h1>
 
         <p class="member-onboarding__description">
-
-            Complete the steps below to register a new cooperative member.
-
+            Register a new cooperative member by completing the information below.
         </p>
 
     </div>
 
-</div>
+</header>

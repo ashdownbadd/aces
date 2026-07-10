@@ -6,19 +6,18 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="member-onboarding__footer">
+<button
+    type="button"
+    class="btn btn--secondary"
+    id="wizardPrevious">
 
-    <button
-        type="button"
-        class="btn btn--secondary"
-        id="wizardPrevious"
-        style="display:none;">
+    <i class="fas fa-arrow-left"></i>
 
-        <i class="fas fa-arrow-left"></i>
+    Previous
 
-        Back
+</button>
 
-    </button>
+<div class="member-panel__actions">
 
     <button
         type="button"
@@ -34,8 +33,7 @@ if (!defined('ALLOW_ACCESS')) {
     <button
         type="submit"
         class="btn btn--success"
-        id="wizardSubmit"
-        style="display:none;">
+        id="wizardSubmit">
 
         <i class="fas fa-save"></i>
 

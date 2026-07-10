@@ -8,10 +8,6 @@ if (!defined('ALLOW_ACCESS')) {
 
 <div class="member-step__content">
 
-    <h2 class="member-step__title">
-        Personal Information
-    </h2>
-
     <p class="member-step__description">
         Enter the member's basic personal information.
     </p>
@@ -23,30 +19,34 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'First Name',
             'name' => 'first_name',
-            'placeholder' => 'Juan',
             'required' => true,
+            'trim' => true,
+            'transform' => 'capitalize',
             'maxlength' => 100
         ]);
 
         c('form/input', [
             'label' => 'Middle Name',
             'name' => 'middle_name',
-            'placeholder' => 'Santos',
+            'trim' => true,
+            'transform' => 'capitalize',
             'maxlength' => 100
         ]);
 
         c('form/input', [
             'label' => 'Last Name',
             'name' => 'last_name',
-            'placeholder' => 'Dela Cruz',
             'required' => true,
+            'trim' => true,
+            'transform' => 'capitalize',
             'maxlength' => 100
         ]);
 
         c('form/input', [
             'label' => 'Suffix',
             'name' => 'suffix',
-            'placeholder' => 'Jr.',
+            'trim' => true,
+            'transform' => 'uppercase',
             'maxlength' => 20
         ]);
 
@@ -61,8 +61,9 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'Birth Place',
             'name' => 'birth_place',
-            'placeholder' => 'Quezon City',
             'required' => true,
+            'trim' => true,
+            'transform' => 'capitalize',
             'maxlength' => 150
         ]);
 

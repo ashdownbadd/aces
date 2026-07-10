@@ -6,8 +6,4 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="container container--lg">
-
-    <?php c('member_form/wizard'); ?>
-
-</div>
+<?php c('member_form/wizard'); ?>
