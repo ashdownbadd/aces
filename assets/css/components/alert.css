@@ -25,11 +25,11 @@
 }
 
 .alert--warning {
-  border-left: 4px solid var(--gold);
+  border-left: 4px solid var(--warning);
 }
 
 .alert--success {
-  border-left: 4px solid var(--ok);
+  border-left: 4px solid var(--success);
 }
 
 .alert--danger {

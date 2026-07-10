@@ -1,6 +1,6 @@
 /* ==========================================================
-   CARD
-   ICS UI Framework
+  ACES UI
+  Design System
 ========================================================== */
 
 /* ==========================================================
@@ -8,8 +8,9 @@
 ========================================================== */
 
 .card {
-  display: flex;
+  position: relative;
 
+  display: flex;
   flex-direction: column;
 
   background: var(--surface);
@@ -21,6 +22,39 @@
   box-shadow: var(--shadow-sm);
 
   overflow: hidden;
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background: transparent;
+
+  transition: background var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+
+  border-color: var(--rim);
+
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover::before {
+  background: var(--gold);
 }
 
 /* ==========================================================

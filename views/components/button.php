@@ -1,25 +1,58 @@
 <?php
 
-$href ??= '#';
+$href = $href ?? null;
+$text = $text ?? '';
 
-$text ??= '';
+$type = $type ?? 'primary';
+$size = $size ?? 'md';
 
-$type ??= 'primary';
+$icon = $icon ?? '';
+$block = $block ?? false;
 
-$icon ??= '';
+$classes = [
+    'btn',
+    'btn--' . $type,
+    'btn--' . $size
+];
+
+if ($block) {
+    $classes[] = 'btn--block';
+}
+
+$class = implode(' ', $classes);
 
 ?>
 
-<a
-    href="<?= htmlspecialchars($href) ?>"
-    class="btn btn--<?= htmlspecialchars($type) ?>">
+<?php if ($href): ?>
 
-    <?php if (!empty($icon)): ?>
+    <a
+        href="<?= htmlspecialchars($href) ?>"
+        class="<?= htmlspecialchars($class) ?>">
 
-        <i class="<?= htmlspecialchars($icon) ?>"></i>
+        <?php if ($icon): ?>
 
-    <?php endif; ?>
+            <i class="<?= htmlspecialchars($icon) ?>"></i>
 
-    <?= htmlspecialchars($text) ?>
+        <?php endif; ?>
 
-</a>
+        <span><?= htmlspecialchars($text) ?></span>
+
+    </a>
+
+<?php else: ?>
+
+    <button
+        type="submit"
+        class="<?= htmlspecialchars($class) ?>">
+
+        <?php if ($icon): ?>
+
+            <i class="<?= htmlspecialchars($icon) ?>"></i>
+
+        <?php endif; ?>
+
+        <span><?= htmlspecialchars($text) ?></span>
+
+    </button>
+
+<?php endif; ?>

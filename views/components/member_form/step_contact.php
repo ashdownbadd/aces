@@ -6,64 +6,79 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="form-grid form-grid--2">
+<div class="member-step__content">
 
-    <div class="form-group">
+    <h2 class="member-step__title">
+        Contact Information
+    </h2>
 
-        <label class="form-label">
+    <p class="member-step__description">
+        Provide the member's contact information.
+    </p>
 
-            Email Address
+    <div class="form-grid">
 
-        </label>
+        <?php
 
-        <input
-            class="form-control"
-            type="email"
-            name="email"
-            placeholder="juan.delacruz@email.com">
+        c('form/input', [
+            'type' => 'email',
+            'label' => 'Email Address',
+            'name' => 'email',
+            'placeholder' => 'juan.delacruz@example.com',
+            'autocomplete' => 'email',
+            'maxlength' => 255
+        ]);
 
-    </div>
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Primary Phone <span class="required">*</span>
-
-        </label>
-
-        <input
-            class="form-control"
-            type="text"
-            name="phone_no_1"
-            placeholder="09XXXXXXXXX"
-            required>
+        ?>
 
     </div>
 
-</div>
+    <div class="form-grid form-grid--2">
 
-<div class="form-grid">
+        <?php
 
-    <div class="form-group">
+        c('form/input', [
+            'type' => 'tel',
+            'label' => 'Primary Phone',
+            'name' => 'phone_no_1',
+            'required' => true,
+            'placeholder' => '0917 123 4567',
+            'autocomplete' => 'tel',
+            'inputmode' => 'tel',
+            'maxlength' => 20
+        ]);
 
-        <label class="form-label">
+        c('form/input', [
+            'type' => 'tel',
+            'label' => 'Secondary Phone',
+            'name' => 'phone_no_2',
+            'placeholder' => '0918 123 4567',
+            'autocomplete' => 'tel',
+            'inputmode' => 'tel',
+            'maxlength' => 20
+        ]);
 
-            Secondary Phone
+        c('form/input', [
+            'type' => 'tel',
+            'label' => 'Primary Telephone',
+            'name' => 'telephone_no_1',
+            'placeholder' => '(02) 8123 4567',
+            'autocomplete' => 'tel',
+            'inputmode' => 'tel',
+            'maxlength' => 20
+        ]);
 
-            <span style="font-weight:400;color:var(--text-muted);">
+        c('form/input', [
+            'type' => 'tel',
+            'label' => 'Secondary Telephone',
+            'name' => 'telephone_no_2',
+            'placeholder' => '(02) 8123 4568',
+            'autocomplete' => 'tel',
+            'inputmode' => 'tel',
+            'maxlength' => 20
+        ]);
 
-                (Optional)
-
-            </span>
-
-        </label>
-
-        <input
-            class="form-control"
-            type="text"
-            name="phone_no_2"
-            placeholder="Optional">
+        ?>
 
     </div>
 

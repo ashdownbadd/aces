@@ -1,24 +1,22 @@
 /* ==========================================================
    STAT CARD
-   Dashboard statistics and summary metrics.
+   ACES UI Design System
 ========================================================== */
 
 .stat-card {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--space-5);
-
   padding: var(--space-5);
 
   background: var(--surface);
-
   border: 1px solid var(--border);
-
   border-radius: var(--radius-lg);
 
   box-shadow: var(--shadow-xs);
+
+  text-decoration: none;
+  color: inherit;
 
   transition:
     transform var(--transition),
@@ -29,56 +27,66 @@
 .stat-card:hover {
   transform: translateY(-4px);
 
-  border-color: var(--rim);
+  border-color: var(--gold);
 
   box-shadow: var(--shadow-md);
 }
 
-.stat-card__body {
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.stat-card__header {
   display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  text-align: center;
-
-  gap: var(--space-3);
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
 }
 
-.stat-card__content {
+.stat-card__heading {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--space-2);
-
   flex: 1;
 }
 
+/* ==========================================================
+   BODY
+========================================================== */
+
+.stat-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .stat-card__title {
+  margin: 0;
+
   color: var(--text-light);
 
   font-size: var(--text-sm);
 
-  font-weight: var(--fw-medium);
-
-  line-height: var(--leading-normal);
+  font-weight: var(--fw-semibold);
 }
 
 .stat-card__value {
+  margin: 0;
+
   color: var(--text);
 
   font-family: var(--font-heading);
 
-  font-size: var(--text-3xl);
+  font-size: clamp(2rem, 4vw, 2.8rem);
 
   font-weight: var(--fw-bold);
 
-  line-height: var(--leading-tight);
+  line-height: 1;
 }
 
 .stat-card__subtitle {
+  margin: 0;
+
   color: var(--text-light);
 
   font-size: var(--text-sm);
@@ -92,27 +100,32 @@
   line-height: var(--leading-normal);
 }
 
+/* ==========================================================
+   ICON
+========================================================== */
+
 .stat-card__icon {
   display: flex;
-
   align-items: center;
-
   justify-content: center;
+
+  width: 52px;
+  height: 52px;
 
   flex-shrink: 0;
 
-  width: 56px;
+  border-radius: var(--radius-md);
 
-  height: 56px;
+  font-size: 1.25rem;
 
-  border-radius: var(--radius-lg);
-
-  background: var(--gold-soft);
-
-  color: var(--primary);
-
-  font-size: 1.4rem;
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
+
+/* ==========================================================
+   FOOTER
+========================================================== */
 
 .stat-card__footer {
   padding-top: var(--space-4);
@@ -124,11 +137,9 @@
   font-size: var(--text-xs);
 }
 
-.stat-card[href] {
-  text-decoration: none;
-
-  color: inherit;
-}
+/* ==========================================================
+   FOCUS
+========================================================== */
 
 .stat-card:focus-visible {
   outline: none;
@@ -138,13 +149,47 @@
     var(--shadow-md);
 }
 
+/* ==========================================================
+   COLORS
+========================================================== */
+
+.stat-card--primary .stat-card__icon {
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+.stat-card--success .stat-card__icon {
+  background: rgba(39, 168, 88, 0.12);
+  color: var(--success);
+}
+
+.stat-card--warning .stat-card__icon {
+  background: rgba(245, 155, 10, 0.12);
+  color: var(--warning);
+}
+
+.stat-card--danger .stat-card__icon {
+  background: rgba(217, 61, 61, 0.12);
+  color: var(--danger);
+}
+
+.stat-card--info .stat-card__icon {
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--info);
+}
+
+.stat-card--purple .stat-card__icon {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
 @media (max-width: 768px) {
   .stat-card {
     padding: var(--space-4);
-  }
-
-  .stat-card__body {
-    gap: var(--space-4);
   }
 
   .stat-card__value {
@@ -153,9 +198,7 @@
 
   .stat-card__icon {
     width: 48px;
-
     height: 48px;
-
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
 }

@@ -1,17 +1,21 @@
 <?php
 
-$type        = $type ?? 'text';
-$name        = $name ?? '';
-$id          = $id ?? $name;
-$label       = $label ?? '';
-$value       = $value ?? '';
+$name = $name ?? '';
+$id = $id ?? $name;
+
+$label = $label ?? '';
+
+$value = $value ?? '';
 $placeholder = $placeholder ?? '';
-$required    = $required ?? false;
-$readonly    = $readonly ?? false;
-$disabled    = $disabled ?? false;
-$autocomplete = $autocomplete ?? 'off';
-$error       = $error ?? '';
-$help        = $help ?? '';
+
+$rows = $rows ?? 4;
+
+$required = $required ?? false;
+$readonly = $readonly ?? false;
+$disabled = $disabled ?? false;
+
+$error = $error ?? '';
+$help = $help ?? '';
 
 ?>
 
@@ -20,42 +24,24 @@ $help        = $help ?? '';
     <?php if ($label): ?>
 
         <label
-            class="form-label"
+            class="form-label<?= $required ? ' form-label--required' : '' ?>"
             for="<?= htmlspecialchars($id) ?>">
 
             <?= htmlspecialchars($label) ?>
-
-            <?php if ($required): ?>
-
-                <span class="text-danger">*</span>
-
-            <?php endif; ?>
 
         </label>
 
     <?php endif; ?>
 
-    <input
-
+    <textarea
         class="form-control<?= $error ? ' is-invalid' : '' ?>"
-
-        type="<?= htmlspecialchars($type) ?>"
-
         id="<?= htmlspecialchars($id) ?>"
-
         name="<?= htmlspecialchars($name) ?>"
-
-        value="<?= htmlspecialchars($value) ?>"
-
+        rows="<?= (int) $rows ?>"
         placeholder="<?= htmlspecialchars($placeholder) ?>"
-
-        autocomplete="<?= htmlspecialchars($autocomplete) ?>"
-
         <?= $required ? 'required' : '' ?>
-
         <?= $readonly ? 'readonly' : '' ?>
-
-        <?= $disabled ? 'disabled' : '' ?>>
+        <?= $disabled ? 'disabled' : '' ?>><?= htmlspecialchars($value) ?></textarea>
 
     <?php if ($help): ?>
 

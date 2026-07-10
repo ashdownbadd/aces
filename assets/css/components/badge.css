@@ -25,31 +25,26 @@
 ========================================================== */
 
 .badge--primary {
-  background: var(--gold-dim);
-
+  background: var(--gold-soft);
   color: var(--gold);
 }
 
 .badge--success {
   background: rgba(39, 168, 88, 0.12);
-
-  color: var(--ok);
+  color: var(--success);
 }
 
 .badge--danger {
   background: rgba(217, 61, 61, 0.12);
-
   color: var(--danger);
 }
 
 .badge--warning {
   background: rgba(245, 155, 10, 0.12);
-
-  color: var(--gold);
+  color: var(--warning);
 }
 
 .badge--neutral {
   background: var(--raised);
-
-  color: var(--t2);
+  color: var(--text-light);
 }

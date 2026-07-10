@@ -13,7 +13,7 @@
 
   background: var(--surface);
 
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 }
 
 .app-nav__link {
@@ -37,13 +37,12 @@
 }
 
 .app-nav__link:hover {
-  color: var(--color-primary);
-
-  background: #f5f8ff;
+  color: var(--primary);
+  background: var(--gold-soft);
 }
 
 .app-nav__link--active {
-  color: var(--color-primary);
-
-  border-bottom-color: var(--color-primary);
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  background: var(--gold-soft);
 }

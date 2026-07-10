@@ -4,16 +4,12 @@
 
 .app-header {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
-  padding: 18px 30px;
-
+  padding: 1rem 2rem;
+  min-height: var(--header-height);
   background: var(--surface);
-
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 }
 
 .app-header__brand {
@@ -31,8 +27,7 @@
 
   text-decoration: none;
 
-  color: var(--text-color);
-
+  color: var(--text);
   font-size: 1.5rem;
 
   font-weight: 800;
@@ -47,7 +42,9 @@
 }
 
 .app-header__title {
-  font-size: 1.6rem;
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
 .app-header__user {

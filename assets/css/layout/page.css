@@ -101,5 +101,5 @@
 ========================================================== */
 
 .page__divider {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
 }

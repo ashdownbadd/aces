@@ -6,122 +6,111 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="form-grid form-grid--2">
+<div class="member-step__content">
 
-    <div class="form-group">
+    <h2 class="member-step__title">
+        Personal Information
+    </h2>
 
-        <label class="form-label">
+    <p class="member-step__description">
+        Enter the member's basic personal information.
+    </p>
 
-            First Name <span class="required">*</span>
+    <div class="form-grid form-grid--2">
 
-        </label>
+        <?php
 
-        <input
-            class="form-control"
-            type="text"
-            name="first_name"
-            required
-            placeholder="Juan">
+        c('form/input', [
+            'label' => 'First Name',
+            'name' => 'first_name',
+            'placeholder' => 'Juan',
+            'required' => true,
+            'maxlength' => 100
+        ]);
 
-    </div>
+        c('form/input', [
+            'label' => 'Middle Name',
+            'name' => 'middle_name',
+            'placeholder' => 'Santos',
+            'maxlength' => 100
+        ]);
 
-    <div class="form-group">
+        c('form/input', [
+            'label' => 'Last Name',
+            'name' => 'last_name',
+            'placeholder' => 'Dela Cruz',
+            'required' => true,
+            'maxlength' => 100
+        ]);
 
-        <label class="form-label">
+        c('form/input', [
+            'label' => 'Suffix',
+            'name' => 'suffix',
+            'placeholder' => 'Jr.',
+            'maxlength' => 20
+        ]);
 
-            Last Name <span class="required">*</span>
+        c('form/input', [
+            'type' => 'date',
+            'label' => 'Birth Date',
+            'name' => 'date_of_birth',
+            'required' => true,
+            'max' => date('Y-m-d')
+        ]);
 
-        </label>
+        c('form/input', [
+            'label' => 'Birth Place',
+            'name' => 'birth_place',
+            'placeholder' => 'Quezon City',
+            'required' => true,
+            'maxlength' => 150
+        ]);
 
-        <input
-            class="form-control"
-            type="text"
-            name="last_name"
-            required
-            placeholder="Dela Cruz">
+        c('form/select', [
+            'label' => 'Sex',
+            'name' => 'sex',
+            'required' => true,
+            'options' => [
+                '' => 'Select Sex',
+                'Male' => 'Male',
+                'Female' => 'Female'
+            ]
+        ]);
 
-    </div>
+        c('form/select', [
+            'label' => 'Civil Status',
+            'name' => 'marital_status',
+            'required' => true,
+            'options' => [
+                '' => 'Select Civil Status',
+                'Single' => 'Single',
+                'Married' => 'Married',
+                'Widowed' => 'Widowed',
+                'Separated' => 'Separated'
+            ]
+        ]);
 
-</div>
-
-<div class="form-grid">
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Middle Name
-
-        </label>
-
-        <input
-            class="form-control"
-            type="text"
-            name="middle_name"
-            placeholder="Santos">
-
-    </div>
-
-</div>
-
-<div class="form-grid form-grid--3">
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Date of Birth <span class="required">*</span>
-
-        </label>
-
-        <input
-            class="form-control"
-            type="date"
-            name="date_of_birth"
-            required>
-
-    </div>
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Sex <span class="required">*</span>
-
-        </label>
-
-        <select
-            class="form-control"
-            name="sex"
-            required>
-
-            <option value="">Select...</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-
-        </select>
+        ?>
 
     </div>
 
-    <div class="form-group">
+    <div class="form-grid">
 
-        <label class="form-label">
+        <?php
 
-            Marital Status
+        c('form/select', [
+            'label' => 'Membership',
+            'name' => 'membership_type',
+            'required' => true,
+            'help' => 'Select the cooperative membership type.',
+            'options' => [
+                '' => 'Select Membership',
+                'Regular' => 'Regular',
+                'Associate' => 'Associate'
+            ]
+        ]);
 
-        </label>
-
-        <select
-            class="form-control"
-            name="marital_status">
-
-            <option value="">Select...</option>
-            <option value="Single">Single</option>
-            <option value="Married">Married</option>
-            <option value="Widowed">Widowed</option>
-            <option value="Divorced">Divorced</option>
-
-        </select>
+        ?>
 
     </div>
 

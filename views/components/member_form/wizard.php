@@ -4,6 +4,16 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$steps = [
+    'personal',
+    'contact',
+    'address',
+    'employment',
+    'education',
+    'beneficiaries',
+    'review'
+];
+
 ?>
 
 <form
@@ -20,29 +30,15 @@ if (!defined('ALLOW_ACCESS')) {
 
         <div class="card__body">
 
-            <section class="member-step is-active">
+            <?php foreach ($steps as $index => $step): ?>
 
-                <?php c('member_form/step_personal'); ?>
+                <section class="member-step <?= $index === 0 ? 'is-active' : '' ?>">
 
-            </section>
+                    <?php c("member_form/step_{$step}"); ?>
 
-            <section class="member-step">
+                </section>
 
-                <?php c('member_form/step_contact'); ?>
-
-            </section>
-
-            <section class="member-step">
-
-                <?php c('member_form/step_address'); ?>
-
-            </section>
-
-            <section class="member-step">
-
-                <?php c('member_form/step_review'); ?>
-
-            </section>
+            <?php endforeach; ?>
 
         </div>
 

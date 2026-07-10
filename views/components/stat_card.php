@@ -18,7 +18,17 @@ $tag = $url ? 'a' : 'div';
 
     class="stat-card stat-card--<?= htmlspecialchars($color) ?>">
 
-    <div class="stat-card__body">
+    <div class="stat-card__header">
+
+        <div class="stat-card__heading">
+
+            <div class="stat-card__title">
+
+                <?= htmlspecialchars($title) ?>
+
+            </div>
+
+        </div>
 
         <?php if ($icon): ?>
 
@@ -30,15 +40,13 @@ $tag = $url ? 'a' : 'div';
 
         <?php endif; ?>
 
+    </div>
+
+    <div class="stat-card__body">
+
         <div class="stat-card__value">
 
             <?= htmlspecialchars((string) $value) ?>
-
-        </div>
-
-        <div class="stat-card__title">
-
-            <?= htmlspecialchars($title) ?>
 
         </div>
 

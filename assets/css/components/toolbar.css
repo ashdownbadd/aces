@@ -1,104 +1,29 @@
 /* ==========================================================
    TOOLBAR
-   ICS UI Framework
-========================================================== */
-
-/* ==========================================================
-   TOOLBAR
+   ACES UI Design System
 ========================================================== */
 
 .toolbar {
   display: flex;
-
-  justify-content: space-between;
-
   align-items: center;
-
+  justify-content: space-between;
   gap: var(--space-4);
 
-  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
 }
 
-/* ==========================================================
-   LEFT
-========================================================== */
-
-.toolbar__start {
-  display: flex;
-
-  align-items: center;
-
-  gap: var(--space-3);
-
-  flex-wrap: wrap;
+.toolbar__left {
+  flex: 1;
+  min-width: 0;
 }
 
-/* ==========================================================
-   RIGHT
-========================================================== */
-
-.toolbar__end {
+.toolbar__right {
   display: flex;
-
   align-items: center;
-
   justify-content: flex-end;
-
   gap: var(--space-3);
 
-  flex-wrap: wrap;
-}
-
-/* ==========================================================
-   GROUP
-========================================================== */
-
-.toolbar__group {
-  display: flex;
-
-  align-items: center;
-
-  gap: var(--space-2);
-}
-
-/* ==========================================================
-   TITLE
-========================================================== */
-
-.toolbar__title {
-  font-size: var(--text-lg);
-
-  font-weight: var(--fw-bold);
-
-  color: var(--text);
-}
-
-/* ==========================================================
-   SEARCH
-========================================================== */
-
-.toolbar__search {
-  min-width: 280px;
-}
-
-/* ==========================================================
-   FILTER
-========================================================== */
-
-.toolbar__filter {
-  min-width: 180px;
-}
-
-/* ==========================================================
-   DIVIDER
-========================================================== */
-
-.toolbar__divider {
-  width: 1px;
-
-  align-self: stretch;
-
-  background: var(--border);
+  flex-shrink: 0;
 }
 
 /* ==========================================================
@@ -108,30 +33,14 @@
 @media (max-width: 768px) {
   .toolbar {
     flex-direction: column;
-
     align-items: stretch;
   }
 
-  .toolbar__start,
-  .toolbar__end {
-    width: 100%;
-
-    justify-content: flex-start;
+  .toolbar__right {
+    justify-content: stretch;
   }
 
-  .toolbar__start {
-    flex: 1;
-  }
-
-  .toolbar__start .search-box {
-    max-width: 520px;
-  }
-
-  .toolbar__end {
-    margin-left: auto;
-  }
-
-  .toolbar__filter {
+  .toolbar__right > * {
     width: 100%;
   }
 }

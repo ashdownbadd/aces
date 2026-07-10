@@ -4,6 +4,7 @@ $headers = $headers ?? [];
 $rows = $rows ?? [];
 
 $caption = $caption ?? '';
+$actions = $actions ?? '';
 
 $emptyMessage = $emptyMessage ?? 'No records found.';
 
@@ -11,11 +12,25 @@ $emptyMessage = $emptyMessage ?? 'No records found.';
 
 <div class="table">
 
-    <?php if ($caption): ?>
+    <?php if ($caption || $actions): ?>
 
         <div class="table__caption">
 
-            <?= htmlspecialchars($caption) ?>
+            <?php if ($caption): ?>
+
+                <div class="table__caption-title">
+                    <?= htmlspecialchars($caption) ?>
+                </div>
+
+            <?php endif; ?>
+
+            <?php if ($actions): ?>
+
+                <div class="table__caption-actions">
+                    <?= $actions ?>
+                </div>
+
+            <?php endif; ?>
 
         </div>
 
@@ -31,11 +46,7 @@ $emptyMessage = $emptyMessage ?? 'No records found.';
 
                     <?php foreach ($headers as $header): ?>
 
-                        <th>
-
-                            <?= htmlspecialchars($header) ?>
-
-                        </th>
+                        <th><?= htmlspecialchars($header) ?></th>
 
                     <?php endforeach; ?>
 
@@ -54,21 +65,15 @@ $emptyMessage = $emptyMessage ?? 'No records found.';
                             class="table__empty">
 
                             <div class="table__empty-icon">
-
                                 <i class="fas fa-folder-open"></i>
-
                             </div>
 
                             <div class="table__empty-title">
-
                                 <?= htmlspecialchars($emptyMessage) ?>
-
                             </div>
 
                             <div class="table__empty-description">
-
                                 There are currently no records to display.
-
                             </div>
 
                         </td>
@@ -83,11 +88,7 @@ $emptyMessage = $emptyMessage ?? 'No records found.';
 
                             <?php foreach ($row as $cell): ?>
 
-                                <td>
-
-                                    <?= $cell ?>
-
-                                </td>
+                                <td><?= $cell ?></td>
 
                             <?php endforeach; ?>
 
