@@ -6,6 +6,7 @@ function initializeForms() {
   initializeMasks();
   initializeTransforms();
   initializeTrim();
+  initializeValidation();
 }
 
 /* ==========================================================
@@ -97,6 +98,18 @@ function initializeTrim() {
       field.value = field.value.trim();
     });
   });
+}
+
+/* ==========================================================
+   VALIDATION
+========================================================== */
+
+function initializeValidation() {
+  if (typeof Validation === "undefined") {
+    return;
+  }
+
+  Validation.initialize();
 }
 
 /* ==========================================================

@@ -8,12 +8,84 @@ if (!defined('ALLOW_ACCESS')) {
 
 <div class="member-step__content">
 
-    <h2 class="member-step__title">
-        Employment Information
-    </h2>
-
     <p class="member-step__description">
-        Employment details will be added in the next phase.
+        Tell us about the member's current employment or primary source of income.
     </p>
+
+    <div class="form-grid form-grid--2">
+
+        <?php
+
+        c('form/select', [
+            'id' => 'employment_status',
+            'label' => 'Employment Status',
+            'name' => 'employment_status',
+            'required' => true,
+            'rules' => [
+                'required'
+            ],
+            'options' => [
+                '' => 'Select Employment Status',
+                'Employed' => 'Employed',
+                'Self-employed' => 'Self-employed',
+                'Unemployed' => 'Unemployed',
+                'Retired' => 'Retired',
+                'Student' => 'Student'
+            ]
+        ]);
+
+        c('form/input', [
+            'id' => 'occupation',
+            'label' => 'Occupation',
+            'name' => 'occupation',
+            'trim' => true,
+            'transform' => 'capitalize',
+            'maxlength' => 100
+        ]);
+
+        c('form/input', [
+            'id' => 'employer_name',
+            'label' => 'Employer',
+            'name' => 'employer_name',
+            'trim' => true,
+            'transform' => 'capitalize',
+            'maxlength' => 150
+        ]);
+
+        c('form/input', [
+            'id' => 'monthly_income',
+            'label' => 'Monthly Income',
+            'name' => 'monthly_income',
+            'inputmode' => 'decimal',
+            'placeholder' => '0.00'
+        ]);
+
+        ?>
+
+    </div>
+
+    <div class="form-grid">
+
+        <?php
+
+        c('form/input', [
+            'id' => 'employer_address',
+            'label' => 'Employer',
+            'name' => 'employer_address',
+            'trim' => true,
+            'transform' => 'capitalize',
+            'maxlength' => 200
+        ]);
+
+        c('form/textarea', [
+            'label' => 'Employment Remarks',
+            'name' => 'employment_remarks',
+            'rows' => 4,
+            'placeholder' => 'Additional employment information (optional)...'
+        ]);
+
+        ?>
+
+    </div>
 
 </div>

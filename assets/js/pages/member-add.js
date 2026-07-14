@@ -82,25 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function validateCurrentStep() {
-    let valid = true;
-
-    const requiredFields = steps[currentStep].querySelectorAll("[required]");
-
-    requiredFields.forEach((field) => {
-      if (field.value.trim() === "") {
-        field.classList.add("form-control--error");
-
-        if (valid) {
-          field.focus();
-        }
-
-        valid = false;
-      } else {
-        field.classList.remove("form-control--error");
-      }
-    });
-
-    return valid;
+    return Validation.validateStep(steps[currentStep]);
   }
 
   function updateProgress() {
@@ -207,3 +189,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateWizard();
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeEmployment();
+});
+
+function initializeEmployment() {
+  const status = document.getElementById("employment_status");
+
+  if (!status) {
+    return;
+  }
+
+  const occupation = document.getElementById("occupation");
+  const employer = document.getElementById("employer_name");
+  const employerAddress = document.getElementById("employer_address");
+  const income = document.getElementById("monthly_income");
+
+  const employerLabel = document.getElementById("employer_name_label");
+
+  function updateEmployment() {
+    const value = status.value;
+
+    const disableEmployer =
+      value === "Unemployed" || value === "Student" || value === "Retired";
+
+    employer.disabled = disableEmployer;
+    employerAddress.disabled = disableEmployer;
+    income.disabled = disableEmployer;
+
+    if (disableEmployer) {
+      employer.value = "";
+      employerAddress.value = "";
+      income.value = "";
+    }
+
+    if (value === "Self-employed") {
+      employerLabel.textContent = "Business Name";
+    } else {
+      employerLabel.textContent = "Employer / Business Name";
+    }
+  }
+
+  status.addEventListener("change", updateEmployment);
+
+  updateEmployment();
+}
+
+function initializeEducation() {
+  const level = document.getElementById("education_level");
+
+  if (!level) {
+    return;
+  }
+
+  const course = document.getElementById("course");
+  const school = document.getElementById("school");
+  const year = document.getElementById("year_graduated");
+  const honors = document.getElementById("honors");
+
+  function updateEducation() {
+    const basicEducation = ["Elementary", "High School"].includes(level.value);
+
+    course.disabled = basicEducation;
+    honors.disabled = basicEducation;
+
+    if (basicEducation) {
+      course.value = "";
+      honors.value = "";
+    }
+
+    school.disabled = false;
+    year.disabled = false;
+  }
+
+  level.addEventListener("change", updateEducation);
+
+  updateEducation();
+}

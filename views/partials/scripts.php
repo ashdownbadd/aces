@@ -15,7 +15,7 @@ $route = $_GET['route'] ?? '';
 <?php if ($route === 'add_member'): ?>
 
     <script src="assets/js/core/form.js"></script>
-
+    <script src="assets/js/core/validation.js"></script>
     <script src="assets/js/pages/member-add.js"></script>
 
 <?php endif; ?>

@@ -30,6 +30,11 @@ $mask = $mask ?? '';
 
 $trim = $trim ?? false;
 $transform = $transform ?? '';
+$rules = $rules ?? [];
+
+if (is_string($rules)) {
+    $rules = [$rules];
+}
 
 $error = $error ?? '';
 $help = $help ?? '';
@@ -41,6 +46,7 @@ $help = $help ?? '';
     <?php if ($label): ?>
 
         <label
+            id="<?= htmlspecialchars($id) ?>_label"
             class="form-label<?= $required ? ' form-label--required' : '' ?>"
             for="<?= htmlspecialchars($id) ?>">
 
@@ -72,6 +78,9 @@ $help = $help ?? '';
         <?= $mask ? 'data-mask="' . htmlspecialchars($mask) . '"' : '' ?>
         <?= $trim ? 'data-trim' : '' ?>
         <?= $transform ? 'data-transform="' . htmlspecialchars($transform) . '"' : '' ?>
+        <?= !empty($rules)
+            ? 'data-rules="' . htmlspecialchars(implode('|', $rules)) . '"'
+            : '' ?>
 
         <?= $required ? 'required' : '' ?>
         <?= $readonly ? 'readonly' : '' ?>

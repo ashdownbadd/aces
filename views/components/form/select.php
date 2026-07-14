@@ -5,6 +5,12 @@ $id = $id ?? $name;
 
 $label = $label ?? '';
 
+$rules = $rules ?? [];
+
+if (is_string($rules)) {
+    $rules = [$rules];
+}
+
 $options = $options ?? [];
 $value = $value ?? '';
 
@@ -32,6 +38,13 @@ $help = $help ?? '';
 
     <select
         class="form-control<?= $error ? ' is-invalid' : '' ?>"
+        id="<?= htmlspecialchars($id) ?>"
+        name="<?= htmlspecialchars($name) ?>"
+        <?= !empty($rules)
+            ? 'data-rules="' . htmlspecialchars(implode('|', $rules)) . '"'
+            : '' ?>
+        <?= $required ? 'required' : '' ?>
+        <?= $disabled ? 'disabled' : '' ?>>
         id="<?= htmlspecialchars($id) ?>"
         name="<?= htmlspecialchars($name) ?>"
         <?= $required ? 'required' : '' ?>
