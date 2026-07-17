@@ -32,6 +32,10 @@ $trim = $trim ?? false;
 $transform = $transform ?? '';
 $rules = $rules ?? [];
 
+if ($required && !in_array('required', $rules, true)) {
+    $rules[] = 'required';
+}
+
 if (is_string($rules)) {
     $rules = [$rules];
 }

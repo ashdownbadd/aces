@@ -1,25 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const wizard = document.getElementById("memberWizard");
+  initializeWizard();
 
-  if (!wizard) {
-    return;
-  }
+  initializeEmployment();
 
-  const steps = [...wizard.querySelectorAll(".member-step")];
+  initializeEducation();
 
-  if (!steps.length) {
-    return;
-  }
+  initializeBeneficiaries();
 
-  const previousButton = document.getElementById("wizardPrevious");
-  const nextButton = document.getElementById("wizardNext");
-  const submitButton = document.getElementById("wizardSubmit");
+  initializeReview();
+});
 
-  const progressBar = document.getElementById("wizardProgressBar");
-  const stepNumber = document.getElementById("wizardStepNumber");
-  const stepTitle = document.getElementById("wizardStepTitle");
+/* ==========================================================
+   MEMBER WIZARD STATE
+========================================================== */
 
-  const titles = [
+const MemberWizard = {
+  currentStep: 0,
+
+  titles: [
     "Personal Information",
     "Contact Information",
     "Address Information",
@@ -27,9 +25,56 @@ document.addEventListener("DOMContentLoaded", () => {
     "Educational Background",
     "Beneficiaries",
     "Review & Submit",
-  ];
+  ],
 
-  let currentStep = 0;
+  wizard: null,
+
+  steps: [],
+
+  previousButton: null,
+
+  nextButton: null,
+
+  submitButton: null,
+
+  stepNumber: null,
+
+  stepTitle: null,
+
+  goTo: null,
+
+  refresh: null,
+};
+
+/* ==========================================================
+   WIZARD
+========================================================== */
+
+function initializeWizard() {
+  MemberWizard.wizard = document.getElementById("memberWizard");
+
+  const wizard = MemberWizard.wizard;
+
+  if (!wizard) {
+    return;
+  }
+
+  MemberWizard.steps = [...wizard.querySelectorAll(".member-step")];
+
+  if (!MemberWizard.steps.length) {
+    return;
+  }
+
+  MemberWizard.previousButton = document.getElementById("wizardPrevious");
+  MemberWizard.nextButton = document.getElementById("wizardNext");
+  MemberWizard.submitButton = document.getElementById("wizardSubmit");
+  MemberWizard.stepNumber = document.getElementById("wizardStepNumber");
+  MemberWizard.stepTitle = document.getElementById("wizardStepTitle");
+  MemberWizard.currentStep = 0;
+
+  /* ======================================================
+       HELPERS
+    ====================================================== */
 
   function getValue(name) {
     const field = wizard.querySelector(`[name="${name}"]`);
@@ -43,104 +88,122 @@ document.addEventListener("DOMContentLoaded", () => {
     return value === "" ? "-" : value;
   }
 
-  function updateReview() {
-    const reviewName = document.getElementById("reviewName");
+  /* ======================================================
+   FORMATTERS
+====================================================== */
 
-    if (!reviewName) {
-      return;
+  function formatCurrency(value) {
+    const amount = parseFloat(value);
+
+    if (Number.isNaN(amount)) {
+      return "-";
     }
 
-    reviewName.textContent = [
-      getValue("first_name"),
-      getValue("middle_name"),
-      getValue("last_name"),
-    ]
-      .filter((value) => value !== "-")
-      .join(" ");
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(amount);
+  }
 
-    document.getElementById("reviewBirth").textContent =
-      getValue("date_of_birth");
-    document.getElementById("reviewSex").textContent = getValue("sex");
-    document.getElementById("reviewMarital").textContent =
-      getValue("marital_status");
-    document.getElementById("reviewEmail").textContent = getValue("email");
-    document.getElementById("reviewPhone1").textContent =
-      getValue("phone_no_1");
-    document.getElementById("reviewPhone2").textContent =
-      getValue("phone_no_2");
+  function formatDate(value) {
+    if (!value || value === "-") {
+      return "-";
+    }
 
-    document.getElementById("reviewAddress").textContent = [
-      getValue("house_number"),
-      getValue("street"),
-      getValue("barangay"),
-      getValue("town_city"),
-      getValue("province"),
-      getValue("region"),
-    ]
-      .filter((value) => value !== "-")
-      .join(", ");
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  function formatPhone(value) {
+    if (!value || value === "-") {
+      return "-";
+    }
+
+    return value;
+  }
+
+  function formatAddress(...parts) {
+    return parts.filter((part) => part && part !== "-").join(", ");
   }
 
   function validateCurrentStep() {
-    return Validation.validateStep(steps[currentStep]);
+    return Validation.validateStep(
+      MemberWizard.steps[MemberWizard.currentStep],
+    );
+  }
+
+  /* ======================================================
+       UI
+    ====================================================== */
+
+  function updateSteps() {
+    MemberWizard.steps.forEach((step, index) => {
+      step.classList.toggle("is-active", index === MemberWizard.currentStep);
+    });
   }
 
   function updateProgress() {
-    const items = document.querySelectorAll(".member-stepper__item");
+    document
+      .querySelectorAll(".member-stepper__item")
+      .forEach((item, index) => {
+        item.classList.remove("is-active", "is-complete");
 
-    items.forEach((item, index) => {
-      item.classList.remove("is-active", "is-complete");
-
-      if (index < currentStep) {
-        item.classList.add("is-complete");
-      } else if (index === currentStep) {
-        item.classList.add("is-active");
-      }
-    });
-  }
-
-  function updateButtons() {
-    const isFirstStep = currentStep === 0;
-    const isLastStep = currentStep === steps.length - 1;
-
-    previousButton.innerHTML = isFirstStep
-      ? `
-            <i class="fas fa-times"></i>
-            Cancel
-        `
-      : `
-            <i class="fas fa-arrow-left"></i>
-            Previous
-        `;
-
-    if (isLastStep) {
-      nextButton.hidden = true;
-      submitButton.hidden = false;
-    } else {
-      nextButton.hidden = false;
-      submitButton.hidden = true;
-    }
+        if (index < MemberWizard.currentStep) {
+          item.classList.add("is-complete");
+        } else if (index === MemberWizard.currentStep) {
+          item.classList.add("is-active");
+        }
+      });
   }
 
   function updateHeader() {
-    stepNumber.textContent = currentStep + 1;
-    stepTitle.textContent = titles[currentStep] ?? "";
+    MemberWizard.stepNumber.textContent = MemberWizard.currentStep + 1;
+
+    MemberWizard.stepTitle.textContent =
+      MemberWizard.titles[MemberWizard.currentStep] ?? "";
   }
 
-  function updateSteps() {
-    const steps = document.querySelectorAll(".member-step");
+  function updateButtons() {
+    const first = MemberWizard.currentStep === 0;
 
-    steps.forEach((step, index) => {
-      step.classList.toggle("is-active", index === currentStep);
-    });
+    const last = MemberWizard.currentStep >= MemberWizard.steps.length - 1;
+
+    MemberWizard.previousButton.innerHTML = first
+      ? `
+                <i class="fas fa-times"></i>
+                Cancel
+            `
+      : `
+                <i class="fas fa-arrow-left"></i>
+                Previous
+            `;
+
+    MemberWizard.nextButton.hidden = last;
+
+    MemberWizard.submitButton.hidden = !last;
   }
 
-  function updateWizard() {
+  function refreshWizard() {
     updateSteps();
-    updateHeader();
+
     updateProgress();
+
+    updateHeader();
+
     updateButtons();
-    updateReview();
+
+    if (MemberReview.update) {
+      MemberReview.update();
+    }
 
     window.scrollTo({
       top: 0,
@@ -148,51 +211,72 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  nextButton.addEventListener("click", () => {
+  MemberWizard.refresh = refreshWizard;
+
+  MemberWizard.goTo = function (step) {
+    if (step < 0 || step >= MemberWizard.steps.length) {
+      return;
+    }
+
+    MemberWizard.currentStep = step;
+
+    MemberWizard.refresh();
+  };
+
+  /* ======================================================
+       EVENTS
+    ====================================================== */
+
+  MemberWizard.nextButton.addEventListener("click", () => {
     if (!validateCurrentStep()) {
       return;
     }
 
-    if (currentStep < steps.length - 1) {
-      currentStep++;
-      updateWizard();
+    if (MemberWizard.currentStep >= MemberWizard.steps.length - 1) {
+      return;
     }
+
+    MemberWizard.currentStep++;
+
+    MemberWizard.refresh();
   });
 
-  previousButton.addEventListener("click", () => {
-    if (currentStep === 0) {
-      const confirmed = confirm(
-        "Discard this member registration and return to the Members page?",
-      );
-
-      if (confirmed) {
+  MemberWizard.previousButton.addEventListener("click", () => {
+    if (MemberWizard.currentStep === 0) {
+      if (
+        confirm(
+          "Discard this member registration and return to the Members page?",
+        )
+      ) {
         window.location.href = "index.php?route=members";
       }
 
       return;
     }
 
-    currentStep--;
+    MemberWizard.currentStep--;
 
-    updateWizard();
+    MemberWizard.refresh();
   });
 
   wizard.querySelectorAll("input, select, textarea").forEach((field) => {
-    function clearError() {
+    function update() {
       field.classList.remove("form-control--error");
+
       updateReview();
     }
 
-    field.addEventListener("input", clearError);
-    field.addEventListener("change", clearError);
+    field.addEventListener("input", update);
+
+    field.addEventListener("change", update);
   });
 
-  updateWizard();
-});
+  MemberWizard.refresh();
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  initializeEmployment();
-});
+/* ==========================================================
+   EMPLOYMENT
+========================================================== */
 
 function initializeEmployment() {
   const status = document.getElementById("employment_status");
@@ -208,26 +292,36 @@ function initializeEmployment() {
 
   const employerLabel = document.getElementById("employer_name_label");
 
+  const addressLabel = document.getElementById("employer_address_label");
+
+  function toggleField(field, disabled) {
+    field.disabled = disabled;
+
+    if (disabled) {
+      field.value = "";
+    }
+  }
+
   function updateEmployment() {
     const value = status.value;
 
-    const disableEmployer =
-      value === "Unemployed" || value === "Student" || value === "Retired";
+    const disableEmployer = ["Unemployed", "Student", "Retired"].includes(
+      value,
+    );
 
-    employer.disabled = disableEmployer;
-    employerAddress.disabled = disableEmployer;
-    income.disabled = disableEmployer;
+    toggleField(employer, disableEmployer);
+    toggleField(employerAddress, disableEmployer);
+    toggleField(income, disableEmployer);
 
-    if (disableEmployer) {
-      employer.value = "";
-      employerAddress.value = "";
-      income.value = "";
-    }
+    occupation.disabled = false;
 
     if (value === "Self-employed") {
       employerLabel.textContent = "Business Name";
+      addressLabel.textContent = "Business Address";
     } else {
       employerLabel.textContent = "Employer / Business Name";
+
+      addressLabel.textContent = "Employer / Business Address";
     }
   }
 
@@ -235,6 +329,10 @@ function initializeEmployment() {
 
   updateEmployment();
 }
+
+/* ==========================================================
+   EDUCATION
+========================================================== */
 
 function initializeEducation() {
   const level = document.getElementById("education_level");
@@ -244,20 +342,26 @@ function initializeEducation() {
   }
 
   const course = document.getElementById("course");
+
   const school = document.getElementById("school");
+
   const year = document.getElementById("year_graduated");
+
   const honors = document.getElementById("honors");
+
+  function toggleField(field, disabled) {
+    field.disabled = disabled;
+
+    if (disabled) {
+      field.value = "";
+    }
+  }
 
   function updateEducation() {
     const basicEducation = ["Elementary", "High School"].includes(level.value);
 
-    course.disabled = basicEducation;
-    honors.disabled = basicEducation;
-
-    if (basicEducation) {
-      course.value = "";
-      honors.value = "";
-    }
+    toggleField(course, basicEducation);
+    toggleField(honors, basicEducation);
 
     school.disabled = false;
     year.disabled = false;
@@ -266,4 +370,295 @@ function initializeEducation() {
   level.addEventListener("change", updateEducation);
 
   updateEducation();
+}
+
+/* ==========================================================
+   BENEFICIARIES
+========================================================== */
+
+function initializeBeneficiaries() {
+  BeneficiaryList.initialize();
+}
+
+/* ==========================================================
+   REVIEW
+========================================================== */
+
+const MemberReview = {
+  update: null,
+};
+
+function initializeReview() {
+  const wizard = MemberWizard.wizard;
+
+  if (!wizard) {
+    return;
+  }
+
+  /* ======================================================
+       HELPERS
+    ====================================================== */
+
+  function getValue(name) {
+    const field = wizard.querySelector(`[name="${name}"]`);
+
+    if (!field) {
+      return "-";
+    }
+
+    const value = field.value.trim();
+
+    return value === "" ? "-" : value;
+  }
+
+  /* ======================================================
+       FORMATTERS
+    ====================================================== */
+
+  function formatName(...parts) {
+    return parts.filter((part) => part && part !== "-").join(" ");
+  }
+
+  function formatCurrency(value) {
+    const amount = parseFloat(value);
+
+    if (Number.isNaN(amount)) {
+      return "-";
+    }
+
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(amount);
+  }
+
+  function formatDate(value) {
+    if (!value || value === "-") {
+      return "-";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  function formatPhone(value) {
+    if (!value || value === "-") {
+      return "-";
+    }
+
+    return value;
+  }
+
+  function formatAddress(...parts) {
+    return parts.filter((part) => part && part !== "-").join(", ");
+  }
+
+  /* ======================================================
+       PERSONAL
+    ====================================================== */
+
+  function updatePersonal() {
+    const reviewName = document.getElementById("reviewName");
+
+    if (!reviewName) {
+      return;
+    }
+
+    reviewName.textContent = Formatter.name(
+      getValue("first_name"),
+
+      getValue("middle_name"),
+
+      getValue("last_name"),
+    );
+
+    document.getElementById("reviewBirth").textContent = Formatter.date(
+      getValue("date_of_birth"),
+    );
+
+    document.getElementById("reviewSex").textContent = getValue("sex");
+
+    document.getElementById("reviewMarital").textContent =
+      getValue("marital_status");
+  }
+
+  /* ======================================================
+       CONTACT
+    ====================================================== */
+
+  function updateContact() {
+    document.getElementById("reviewEmail").textContent = getValue("email");
+
+    document.getElementById("reviewPhone1").textContent = Formatter.phone(
+      getValue("phone_no_1"),
+    );
+
+    document.getElementById("reviewPhone2").textContent = Formatter.phone(
+      getValue("phone_no_2"),
+    );
+  }
+
+  /* ======================================================
+       ADDRESS
+    ====================================================== */
+
+  function updateAddress() {
+    document.getElementById("reviewAddress").textContent = Formatter.address(
+      getValue("house_number"),
+
+      getValue("street"),
+
+      getValue("barangay"),
+
+      getValue("town_city"),
+
+      getValue("province"),
+
+      getValue("region"),
+    );
+  }
+
+  /* ======================================================
+       EMPLOYMENT
+    ====================================================== */
+
+  function updateEmployment() {
+    document.getElementById("reviewEmploymentStatus").textContent =
+      getValue("employment_status");
+
+    document.getElementById("reviewOccupation").textContent =
+      getValue("occupation");
+
+    document.getElementById("reviewEmployer").textContent =
+      getValue("employer_name");
+
+    document.getElementById("reviewIncome").textContent = Formatter.currency(
+      getValue("monthly_income"),
+    );
+  }
+
+  /* ======================================================
+       EDUCATION
+    ====================================================== */
+
+  function updateEducation() {
+    document.getElementById("reviewEducation").textContent =
+      getValue("education_level");
+
+    document.getElementById("reviewCourse").textContent = getValue("course");
+
+    document.getElementById("reviewSchool").textContent = getValue("school");
+
+    document.getElementById("reviewYearGraduated").textContent =
+      getValue("year_graduated");
+  }
+
+  /* ======================================================
+       BENEFICIARIES
+    ====================================================== */
+
+  function renderBeneficiaries() {
+    const container = document.getElementById("reviewBeneficiaries");
+
+    if (!container) {
+      return;
+    }
+
+    const beneficiaries = BeneficiaryList.getData();
+
+    if (!beneficiaries.length) {
+      container.innerHTML = `
+
+                <div class="empty-state">
+
+                    <i class="fas fa-users"></i>
+
+                    <p>No beneficiaries added.</p>
+
+                </div>
+
+            `;
+
+      return;
+    }
+
+    container.innerHTML = beneficiaries
+      .map(
+        (beneficiary) => `
+
+                <div class="review-beneficiary">
+
+                    <div class="review-beneficiary__details">
+
+                        <strong>
+
+                            ${beneficiary.full_name || "-"}
+
+                        </strong>
+
+                        <span>
+
+                            ${beneficiary.relationship || "-"}
+
+                        </span>
+
+                    </div>
+
+                    <div class="review-beneficiary__allocation">
+
+                        ${beneficiary.allocation || 0}%
+
+                    </div>
+
+                </div>
+
+            `,
+      )
+      .join("");
+  }
+
+  /* ======================================================
+       UPDATE
+    ====================================================== */
+
+  function update() {
+    updatePersonal();
+
+    updateContact();
+
+    updateAddress();
+
+    updateEmployment();
+
+    updateEducation();
+
+    renderBeneficiaries();
+  }
+
+  /* ======================================================
+       PUBLIC API
+    ====================================================== */
+
+  MemberReview.update = update;
+
+  /* ======================================================
+       REVIEW EVENTS
+    ====================================================== */
+
+  document.querySelectorAll("[data-review-step]").forEach((button) => {
+    button.addEventListener("click", () => {
+      MemberWizard.goTo?.(Number(button.dataset.reviewStep));
+    });
+  });
+
+  update();
 }

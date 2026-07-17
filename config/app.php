@@ -10,7 +10,7 @@ return [
 
     'full_name' => 'Administrative Cooperative Enterprise System',
 
-    'portal' => 'Member Portal',
+    'portal' => 'Admin & Member Portal',
 
     'copyright' => '© ' . date('Y') . ' ACES'
 

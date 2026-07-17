@@ -1,0 +1,131 @@
+/* ==========================================================
+   BENEFICIARY CARD
+========================================================== */
+
+.beneficiary-card {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-6);
+
+  padding: var(--space-6);
+
+  margin-bottom: var(--space-5);
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.beneficiary-card:hover {
+  border-color: var(--primary-200);
+
+  box-shadow: var(--shadow-md);
+}
+
+.beneficiary-card__header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: var(--space-4);
+
+  padding-bottom: var(--space-4);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.beneficiary-card__header h3 {
+  margin: 0;
+
+  font-size: var(--text-lg);
+
+  font-weight: var(--fw-semibold);
+
+  color: var(--text);
+}
+
+.beneficiary-card__header .btn {
+  flex-shrink: 0;
+}
+
+.member-beneficiaries__footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: var(--space-4);
+
+  margin-top: var(--space-8);
+
+  padding-top: var(--space-6);
+
+  border-top: 1px solid var(--border);
+}
+
+.member-beneficiaries__allocation {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-1);
+}
+
+.member-beneficiaries__allocation span {
+  font-size: var(--text-sm);
+
+  color: var(--text-muted);
+}
+
+.member-beneficiaries__allocation strong {
+  font-size: var(--text-2xl);
+
+  font-weight: var(--fw-bold);
+
+  color: var(--text);
+}
+
+.member-beneficiaries__allocation strong.text-success {
+  color: var(--success);
+}
+
+.member-beneficiaries__allocation strong.text-danger {
+  color: var(--danger);
+}
+
+@media (max-width: 768px) {
+  .beneficiary-card {
+    padding: var(--space-5);
+  }
+
+  .beneficiary-card__header {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .beneficiary-card__header .btn {
+    width: 100%;
+  }
+
+  .member-beneficiaries__footer {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .member-beneficiaries__footer .btn {
+    width: 100%;
+  }
+}

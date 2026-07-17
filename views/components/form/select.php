@@ -17,6 +17,10 @@ $value = $value ?? '';
 $required = $required ?? false;
 $disabled = $disabled ?? false;
 
+if ($required && !in_array('required', $rules, true)) {
+    $rules[] = 'required';
+}
+
 $error = $error ?? '';
 $help = $help ?? '';
 
@@ -43,10 +47,6 @@ $help = $help ?? '';
         <?= !empty($rules)
             ? 'data-rules="' . htmlspecialchars(implode('|', $rules)) . '"'
             : '' ?>
-        <?= $required ? 'required' : '' ?>
-        <?= $disabled ? 'disabled' : '' ?>>
-        id="<?= htmlspecialchars($id) ?>"
-        name="<?= htmlspecialchars($name) ?>"
         <?= $required ? 'required' : '' ?>
         <?= $disabled ? 'disabled' : '' ?>>
 

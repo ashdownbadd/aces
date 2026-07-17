@@ -16,6 +16,8 @@ $route = $_GET['route'] ?? '';
 
     <script src="assets/js/core/form.js"></script>
     <script src="assets/js/core/validation.js"></script>
+    <script src="assets/js/core/formatter.js"></script>
+    <script src="assets/js/components/beneficiary-manager.js"></script>
     <script src="assets/js/pages/member-add.js"></script>
 
 <?php endif; ?>

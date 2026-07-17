@@ -23,6 +23,8 @@
 =========================== */
 
 @import url("components/button.css");
+@import url("components/beneficiary-card.css");
+@import url("components/review-card.css");
 @import url("components/card.css");
 @import url("components/module-card.css");
 @import url("components/empty-state.css");
