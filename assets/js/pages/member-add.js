@@ -92,49 +92,6 @@ function initializeWizard() {
    FORMATTERS
 ====================================================== */
 
-  function formatCurrency(value) {
-    const amount = parseFloat(value);
-
-    if (Number.isNaN(amount)) {
-      return "-";
-    }
-
-    return new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(amount);
-  }
-
-  function formatDate(value) {
-    if (!value || value === "-") {
-      return "-";
-    }
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-
-    return date.toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  function formatPhone(value) {
-    if (!value || value === "-") {
-      return "-";
-    }
-
-    return value;
-  }
-
-  function formatAddress(...parts) {
-    return parts.filter((part) => part && part !== "-").join(", ");
-  }
-
   function validateCurrentStep() {
     return Validation.validateStep(
       MemberWizard.steps[MemberWizard.currentStep],
@@ -232,6 +189,16 @@ function initializeWizard() {
       return;
     }
 
+    if (MemberWizard.currentStep === 5) {
+      const total = BeneficiaryList.getTotalAllocation();
+
+      if (total > 100) {
+        alert("Total beneficiary allocation cannot exceed 100%.");
+
+        return;
+      }
+    }
+
     if (MemberWizard.currentStep >= MemberWizard.steps.length - 1) {
       return;
     }
@@ -263,7 +230,7 @@ function initializeWizard() {
     function update() {
       field.classList.remove("form-control--error");
 
-      updateReview();
+      MemberReview.update?.();
     }
 
     field.addEventListener("input", update);
@@ -289,6 +256,12 @@ function initializeEmployment() {
   const employer = document.getElementById("employer_name");
   const employerAddress = document.getElementById("employer_address");
   const income = document.getElementById("monthly_income");
+
+  income.addEventListener("input", () => {
+    const digits = Formatter.currencyDigits(income.value);
+
+    income.value = Formatter.currencyInput(digits);
+  });
 
   const employerLabel = document.getElementById("employer_name_label");
 
@@ -409,57 +382,6 @@ function initializeReview() {
     const value = field.value.trim();
 
     return value === "" ? "-" : value;
-  }
-
-  /* ======================================================
-       FORMATTERS
-    ====================================================== */
-
-  function formatName(...parts) {
-    return parts.filter((part) => part && part !== "-").join(" ");
-  }
-
-  function formatCurrency(value) {
-    const amount = parseFloat(value);
-
-    if (Number.isNaN(amount)) {
-      return "-";
-    }
-
-    return new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(amount);
-  }
-
-  function formatDate(value) {
-    if (!value || value === "-") {
-      return "-";
-    }
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-
-    return date.toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  function formatPhone(value) {
-    if (!value || value === "-") {
-      return "-";
-    }
-
-    return value;
-  }
-
-  function formatAddress(...parts) {
-    return parts.filter((part) => part && part !== "-").join(", ");
   }
 
   /* ======================================================
