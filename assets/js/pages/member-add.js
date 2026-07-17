@@ -190,10 +190,10 @@ function initializeWizard() {
     }
 
     if (MemberWizard.currentStep === 5) {
-      const total = BeneficiaryList.getTotalAllocation();
-
-      if (total > 100) {
-        alert("Total beneficiary allocation cannot exceed 100%.");
+      if (!BeneficiaryList.validate()) {
+        alert(
+          "Please complete all beneficiary information. Each relationship must be unique, and the total allocation must equal exactly 100%.",
+        );
 
         return;
       }
