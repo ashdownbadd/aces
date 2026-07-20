@@ -33,10 +33,7 @@ if (!defined('ALLOW_ACCESS')) {
                     <strong>
 
                         <?= display_value(
-                            trim(
-                                ($beneficiary['first_name'] ?? '') . ' ' .
-                                    ($beneficiary['last_name'] ?? '')
-                            ),
+                            $beneficiary['full_name'],
                             'Unnamed Beneficiary'
                         ); ?>
 
@@ -44,7 +41,7 @@ if (!defined('ALLOW_ACCESS')) {
 
                     <span>
 
-                        <?= display_value($beneficiary['relation'] ?? null); ?>
+                        <?= display_value($beneficiary['relationship']); ?>
 
                     </span>
 

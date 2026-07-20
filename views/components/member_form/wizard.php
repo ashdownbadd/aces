@@ -14,13 +14,24 @@ $steps = [
     'review'
 ];
 
+$isEdit = !empty($member);
+
+$formAction = $isEdit
+    ? 'index.php?route=member_update&id=' . (int) $member['id']
+    : 'index.php?route=add_member';
+
 ?>
 
 <form
     id="memberWizard"
     class="member-onboarding"
-    action="index.php?route=add_member"
+    action="<?= $formAction ?>"
     method="POST">
+
+    <input
+        type="hidden"
+        id="beneficiariesJson"
+        name="beneficiaries">
 
     <?php c('member_form/step_header'); ?>
 

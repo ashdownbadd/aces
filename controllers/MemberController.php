@@ -308,6 +308,150 @@ function buildMemberRows(array $members): array
     return $rows;
 }
 
+function getMemberDetails(PDO $pdo, int $member_id): array
+{
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM members
+        WHERE id = ?
+    ");
+
+    $stmt->execute([$member_id]);
+
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$member) {
+
+        redirectError(
+            'members',
+            'Member profile not found.'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | One-to-One Relations
+    |--------------------------------------------------------------------------
+    */
+
+    $relations = [
+
+        'profile'    => 'member_profiles',
+
+        'contact'    => 'member_contact',
+
+        'address'    => 'member_addresses',
+
+        'employment' => 'member_employment'
+
+    ];
+
+    foreach ($relations as $key => $table) {
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM {$table}
+            WHERE member_id = ?
+        ");
+
+        $stmt->execute([$member_id]);
+
+        $member[$key] =
+            $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | One-to-Many Relations
+    |--------------------------------------------------------------------------
+    */
+
+    $lists = [
+
+        'education',
+
+        'beneficiaries'
+
+    ];
+
+    foreach ($lists as $list) {
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM member_{$list}
+            WHERE member_id = ?
+        ");
+
+        $stmt->execute([$member_id]);
+
+        $member[$list] =
+            $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Share Capital
+    |--------------------------------------------------------------------------
+    */
+
+    $stmtLedger = $pdo->prepare("
+        SELECT
+            COALESCE(
+                SUM(le.credit)
+                -
+                SUM(le.debit),
+                0
+            )
+        FROM ledger_entries le
+
+        INNER JOIN journal_vouchers jv
+            ON le.voucher_id = jv.id
+
+        WHERE
+            le.member_id = ?
+            AND jv.status = 'approved'
+    ");
+
+    $stmtLedger->execute([$member_id]);
+
+    $member['ledger_balance'] =
+        (float) $stmtLedger->fetchColumn();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Active Loan
+    |--------------------------------------------------------------------------
+    */
+
+    $stmtLoan = $pdo->prepare("
+        SELECT
+            l.*,
+            s.due_date AS next_due_date
+
+        FROM loans l
+
+        LEFT JOIN loan_schedules s
+            ON l.id = s.loan_id
+            AND s.due_date >= CURDATE()
+
+        WHERE
+            l.member_id = ?
+            AND l.loan_status = 'approved'
+
+        ORDER BY
+            s.due_date ASC
+
+        LIMIT 1
+    ");
+
+    $stmtLoan->execute([$member_id]);
+
+    $member['active_loan'] =
+        $stmtLoan->fetch(PDO::FETCH_ASSOC) ?: null;
+
+    return $member;
+}
+
 function handleMemberProfile(PDO $pdo): string
 {
     checkAuthenticated($pdo);
@@ -316,153 +460,10 @@ function handleMemberProfile(PDO $pdo): string
 
     try {
 
-        $stmt = $pdo->prepare("
-            SELECT *
-            FROM members
-            WHERE id = ?
-        ");
-
-        $stmt->execute([$member_id]);
-
-        $member = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$member) {
-
-            redirectError(
-                'members',
-                'Member profile not found.'
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | One-to-One Relations
-        |--------------------------------------------------------------------------
-        */
-
-        $relations = [
-
-            'profile' => 'member_profiles',
-
-            'contact' => 'member_contact',
-
-            'address' => 'member_addresses'
-
-        ];
-
-        foreach ($relations as $key => $table) {
-
-            $stmt = $pdo->prepare("
-                SELECT *
-                FROM {$table}
-                WHERE member_id = ?
-            ");
-
-            $stmt->execute([$member_id]);
-
-            $member[$key] =
-                $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | One-to-Many Relations
-        |--------------------------------------------------------------------------
-        */
-
-        $lists = [
-
-            'education',
-
-            'beneficiaries'
-
-        ];
-
-        $stmt = $pdo->prepare("
-    SELECT *
-    FROM member_experience
-    WHERE member_id = ?
-");
-
-        $stmt->execute([$member_id]);
-
-        $member['employment'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($lists as $list) {
-
-            $stmt = $pdo->prepare("
-                SELECT *
-                FROM member_{$list}
-                WHERE member_id = ?
-            ");
-
-            $stmt->execute([$member_id]);
-
-            $member[$list] =
-                $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Share Capital
-        |--------------------------------------------------------------------------
-        */
-
-        $stmtLedger = $pdo->prepare("
-            SELECT
-                COALESCE(
-                    SUM(le.credit)
-                    -
-                    SUM(le.debit),
-                    0
-                )
-
-            FROM ledger_entries le
-
-            INNER JOIN journal_vouchers jv
-                ON le.voucher_id = jv.id
-
-            WHERE
-                le.member_id = ?
-                AND jv.status = 'approved'
-        ");
-
-        $stmtLedger->execute([$member_id]);
-
-        $member['ledger_balance'] =
-            (float) $stmtLedger->fetchColumn();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Active Loan
-        |--------------------------------------------------------------------------
-        */
-
-        $stmtLoan = $pdo->prepare("
-            SELECT
-                l.*,
-                s.due_date AS next_due_date
-
-            FROM loans l
-
-            LEFT JOIN loan_schedules s
-                ON l.id = s.loan_id
-                AND s.due_date >= CURDATE()
-
-            WHERE
-                l.member_id = ?
-                AND l.loan_status = 'approved'
-
-            ORDER BY
-                s.due_date ASC
-
-            LIMIT 1
-        ");
-
-        $stmtLoan->execute([$member_id]);
-
-        $member['active_loan'] =
-            $stmtLoan->fetch(PDO::FETCH_ASSOC) ?: null;
+        $member = getMemberDetails(
+            $pdo,
+            $member_id
+        );
 
         return render(
             'member_profile',
@@ -481,6 +482,349 @@ function handleMemberProfile(PDO $pdo): string
     }
 }
 
+
+function handleEditMember(PDO $pdo): string
+{
+    checkAuthenticated($pdo);
+
+    $member_id = (int) ($_GET['id'] ?? 0);
+
+    try {
+
+        $member = getMemberDetails(
+            $pdo,
+            $member_id
+        );
+
+        return render(
+            'member_add',
+            [
+                'member' => $member
+            ]
+        );
+    } catch (PDOException $e) {
+
+        error_log($e->getMessage());
+
+        redirectError(
+            'members',
+            'Unable to load member.'
+        );
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| One-to-One Relations
+|--------------------------------------------------------------------------
+*/
+
+$relations = [
+
+    'profile'    => 'member_profiles',
+
+    'contact'    => 'member_contact',
+
+    'address'    => 'member_addresses',
+
+    'employment' => 'member_employment'
+
+];
+
+foreach ($relations as $key => $table) {
+
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM {$table}
+        WHERE member_id = ?
+    ");
+
+    $stmt->execute([$member_id]);
+
+    $member[$key] =
+        $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+}
+
+function handleUpdateMember(PDO $pdo): void
+{
+    checkAuthenticated($pdo);
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+        redirectError(
+            'members',
+            'Invalid request.'
+        );
+    }
+
+    $member_id = (int) ($_GET['id'] ?? 0);
+
+    $beneficiaries = json_decode(
+        $_POST['beneficiaries'] ?? '[]',
+        true
+    );
+
+    if (!is_array($beneficiaries)) {
+        $beneficiaries = [];
+    }
+
+    try {
+
+        $pdo->beginTransaction();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Members
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE members
+            SET
+                first_name = ?,
+                middle_name = ?,
+                last_name = ?,
+                date_of_birth = ?,
+                membership_type = ?
+            WHERE id = ?
+        ")->execute([
+
+            trim($_POST['first_name'] ?? ''),
+            trim($_POST['middle_name'] ?? ''),
+            trim($_POST['last_name'] ?? ''),
+            trim($_POST['date_of_birth'] ?? ''),
+            trim($_POST['membership_type'] ?? 'Regular'),
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Profile
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE member_profiles
+            SET
+                sex = ?,
+                marital_status = ?
+            WHERE member_id = ?
+        ")->execute([
+
+            trim($_POST['sex'] ?? ''),
+            trim($_POST['marital_status'] ?? ''),
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Contact
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE member_contact
+            SET
+                email = ?,
+                phone_no_1 = ?,
+                phone_no_2 = ?
+            WHERE member_id = ?
+        ")->execute([
+
+            trim($_POST['email'] ?? ''),
+            trim($_POST['phone_no_1'] ?? ''),
+            trim($_POST['phone_no_2'] ?? ''),
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Address
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE member_addresses
+            SET
+                house_number = ?,
+                street = ?,
+                barangay = ?,
+                town_city = ?,
+                province = ?,
+                region = ?
+            WHERE member_id = ?
+        ")->execute([
+
+            trim($_POST['house_number'] ?? ''),
+            trim($_POST['street'] ?? ''),
+            trim($_POST['barangay'] ?? ''),
+            trim($_POST['town_city'] ?? ''),
+            trim($_POST['province'] ?? ''),
+            trim($_POST['region'] ?? ''),
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Employment
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE member_employment
+            SET
+                employment_status = ?,
+                occupation = ?,
+                employer_name = ?,
+                employer_address = ?,
+                monthly_income = ?
+            WHERE member_id = ?
+        ")->execute([
+
+            trim($_POST['employment_status'] ?? ''),
+            trim($_POST['occupation'] ?? ''),
+            trim($_POST['employer_name'] ?? ''),
+            trim($_POST['employer_address'] ?? ''),
+
+            !empty($_POST['monthly_income'])
+                ? (float) preg_replace(
+                    '/[^\d.]/',
+                    '',
+                    trim($_POST['monthly_income'])
+                )
+                : null,
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Education
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            UPDATE member_education
+            SET
+                education_level = ?,
+                course = ?,
+                school = ?,
+                year_graduated = ?,
+                honors = ?
+            WHERE member_id = ?
+        ")->execute([
+
+            trim($_POST['education_level'] ?? ''),
+            trim($_POST['course'] ?? ''),
+            trim($_POST['school'] ?? ''),
+
+            !empty($_POST['year_graduated'])
+                ? (int) $_POST['year_graduated']
+                : null,
+
+            trim($_POST['honors'] ?? ''),
+
+            $member_id
+
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Beneficiaries
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->prepare("
+            DELETE FROM member_beneficiaries
+            WHERE member_id = ?
+        ")->execute([$member_id]);
+
+        foreach ($beneficiaries as $beneficiary) {
+
+            if (empty(trim($beneficiary['full_name'] ?? ''))) {
+                continue;
+            }
+
+            $pdo->prepare("
+                INSERT INTO member_beneficiaries
+                (
+                    member_id,
+                    full_name,
+                    relationship,
+                    birth_date,
+                    contact_number,
+                    allocation
+                )
+                VALUES
+                (?, ?, ?, ?, ?, ?)
+            ")->execute([
+
+                $member_id,
+
+                trim($beneficiary['full_name'] ?? ''),
+
+                trim($beneficiary['relationship'] ?? ''),
+
+                !empty($beneficiary['birth_date'])
+                    ? $beneficiary['birth_date']
+                    : null,
+
+                trim($beneficiary['contact_number'] ?? ''),
+
+                (float) ($beneficiary['allocation'] ?? 0)
+
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Activity Log
+        |--------------------------------------------------------------------------
+        */
+
+        logSystemActivity(
+
+            $pdo,
+
+            'MEMBER_UPDATED',
+
+            "Updated member ID: {$member_id}"
+
+        );
+
+        $pdo->commit();
+
+        redirectSuccess(
+
+            'member_profile&id=' . $member_id,
+
+            'Member successfully updated.'
+
+        );
+    } catch (PDOException $e) {
+
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        error_log($e->getMessage());
+
+        redirectError(
+            'member_profile&id=' . $member_id,
+            'Unable to update member.'
+        );
+    }
+}
+
 function handleCreateCoopMember(PDO $pdo): string
 {
     checkAuthenticated($pdo);
@@ -495,6 +839,15 @@ function handleCreateCoopMember(PDO $pdo): string
     $last_name       = trim($_POST['last_name'] ?? '');
     $date_of_birth   = trim($_POST['date_of_birth'] ?? '');
     $membership_type = trim($_POST['membership_type'] ?? 'Regular');
+
+    $beneficiaries = json_decode(
+        $_POST['beneficiaries'] ?? '[]',
+        true
+    );
+
+    if (!is_array($beneficiaries)) {
+        $beneficiaries = [];
+    }
 
     if (
         $first_name === '' ||
@@ -622,6 +975,107 @@ function handleCreateCoopMember(PDO $pdo): string
             trim($_POST['region'] ?? '')
         ]);
 
+        $pdo->prepare("
+    INSERT INTO member_employment
+    (
+        member_id,
+        employment_status,
+        occupation,
+        employer_name,
+        employer_address,
+        monthly_income
+    )
+    VALUES
+    (?, ?, ?, ?, ?, ?)
+")->execute([
+
+            $member_id,
+
+            trim($_POST['employment_status'] ?? ''),
+
+            trim($_POST['occupation'] ?? ''),
+
+            trim($_POST['employer_name'] ?? ''),
+
+            trim($_POST['employer_address'] ?? ''),
+
+            !empty($_POST['monthly_income'])
+                ? (float) preg_replace(
+                    '/[^\d.]/',
+                    '',
+                    trim($_POST['monthly_income'])
+                )
+                : null
+
+        ]);
+
+        $pdo->prepare("
+    INSERT INTO member_education
+    (
+        member_id,
+        education_level,
+        course,
+        school,
+        year_graduated,
+        honors
+    )
+    VALUES
+    (?, ?, ?, ?, ?, ?)
+")->execute([
+
+            $member_id,
+
+            trim($_POST['education_level'] ?? ''),
+
+            trim($_POST['course'] ?? ''),
+
+            trim($_POST['school'] ?? ''),
+
+            !empty($_POST['year_graduated'])
+                ? (int) $_POST['year_graduated']
+                : null,
+
+            trim($_POST['honors'] ?? '')
+
+        ]);
+
+        foreach ($beneficiaries as $beneficiary) {
+
+            if (empty(trim($beneficiary['full_name'] ?? ''))) {
+                continue;
+            }
+
+            $pdo->prepare("
+        INSERT INTO member_beneficiaries
+        (
+            member_id,
+            full_name,
+            relationship,
+            birth_date,
+            contact_number,
+            allocation
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?)
+    ")->execute([
+
+                $member_id,
+
+                trim($beneficiary['full_name'] ?? ''),
+
+                trim($beneficiary['relationship'] ?? ''),
+
+                !empty($beneficiary['birth_date'])
+                    ? $beneficiary['birth_date']
+                    : null,
+
+                trim($beneficiary['contact_number'] ?? ''),
+
+                (float) ($beneficiary['allocation'] ?? 0)
+
+            ]);
+        }
+
         logSystemActivity(
             $pdo,
             'MEMBER_CREATED',
@@ -642,10 +1096,8 @@ function handleCreateCoopMember(PDO $pdo): string
 
         error_log($e->getMessage());
 
-        flashError(
-            'Unable to register the member. Please try again.'
-        );
-
-        return render('member_add');
+        echo '<pre>';
+        echo $e->getMessage();
+        exit;
     }
 }

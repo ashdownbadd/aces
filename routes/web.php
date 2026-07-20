@@ -74,6 +74,14 @@ switch ($route) {
         $content = handleCreateCoopMember($pdo);
         break;
 
+    case 'member_edit':
+        $content = handleEditMember($pdo);
+        break;
+
+    case 'member_update':
+        handleUpdateMember($pdo);
+        break;
+
     case 'member_profile':
         $content = handleMemberProfile($pdo);
         break;

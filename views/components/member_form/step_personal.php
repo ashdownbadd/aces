@@ -4,6 +4,9 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$member = $member ?? [];
+$profile = $member['profile'] ?? [];
+
 ?>
 
 <div class="member-step__content">
@@ -19,6 +22,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'First Name',
             'name' => 'first_name',
+            'value' => $member['first_name'] ?? '',
             'required' => true,
             'trim' => true,
             'transform' => 'capitalize',
@@ -28,6 +32,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'Middle Name',
             'name' => 'middle_name',
+            'value' => $member['middle_name'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 100
@@ -36,6 +41,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'Last Name',
             'name' => 'last_name',
+            'value' => $member['last_name'] ?? '',
             'required' => true,
             'trim' => true,
             'transform' => 'capitalize',
@@ -45,6 +51,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'Suffix',
             'name' => 'suffix',
+            'value' => $member['suffix'] ?? '',
             'trim' => true,
             'transform' => 'uppercase',
             'maxlength' => 20
@@ -54,6 +61,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'date',
             'label' => 'Birth Date',
             'name' => 'date_of_birth',
+            'value' => $member['date_of_birth'] ?? '',
             'required' => true,
             'max' => date('Y-m-d')
         ]);
@@ -61,6 +69,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/input', [
             'label' => 'Birth Place',
             'name' => 'birth_place',
+            'value' => $member['birth_place'] ?? '',
             'required' => true,
             'trim' => true,
             'transform' => 'capitalize',
@@ -70,6 +79,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/select', [
             'label' => 'Sex',
             'name' => 'sex',
+            'value' => $profile['sex'] ?? '',
             'required' => true,
             'options' => [
                 '' => 'Select Sex',
@@ -81,6 +91,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/select', [
             'label' => 'Civil Status',
             'name' => 'marital_status',
+            'value' => $profile['marital_status'] ?? '',
             'required' => true,
             'options' => [
                 '' => 'Select Civil Status',
@@ -102,6 +113,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/select', [
             'label' => 'Membership',
             'name' => 'membership_type',
+            'value' => $member['membership_type'] ?? '',
             'required' => true,
             'help' => 'Select the cooperative membership type.',
             'options' => [

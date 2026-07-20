@@ -4,21 +4,23 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$employment = $member['employment'] ?? [];
+
 ?>
 
 <section class="member-section">
 
     <h2 class="member-section__title">
 
-        Employment History
+        Employment Information
 
     </h2>
 
-    <?php if (empty($member['employment'])): ?>
+    <?php if (empty($employment)): ?>
 
         <p class="member-empty">
 
-            No employment records found.
+            No employment information found.
 
         </p>
 
@@ -26,45 +28,44 @@ if (!defined('ALLOW_ACCESS')) {
 
         <div class="member-list">
 
-            <?php foreach ($member['employment'] as $employment): ?>
+            <div class="member-list__item">
 
-                <div class="member-list__item">
+                <div>
 
-                    <div>
+                    <strong>
 
-                        <strong>
+                        <?= display_value($employment['occupation']); ?>
 
-                            <?= display_value($employment['company_name'] ?? null); ?>
+                    </strong>
 
-                        </strong>
+                    <br>
 
-                        <br>
+                    <span>
 
-                        <span>
+                        <?= display_value($employment['employer_name']); ?>
 
-                            <?= display_value($employment['position'] ?? null); ?>
+                    </span>
 
-                        </span>
+                    <br>
 
-                    </div>
+                    <small>
 
-                    <div class="member-list__meta">
+                        <?= display_value($employment['employment_status']); ?>
 
-                        <span>
-
-                            <?= display_value($employment['date_started'] ?? null); ?>
-
-                            —
-
-                            <?= display_value($employment['date_ended'] ?? 'Present'); ?>
-
-                        </span>
-
-                    </div>
+                    </small>
 
                 </div>
 
-            <?php endforeach; ?>
+                <div class="member-list__meta">
+
+                    ₱<?= number_format(
+                            (float) ($employment['monthly_income'] ?? 0),
+                            2
+                        ); ?>
+
+                </div>
+
+            </div>
 
         </div>
 

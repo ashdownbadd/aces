@@ -34,7 +34,7 @@ if (!defined('ALLOW_ACCESS')) {
 
                         <strong>
 
-                            <?= display_value($education['program'] ?? null); ?>
+                            <?= display_value($education['course'] ?? null); ?>
 
                         </strong>
 
@@ -42,7 +42,7 @@ if (!defined('ALLOW_ACCESS')) {
 
                         <span>
 
-                            <?= display_value($education['school_university'] ?? null); ?>
+                            <?= display_value($education['school'] ?? null); ?>
 
                         </span>
 
@@ -50,7 +50,7 @@ if (!defined('ALLOW_ACCESS')) {
 
                     <span>
 
-                        <?= display_value($education['date_ended'] ?? 'Present'); ?>
+                        <?= display_value($education['year_graduated'] ?? 'Present'); ?>
 
                     </span>
 

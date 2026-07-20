@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeBeneficiaries();
 
   initializeReview();
+
+  initializeSubmission();
 });
 
 /* ==========================================================
@@ -583,4 +585,22 @@ function initializeReview() {
   });
 
   update();
+}
+
+/* ==========================================================
+   SUBMISSION
+========================================================== */
+
+function initializeSubmission() {
+  const form = document.getElementById("memberWizard");
+
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener("submit", () => {
+    document.getElementById("beneficiariesJson").value = JSON.stringify(
+      BeneficiaryList.getData(),
+    );
+  });
 }
