@@ -4,105 +4,90 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$member = $member ?? [];
+$address = $member['address'] ?? [];
+
 ?>
 
-<div class="form-grid form-grid--2">
+<div class="member-step__content">
 
-    <div class="form-group">
+    <h2 class="member-step__title">
+        Address Information
+    </h2>
 
-        <label class="form-label">
+    <p class="member-step__description">
+        Provide the member's residential address.
+    </p>
 
-            House Number
+    <div class="form-grid form-grid--2">
 
-        </label>
+        <?php
 
-        <input
-            class="form-control"
-            name="house_number"
-            placeholder="123">
+        c('form/input', [
+            'label' => 'House Number',
+            'name' => 'house_number',
+            'value' => $address['house_number'] ?? '',
+            'placeholder' => '123',
+            'maxlength' => 100
+        ]);
 
-    </div>
+        c('form/input', [
+            'label' => 'Street',
+            'name' => 'street',
+            'value' => $address['street'] ?? '',
+            'placeholder' => 'Rizal Street',
+            'maxlength' => 150
+        ]);
 
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Street
-
-        </label>
-
-        <input
-            class="form-control"
-            name="street"
-            placeholder="Rizal Street">
-
-    </div>
-
-</div>
-
-<div class="form-grid form-grid--2">
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Barangay
-
-        </label>
-
-        <input
-            class="form-control"
-            name="barangay"
-            placeholder="Barangay San Isidro">
+        ?>
 
     </div>
 
-    <div class="form-group">
+    <div class="form-grid form-grid--2">
 
-        <label class="form-label">
+        <?php
 
-            Municipality / City
+        c('form/input', [
+            'label' => 'Barangay',
+            'name' => 'barangay',
+            'value' => $address['barangay'] ?? '',
+            'placeholder' => 'Barangay San Isidro',
+            'maxlength' => 150
+        ]);
 
-        </label>
+        c('form/input', [
+            'label' => 'Municipality / City',
+            'name' => 'town_city',
+            'value' => $address['town_city'] ?? '',
+            'placeholder' => 'Quezon City',
+            'maxlength' => 150
+        ]);
 
-        <input
-            class="form-control"
-            name="town_city"
-            placeholder="Quezon City">
-
-    </div>
-
-</div>
-
-<div class="form-grid form-grid--2">
-
-    <div class="form-group">
-
-        <label class="form-label">
-
-            Province
-
-        </label>
-
-        <input
-            class="form-control"
-            name="province"
-            placeholder="Metro Manila">
+        ?>
 
     </div>
 
-    <div class="form-group">
+    <div class="form-grid form-grid--2">
 
-        <label class="form-label">
+        <?php
 
-            Region
+        c('form/input', [
+            'label' => 'Province',
+            'name' => 'province',
+            'value' => $address['province'] ?? '',
+            'placeholder' => 'Metro Manila',
+            'maxlength' => 150
+        ]);
 
-        </label>
+        c('form/input', [
+            'label' => 'Region',
+            'name' => 'region',
+            'value' => $address['region'] ?? '',
+            'placeholder' => 'NCR',
+            'maxlength' => 150
+        ]);
 
-        <input
-            class="form-control"
-            name="region"
-            placeholder="NCR">
+        ?>
 
     </div>
 

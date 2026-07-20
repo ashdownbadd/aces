@@ -4,6 +4,9 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$member = $member ?? [];
+$contact = $member['contact'] ?? [];
+
 ?>
 
 <div class="member-step__content">
@@ -24,6 +27,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'email',
             'label' => 'Email Address',
             'name' => 'email',
+            'value' => $contact['email'] ?? '',
             'placeholder' => 'juan.delacruz@example.com',
             'autocomplete' => 'email',
             'maxlength' => 255
@@ -41,6 +45,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'tel',
             'label' => 'Primary Phone',
             'name' => 'phone_no_1',
+            'value' => $contact['phone_no_1'] ?? '',
             'required' => true,
             'placeholder' => '0917 123 4567',
             'autocomplete' => 'tel',
@@ -53,6 +58,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'tel',
             'label' => 'Secondary Phone',
             'name' => 'phone_no_2',
+            'value' => $contact['phone_no_2'] ?? '',
             'placeholder' => '0917 123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
@@ -64,6 +70,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'tel',
             'label' => 'Primary Telephone',
             'name' => 'telephone_no_1',
+            'value' => $contact['telephone_no_1'] ?? '',
             'placeholder' => '(02) 8123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',
@@ -75,6 +82,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'tel',
             'label' => 'Secondary Telephone',
             'name' => 'telephone_no_2',
+            'value' => $contact['telephone_no_2'] ?? '',
             'placeholder' => '(02) 8123 4567',
             'autocomplete' => 'tel',
             'inputmode' => 'tel',

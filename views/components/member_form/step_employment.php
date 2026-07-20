@@ -4,6 +4,9 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$member = $member ?? [];
+$employment = $member['employment'] ?? [];
+
 ?>
 
 <div class="member-step__content">
@@ -20,6 +23,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'employment_status',
             'label' => 'Employment Status',
             'name' => 'employment_status',
+            'value' => $employment['employment_status'] ?? '',
             'required' => true,
             'rules' => [
                 'required'
@@ -38,6 +42,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'occupation',
             'label' => 'Occupation',
             'name' => 'occupation',
+            'value' => $employment['occupation'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 100
@@ -47,6 +52,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'employer_name',
             'label' => 'Employer',
             'name' => 'employer_name',
+            'value' => $employment['employer_name'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 150
@@ -56,6 +62,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'monthly_income',
             'label' => 'Monthly Income',
             'name' => 'monthly_income',
+            'value' => $employment['monthly_income'] ?? '',
             'inputmode' => 'decimal',
             'placeholder' => '0.00'
         ]);
@@ -70,8 +77,9 @@ if (!defined('ALLOW_ACCESS')) {
 
         c('form/input', [
             'id' => 'employer_address',
-            'label' => 'Employer',
+            'label' => 'Employer Address',
             'name' => 'employer_address',
+            'value' => $employment['employer_address'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 200
@@ -80,6 +88,7 @@ if (!defined('ALLOW_ACCESS')) {
         c('form/textarea', [
             'label' => 'Employment Remarks',
             'name' => 'employment_remarks',
+            'value' => $employment['employment_remarks'] ?? '',
             'rows' => 4,
             'placeholder' => 'Additional employment information (optional)...'
         ]);
