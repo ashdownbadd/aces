@@ -727,5 +727,3 @@ if (!defined('ALLOW_ACCESS')) {
     </form>
 
 </div>
-
-<script src="assets/js/loan-create.js"></script>

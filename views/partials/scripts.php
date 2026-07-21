@@ -21,3 +21,9 @@ $route = $_GET['route'] ?? '';
     <script src="assets/js/pages/member-add.js"></script>
 
 <?php endif; ?>
+
+<?php if (in_array($route, ['create_loan'])): ?>
+
+    <script src="assets/js/pages/loan-create.js"></script>
+
+<?php endif; ?>
