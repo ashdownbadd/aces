@@ -6,524 +6,721 @@ if (!defined('ALLOW_ACCESS')) {
 
 ?>
 
-<div class="page loan-page">
+<div class="page">
 
     <?php
 
     c('page_header', [
-
-        'title' => 'Generate Amortization Schedule',
-
-        'description' => 'Setup parameters below to automatically formulate an explicit financial schedule matrix matching portfolio logic rules.'
-
+        'title' => 'Create Loan',
+        'description' => 'Create a new cooperative loan account and automatically generate its amortization schedule.'
     ]);
 
     ?>
 
     <?php c('flash_messages'); ?>
 
-    <p class="page__back">
+    <div class="page__actions">
 
-        <a href="<?= url('amortization_dashboard') ?>">
+        <a
+            href="<?= url('amortization_dashboard') ?>"
+            class="btn btn--secondary">
 
-            ← Back to Loans Dashboard
+            <i class="fas fa-arrow-left"></i>
+
+            Back to Loans
 
         </a>
 
-    </p>
+    </div>
 
     <form
         action="<?= url('create_loan') ?>"
         method="POST"
         enctype="multipart/form-data"
-        class="loan-form">
+        class="form">
 
-        <div class="loan-section">
+        <div class="page__content">
 
-            <label
-                class="form-label"
-                for="member_id">
-                Cooperative Member Profile
-            </label>
+            <!-- =======================================================
+                 BORROWER INFORMATION
+            ======================================================== -->
 
-            <select
-                class="form-control"
-                id="member_id"
-                name="member_id"
-                required>
+            <section class="card">
 
-                <option value="">
+                <div class="card__header">
 
-                    -- Select Target Account Owner --
+                    <div>
 
-                </option>
+                        <h2 class="card__title">
 
-                <?php foreach ($members as $member): ?>
+                            <i class="fas fa-user"></i>
 
-                    <option value="<?= (int) $member['id'] ?>">
+                            Borrower Information
 
-                        <?= htmlspecialchars(
-                            $member['last_name']
-                                . ', '
-                                . $member['first_name']
-                                . ' ('
-                                . $member['member_number']
-                                . ')'
-                        ) ?>
+                        </h2>
 
-                    </option>
+                        <p class="card__subtitle">
 
-                <?php endforeach; ?>
+                            Select the cooperative member and configure the basic details of the loan.
 
-            </select>
+                        </p>
 
-        </div>
-
-        <div class="loan-row">
-
-            <div class="loan-column">
-
-                <label
-                    class="form-label"
-                    for="loan_type">
-                    Loan Type Classification
-                </label>
-
-                <select
-                    class="form-control"
-                    id="loan_type"
-                    name="loan_type"
-                    onchange="handleLoanTypeChange()"
-                    required>
-
-                    <option value="Personal Loan">Personal Loan</option>
-                    <option value="Bridge Financing">Bridge Financing</option>
-                    <option value="Investment Loan">Investment Loan</option>
-                    <option value="Pension Loan">Pension Loan</option>
-                    <option value="Productivity Loan">Productivity Loan</option>
-                    <option value="Salary Loan">Salary Loan</option>
-                    <option value="Micro-Finance Loan">Micro-Finance Loan</option>
-
-                </select>
-
-            </div>
-
-            <div class="loan-column">
-
-                <label
-                    class="form-label"
-                    for="collateral">
-                    Asset Collateral Class
-                </label>
-
-                <select
-                    class="form-control"
-                    id="collateral"
-                    name="collateral"
-                    onchange="handleCollateralChange()"
-                    required>
-
-                    <option value="Post-Dated Check">
-
-                        Post-Dated Check
-
-                    </option>
-
-                    <option value="Real Property">
-
-                        Real Property
-
-                    </option>
-
-                    <option value="Chattels / Movable Assets">
-
-                        Chattels / Movable Assets
-
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <div
-            id="real_property_panel"
-            class="loan-panel loan-panel--property">
-
-            <h3 class="loan-panel__title">
-
-                Real Property Registration Assets
-
-            </h3>
-
-            <div class="loan-row">
-
-                <div class="loan-column">
-
-                    <label
-                        class="form-label"
-                        for="tct_no">
-                        TCT No.
-                    </label>
-
-                    <input
-                        class="form-control"
-                        type="text"
-                        id="tct_no"
-                        name="tct_no">
+                    </div>
 
                 </div>
 
-                <div class="loan-column">
+                <div class="card__body">
 
-                    <label
-                        class="form-label"
-                        for="tax_declaration_no">
-                        Tax Declaration No.
-                    </label>
+                    <div class="form-grid form-grid--3">
 
-                    <input
-                        class="form-control"
-                        type="text"
-                        id="tax_declaration_no"
-                        name="tax_declaration_no">
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="member_id">
+
+                                Member
+
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="member_id"
+                                name="member_id"
+                                required>
+
+                                <option value="">
+
+                                    -- Select Member --
+
+                                </option>
+
+                                <?php foreach ($members as $member): ?>
+
+                                    <option value="<?= (int) $member['id'] ?>">
+
+                                        <?= htmlspecialchars(
+                                            $member['last_name']
+                                                . ', '
+                                                . $member['first_name']
+                                                . ' ('
+                                                . $member['member_number']
+                                                . ')'
+                                        ) ?>
+
+                                    </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="loan_type">
+
+                                Loan Type
+
+                            </label>
+
+                            <select
+                                class="form-control"
+                                id="loan_type"
+                                name="loan_type"
+                                onchange="handleLoanTypeChange()"
+                                required>
+
+                                <option value="Personal Loan">Personal Loan</option>
+
+                                <option value="Bridge Financing">Bridge Financing</option>
+
+                                <option value="Investment Loan">Investment Loan</option>
+
+                                <option value="Pension Loan">Pension Loan</option>
+
+                                <option value="Productivity Loan">Productivity Loan</option>
+
+                                <option value="Salary Loan">Salary Loan</option>
+
+                                <option value="Micro-Finance Loan">Micro-Finance Loan</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="principal">
+
+                                Principal Amount (₱)
+
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="number"
+                                id="principal"
+                                name="principal"
+                                step="0.01"
+                                required
+                                oninput="calculateLiveDeductions()">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="interest_rate">
+
+                                Interest Rate (%)
+
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="number"
+                                id="interest_rate"
+                                name="interest_rate"
+                                step="0.01"
+                                required
+                                oninput="flagManualInterest()">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="terms">
+
+                                Loan Term (Months)
+
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="number"
+                                id="terms"
+                                name="terms"
+                                required
+                                oninput="calculateLiveDeductions()">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="start_date">
+
+                                Loan Start Date
+
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="date"
+                                id="start_date"
+                                name="start_date"
+                                required>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="loan-column">
+            </section>
 
-                    <label
-                        class="form-label"
-                        for="real_property_status">
-                        Tax Payments Status
-                    </label>
+            <!-- =======================================================
+                 REPAYMENT DETAILS
+            ======================================================== -->
 
-                    <select
-                        class="form-control"
-                        id="real_property_status"
-                        name="real_property_status">
+            <section class="card">
 
-                        <option value="Updated">
+                <div class="card__header">
 
-                            Updated
+                    <div>
 
-                        </option>
+                        <h2 class="card__title">
 
-                        <option value="Pending">
+                            <i class="fas fa-credit-card"></i>
 
-                            Pending
+                            Repayment Details
 
-                        </option>
+                        </h2>
 
-                        <option value="Overdue">
+                        <p class="card__subtitle">
 
-                            Overdue
+                            Configure how this loan will be repaid and secured.
 
-                        </option>
+                        </p>
 
-                    </select>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="card__body">
 
-            <div class="loan-section">
+                    <div class="form-grid form-grid--3">
 
-                <label
-                    class="form-label"
-                    for="undertaking_doc">
-                    Undertaking Document (PDF Only)
-                </label>
+                        <div class="form-group">
 
-                <input
-                    class="form-control"
-                    type="file"
-                    id="undertaking_doc"
-                    name="undertaking_doc"
-                    accept="application/pdf">
+                            <label
+                                class="form-label"
+                                for="collateral">
 
-            </div>
+                                Collateral
 
-            <div class="loan-section">
+                            </label>
 
-                <label
-                    class="form-label"
-                    for="deed_of_rights_doc">
-                    Assignment of Deed of Rights (PDF Only)
-                </label>
+                            <select
+                                class="form-control"
+                                id="collateral"
+                                name="collateral"
+                                onchange="handleCollateralChange()"
+                                required>
 
-                <input
-                    class="form-control"
-                    type="file"
-                    id="deed_of_rights_doc"
-                    name="deed_of_rights_doc"
-                    accept="application/pdf">
+                                <option value="Post-Dated Check">
 
-            </div>
+                                    Post-Dated Check
 
-        </div>
+                                </option>
 
-        <div class="loan-row">
+                                <option value="Real Property">
 
-            <div class="loan-column">
+                                    Real Property
 
-                <label
-                    class="form-label"
-                    for="amortization_type">
-                    Amortization Method
-                </label>
+                                </option>
 
-                <select
-                    class="form-control"
-                    id="amortization_type"
-                    name="amortization_type"
-                    onchange="handleAmortTypeChange()"
-                    required>
+                                <option value="Chattels / Movable Assets">
 
-                    <option value="Straight-line">
+                                    Chattels / Movable Assets
 
-                        Straight-line Mode
+                                </option>
 
-                    </option>
+                            </select>
 
-                    <option value="Diminishing balance">
+                        </div>
 
-                        Diminishing Balance Mode
+                        <div class="form-group">
 
-                    </option>
+                            <label
+                                class="form-label"
+                                for="amortization_type">
 
-                    <option value="Manual">
+                                Amortization Method
 
-                        Manual Installment Payment
+                            </label>
 
-                    </option>
+                            <select
+                                class="form-control"
+                                id="amortization_type"
+                                name="amortization_type"
+                                onchange="handleAmortTypeChange()"
+                                required>
 
-                </select>
+                                <option value="Straight-line">
 
-            </div>
+                                    Straight-line
 
-            <div
-                id="frequency_panel"
-                class="loan-column loan-hidden">
+                                </option>
 
-                <label
-                    class="form-label"
-                    for="payment_frequency">
-                    Micro-Finance Frequency Multiplier
-                </label>
+                                <option value="Diminishing balance">
 
-                <select
-                    class="form-control"
-                    id="payment_frequency"
-                    name="payment_frequency">
+                                    Diminishing Balance
 
-                    <option value="Monthly">
+                                </option>
 
-                        Monthly Structure
+                                <option value="Manual">
 
-                    </option>
+                                    Manual
 
-                    <option value="Bi-Monthly">
+                                </option>
 
-                        Bi-Monthly (+15 Days Split)
+                            </select>
 
-                    </option>
+                        </div>
 
-                    <option value="Weekly">
+                        <div
+                            id="frequency_panel"
+                            class="form-group loan-hidden">
 
-                        Weekly Cycle (+7 Days Split)
+                            <label
+                                class="form-label"
+                                for="payment_frequency">
 
-                    </option>
+                                Payment Frequency
 
-                </select>
+                            </label>
 
-            </div>
+                            <select
+                                class="form-control"
+                                id="payment_frequency"
+                                name="payment_frequency">
 
-        </div>
+                                <option value="Monthly">
 
-        <div class="loan-row">
+                                    Monthly
 
-            <div class="loan-column">
+                                </option>
 
-                <label
-                    class="form-label"
-                    for="principal">
-                    Principal Core Sum (₱)
-                </label>
+                                <option value="Bi-Monthly">
 
-                <input
-                    class="form-control"
-                    type="number"
-                    id="principal"
-                    name="principal"
-                    step="0.01"
-                    required
-                    oninput="calculateLiveDeductions()">
+                                    Bi-Monthly
 
-            </div>
+                                </option>
 
-            <div class="loan-column">
+                                <option value="Weekly">
 
-                <label
-                    class="form-label"
-                    for="interest_rate">
-                    Interest Rate (% Per Month)
-                </label>
+                                    Weekly
 
-                <input
-                    class="form-control"
-                    type="number"
-                    id="interest_rate"
-                    name="interest_rate"
-                    step="0.01"
-                    required
-                    oninput="flagManualInterest()">
+                                </option>
 
-            </div>
+                            </select>
 
-        </div>
+                        </div>
 
-        <div class="loan-row">
+                    </div>
 
-            <div class="loan-column">
+                </div>
 
-                <label
-                    class="form-label"
-                    for="terms">
-                    Term Duration (Months)
-                </label>
+            </section>
 
-                <input
-                    class="form-control"
-                    type="number"
-                    id="terms"
-                    name="terms"
-                    required
-                    oninput="calculateLiveDeductions()">
+            <!-- =======================================================
+                 REAL PROPERTY INFORMATION
+            ======================================================== -->
 
-            </div>
+            <section
+                id="real_property_panel"
+                class="card loan-hidden">
 
-            <div class="loan-column">
+                <div class="card__header">
 
-                <label
-                    class="form-label"
-                    for="start_date">
-                    Schedule Start Release Date
-                </label>
+                    <div>
 
-                <input
-                    class="form-control"
-                    type="date"
-                    id="start_date"
-                    name="start_date"
-                    required>
+                        <h2 class="card__title">
 
-            </div>
+                            <i class="fas fa-house"></i>
 
-        </div>
+                            Real Property Information
 
-        <div
-            id="manual_payment_panel"
-            class="loan-section loan-hidden">
+                        </h2>
 
-            <label
-                class="form-label"
-                for="manual_payment">
-                Explicit Target Amount Per Period (₱)
-            </label>
+                        <p class="card__subtitle">
 
-            <input
-                class="form-control"
-                type="number"
-                id="manual_payment"
-                name="manual_payment"
-                step="0.01"
-                value="0.00">
+                            Complete the required information for loans secured by real property.
 
-        </div>
+                        </p>
 
-        <div
-            id="deductions_panel"
-            class="loan-panel loan-panel--summary">
+                    </div>
 
-            <h3 class="loan-panel__title">
+                </div>
 
-                Computed Capital Deductions
+                <div class="card__body">
 
-            </h3>
+                    <div class="form-grid form-grid--3">
 
-            <div class="loan-summary__row">
+                        <div class="form-group">
 
-                <span>
+                            <label
+                                class="form-label"
+                                for="tct_no">
 
-                    Processing Fee (2%)
+                                TCT Number
 
-                </span>
+                            </label>
 
-                <strong id="lbl_processing">
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="tct_no"
+                                name="tct_no">
 
-                    ₱0.00
+                        </div>
 
-                </strong>
+                        <div class="form-group">
 
-            </div>
+                            <label
+                                class="form-label"
+                                for="tax_declaration_no">
 
-            <div class="loan-summary__row">
+                                Tax Declaration No.
 
-                <span>
+                            </label>
 
-                    Mutual Insurance Protection
+                            <input
+                                class="form-control"
+                                type="text"
+                                id="tax_declaration_no"
+                                name="tax_declaration_no">
 
-                </span>
+                        </div>
 
-                <strong id="lbl_insurance">
+                        <div class="form-group">
 
-                    ₱0.00
+                            <label
+                                class="form-label"
+                                for="real_property_status">
 
-                </strong>
+                                Tax Payment Status
 
-            </div>
+                            </label>
 
-            <div class="loan-summary__row">
+                            <select
+                                class="form-control"
+                                id="real_property_status"
+                                name="real_property_status">
 
-                <span>
+                                <option value="Updated">
 
-                    Notarial Fee
+                                    Updated
 
-                </span>
+                                </option>
 
-                <strong id="lbl_notarial">
+                                <option value="Pending">
 
-                    ₱0.00
+                                    Pending
 
-                </strong>
+                                </option>
 
-            </div>
+                                <option value="Overdue">
 
-            <div class="loan-summary__total">
+                                    Overdue
 
-                Projected Net Loan Proceeds
+                                </option>
 
-                <span id="lbl_net">
+                            </select>
 
-                    ₱0.00
+                        </div>
 
-                </span>
+                    </div>
 
-            </div>
+                    <div class="form-grid form-grid--2">
 
-        </div>
+                        <div class="form-group">
 
-        <div class="loan-actions">
+                            <label
+                                class="form-label"
+                                for="undertaking_doc">
 
-            <button
-                type="submit"
-                class="btn btn--success loan-submit">
+                                Undertaking Document (PDF)
 
-                Establish Account & Commit Amortization Schedule
+                            </label>
 
-            </button>
+                            <input
+                                class="form-control"
+                                type="file"
+                                id="undertaking_doc"
+                                name="undertaking_doc"
+                                accept="application/pdf">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="deed_of_rights_doc">
+
+                                Assignment of Deed of Rights (PDF)
+
+                            </label>
+
+                            <input
+                                class="form-control"
+                                type="file"
+                                id="deed_of_rights_doc"
+                                name="deed_of_rights_doc"
+                                accept="application/pdf">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =======================================================
+                 LOAN SUMMARY
+            ======================================================== -->
+
+            <section
+                id="deductions_panel"
+                class="card">
+
+                <div class="card__header">
+
+                    <div>
+
+                        <h2 class="card__title">
+
+                            <i class="fas fa-chart-pie"></i>
+
+                            Loan Summary
+
+                        </h2>
+
+                        <p class="card__subtitle">
+
+                            Estimated deductions before loan proceeds are released.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="card__body">
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card stat-card--warning">
+
+                            <div class="stat-card__body">
+
+                                <p class="stat-card__title">
+
+                                    Processing Fee
+
+                                </p>
+
+                                <h3
+                                    id="lbl_processing"
+                                    class="stat-card__value">
+
+                                    ₱0.00
+
+                                </h3>
+
+                                <p class="stat-card__subtitle">
+
+                                    2% of principal amount
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-card stat-card--info">
+
+                            <div class="stat-card__body">
+
+                                <p class="stat-card__title">
+
+                                    Insurance
+
+                                </p>
+
+                                <h3
+                                    id="lbl_insurance"
+                                    class="stat-card__value">
+
+                                    ₱0.00
+
+                                </h3>
+
+                                <p class="stat-card__subtitle">
+
+                                    Based on loan term
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-card stat-card--primary">
+
+                            <div class="stat-card__body">
+
+                                <p class="stat-card__title">
+
+                                    Notarial Fee
+
+                                </p>
+
+                                <h3
+                                    id="lbl_notarial"
+                                    class="stat-card__value">
+
+                                    ₱0.00
+
+                                </h3>
+
+                                <p class="stat-card__subtitle">
+
+                                    Documentation fee
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-card stat-card--success">
+
+                            <div class="stat-card__body">
+
+                                <p class="stat-card__title">
+
+                                    Net Proceeds
+
+                                </p>
+
+                                <h3
+                                    id="lbl_net"
+                                    class="stat-card__value">
+
+                                    ₱0.00
+
+                                </h3>
+
+                                <p class="stat-card__subtitle">
+
+                                    Estimated amount to be released
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card__footer">
+
+                    <a
+                        href="<?= url('amortization_dashboard') ?>"
+                        class="btn btn--secondary">
+
+                        Cancel
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn--success btn--lg">
+
+                        <i class="fas fa-hand-holding-dollar"></i>
+
+                        Create Loan
+
+                    </button>
+
+                </div>
+
+            </section>
 
         </div>
 

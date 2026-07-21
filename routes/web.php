@@ -135,8 +135,8 @@ switch ($route) {
         break;
 
     case 'print_soa':
-        handlePrintSOA($pdo);
-        break;
+        echo handlePrintSOA($pdo);
+        exit;
 
     case 'edit_schedule_period':
         handleEditSchedulePeriod($pdo);

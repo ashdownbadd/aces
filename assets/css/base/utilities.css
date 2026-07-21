@@ -6,6 +6,14 @@
   display: none !important;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.loan-hidden {
+  display: none !important;
+}
+
 .block {
   display: block !important;
 }
@@ -268,6 +276,10 @@
 
 .text-warning {
   color: var(--warning);
+}
+
+.text-muted {
+  color: var(--text-light);
 }
 
 /* ==========================================================

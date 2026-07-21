@@ -4,6 +4,9 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$member = $member ?? [];
+$education = $member['education'][0] ?? [];
+
 ?>
 
 <div class="member-step__content">
@@ -20,6 +23,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'education_level',
             'label' => 'Highest Educational Attainment',
             'name' => 'education_level',
+            'value' => $education['education_level'] ?? '',
             'required' => true,
             'rules' => [
                 'required'
@@ -40,6 +44,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'course',
             'label' => 'Course / Degree',
             'name' => 'course',
+            'value' => $education['course'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 150
@@ -49,6 +54,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'school',
             'label' => 'School / Institution',
             'name' => 'school',
+            'value' => $education['school'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 150
@@ -59,6 +65,7 @@ if (!defined('ALLOW_ACCESS')) {
             'type' => 'number',
             'label' => 'Year Graduated',
             'name' => 'year_graduated',
+            'value' => $education['year_graduated'] ?? '',
             'min' => '1950',
             'max' => date('Y')
         ]);
@@ -75,6 +82,7 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'honors',
             'label' => 'Honors / Awards',
             'name' => 'honors',
+            'value' => $education['honors'] ?? '',
             'trim' => true,
             'transform' => 'capitalize',
             'maxlength' => 150
@@ -84,8 +92,9 @@ if (!defined('ALLOW_ACCESS')) {
             'id' => 'education_remarks',
             'label' => 'Educational Remarks',
             'name' => 'education_remarks',
+            'value' => $education['education_remarks'] ?? '',
             'rows' => 4,
-            'placeholder' => 'Additional educational information (optional)...'
+            'placeholder' => 'Additional educational information (Optional)...'
         ]);
 
         ?>

@@ -68,8 +68,8 @@ $profile = $member['profile'] ?? [];
 
         c('form/input', [
             'label' => 'Birth Place',
-            'name' => 'birth_place',
-            'value' => $member['birth_place'] ?? '',
+            'name' => 'birthplace',
+            'value' => $member['profile']['birthplace'] ?? '',
             'required' => true,
             'trim' => true,
             'transform' => 'capitalize',

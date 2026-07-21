@@ -513,37 +513,7 @@ function handleEditMember(PDO $pdo): string
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| One-to-One Relations
-|--------------------------------------------------------------------------
-*/
 
-$relations = [
-
-    'profile'    => 'member_profiles',
-
-    'contact'    => 'member_contact',
-
-    'address'    => 'member_addresses',
-
-    'employment' => 'member_employment'
-
-];
-
-foreach ($relations as $key => $table) {
-
-    $stmt = $pdo->prepare("
-        SELECT *
-        FROM {$table}
-        WHERE member_id = ?
-    ");
-
-    $stmt->execute([$member_id]);
-
-    $member[$key] =
-        $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-}
 
 function handleUpdateMember(PDO $pdo): void
 {
@@ -580,21 +550,22 @@ function handleUpdateMember(PDO $pdo): void
 
         $pdo->prepare("
             UPDATE members
-            SET
-                first_name = ?,
-                middle_name = ?,
-                last_name = ?,
-                date_of_birth = ?,
-                membership_type = ?
-            WHERE id = ?
+SET
+    first_name = ?,
+    middle_name = ?,
+    last_name = ?,
+    suffix = ?,
+    date_of_birth = ?,
+    membership_type = ?
+WHERE id = ?
         ")->execute([
 
             trim($_POST['first_name'] ?? ''),
             trim($_POST['middle_name'] ?? ''),
             trim($_POST['last_name'] ?? ''),
+            trim($_POST['suffix'] ?? ''),
             trim($_POST['date_of_birth'] ?? ''),
             trim($_POST['membership_type'] ?? 'Regular'),
-
             $member_id
 
         ]);
@@ -607,17 +578,28 @@ function handleUpdateMember(PDO $pdo): void
 
         $pdo->prepare("
             UPDATE member_profiles
-            SET
-                sex = ?,
-                marital_status = ?
-            WHERE member_id = ?
+SET
+    title_rank = ?,
+    position = ?,
+    tin_no = ?,
+    marital_status = ?,
+    sex = ?,
+    height = ?,
+    weight = ?,
+    complexion = ?,
+    birthplace = ?
+WHERE member_id = ?
         ")->execute([
-
-            trim($_POST['sex'] ?? ''),
+            trim($_POST['title_rank'] ?? ''),
+            trim($_POST['position'] ?? ''),
+            trim($_POST['tin_no'] ?? ''),
             trim($_POST['marital_status'] ?? ''),
-
+            trim($_POST['sex'] ?? ''),
+            trim($_POST['height'] ?? ''),
+            trim($_POST['weight'] ?? ''),
+            trim($_POST['complexion'] ?? ''),
+            trim($_POST['birthplace'] ?? ''),
             $member_id
-
         ]);
 
         /*
@@ -681,11 +663,12 @@ function handleUpdateMember(PDO $pdo): void
         $pdo->prepare("
             UPDATE member_employment
             SET
-                employment_status = ?,
-                occupation = ?,
-                employer_name = ?,
-                employer_address = ?,
-                monthly_income = ?
+    employment_status = ?,
+    occupation = ?,
+    employer_name = ?,
+    employer_address = ?,
+    monthly_income = ?,
+    employment_remarks = ?
             WHERE member_id = ?
         ")->execute([
 
@@ -702,6 +685,8 @@ function handleUpdateMember(PDO $pdo): void
                 )
                 : null,
 
+            trim($_POST['employment_remarks'] ?? ''),
+
             $member_id
 
         ]);
@@ -715,11 +700,12 @@ function handleUpdateMember(PDO $pdo): void
         $pdo->prepare("
             UPDATE member_education
             SET
-                education_level = ?,
-                course = ?,
-                school = ?,
-                year_graduated = ?,
-                honors = ?
+    education_level = ?,
+    course = ?,
+    school = ?,
+    year_graduated = ?,
+    honors = ?,
+    education_remarks = ?
             WHERE member_id = ?
         ")->execute([
 
@@ -732,6 +718,8 @@ function handleUpdateMember(PDO $pdo): void
                 : null,
 
             trim($_POST['honors'] ?? ''),
+
+            trim($_POST['education_remarks'] ?? ''),
 
             $member_id
 
@@ -804,11 +792,11 @@ function handleUpdateMember(PDO $pdo): void
         $pdo->commit();
 
         redirectSuccess(
-
-            'member_profile&id=' . $member_id,
-
-            'Member successfully updated.'
-
+            'member_profile',
+            'Member successfully updated.',
+            [
+                'id' => $member_id
+            ]
         );
     } catch (PDOException $e) {
 
@@ -819,8 +807,11 @@ function handleUpdateMember(PDO $pdo): void
         error_log($e->getMessage());
 
         redirectError(
-            'member_profile&id=' . $member_id,
-            'Unable to update member.'
+            'member_profile',
+            'Unable to update member.',
+            [
+                'id' => $member_id
+            ]
         );
     }
 }
@@ -868,16 +859,17 @@ function handleCreateCoopMember(PDO $pdo): string
 
         $stmtM = $pdo->prepare("
             INSERT INTO members
-            (
-                member_number,
-                first_name,
-                middle_name,
-                last_name,
-                date_of_birth,
-                membership_type,
-                status,
-                date_of_membership
-            )
+(
+    member_number,
+    first_name,
+    middle_name,
+    last_name,
+    suffix,
+    date_of_birth,
+    membership_type,
+    status,
+    date_of_membership
+)
             VALUES
             (
                 'TEMP',
@@ -895,6 +887,7 @@ function handleCreateCoopMember(PDO $pdo): string
             $first_name,
             $middle_name,
             $last_name,
+            trim($_POST['suffix'] ?? ''),
             $date_of_birth,
             $membership_type
         ]);
@@ -923,16 +916,30 @@ function handleCreateCoopMember(PDO $pdo): string
 
         $pdo->prepare("
             INSERT INTO member_profiles
-            (
-                member_id,
-                sex,
-                marital_status
-            )
-            VALUES (?, ?, ?)
+(
+    member_id,
+    title_rank,
+    position,
+    tin_no,
+    marital_status,
+    sex,
+    height,
+    weight,
+    complexion,
+    birthplace
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ")->execute([
             $member_id,
+            trim($_POST['title_rank'] ?? ''),
+            trim($_POST['position'] ?? ''),
+            trim($_POST['tin_no'] ?? ''),
+            trim($_POST['marital_status'] ?? ''),
             trim($_POST['sex'] ?? ''),
-            trim($_POST['marital_status'] ?? '')
+            trim($_POST['height'] ?? ''),
+            trim($_POST['weight'] ?? ''),
+            trim($_POST['complexion'] ?? ''),
+            trim($_POST['birthplace'] ?? '')
         ]);
 
         $pdo->prepare("
@@ -977,16 +984,17 @@ function handleCreateCoopMember(PDO $pdo): string
 
         $pdo->prepare("
     INSERT INTO member_employment
-    (
-        member_id,
-        employment_status,
-        occupation,
-        employer_name,
-        employer_address,
-        monthly_income
-    )
+(
+    member_id,
+    employment_status,
+    occupation,
+    employer_name,
+    employer_address,
+    monthly_income,
+    employment_remarks
+)
     VALUES
-    (?, ?, ?, ?, ?, ?)
+(?, ?, ?, ?, ?, ?, ?)
 ")->execute([
 
             $member_id,
@@ -1005,22 +1013,25 @@ function handleCreateCoopMember(PDO $pdo): string
                     '',
                     trim($_POST['monthly_income'])
                 )
-                : null
+                : null,
+
+            trim($_POST['employment_remarks'] ?? ''),
 
         ]);
 
         $pdo->prepare("
     INSERT INTO member_education
-    (
-        member_id,
-        education_level,
-        course,
-        school,
-        year_graduated,
-        honors
-    )
+(
+    member_id,
+    education_level,
+    course,
+    school,
+    year_graduated,
+    honors,
+    education_remarks
+)
     VALUES
-    (?, ?, ?, ?, ?, ?)
+(?, ?, ?, ?, ?, ?, ?)
 ")->execute([
 
             $member_id,
@@ -1035,7 +1046,9 @@ function handleCreateCoopMember(PDO $pdo): string
                 ? (int) $_POST['year_graduated']
                 : null,
 
-            trim($_POST['honors'] ?? '')
+            trim($_POST['honors'] ?? ''),
+
+            trim($_POST['education_remarks'] ?? '')
 
         ]);
 

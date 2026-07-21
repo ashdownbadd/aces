@@ -384,6 +384,19 @@ const BeneficiaryList = (() => {
     return beneficiaries;
   }
 
+  function setData(data = []) {
+    beneficiaries = data.map((beneficiary) => ({
+      id: crypto.randomUUID(),
+      full_name: beneficiary.full_name ?? "",
+      relationship: beneficiary.relationship ?? "",
+      birth_date: beneficiary.birth_date ?? "",
+      contact_number: beneficiary.contact_number ?? "",
+      allocation: beneficiary.allocation ?? "",
+    }));
+
+    refresh();
+  }
+
   function reset() {
     beneficiaries = [];
 
@@ -400,6 +413,8 @@ const BeneficiaryList = (() => {
     validate,
 
     getData,
+
+    setData,
 
     getTotalAllocation,
 

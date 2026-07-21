@@ -353,6 +353,22 @@ function initializeEducation() {
 
 function initializeBeneficiaries() {
   BeneficiaryList.initialize();
+
+  const existing = document.getElementById("existingBeneficiaries");
+
+  if (!existing || !existing.value) {
+    return;
+  }
+
+  try {
+    const beneficiaries = JSON.parse(existing.value);
+
+    if (Array.isArray(beneficiaries) && beneficiaries.length) {
+      BeneficiaryList.setData(beneficiaries);
+    }
+  } catch (error) {
+    console.error("Unable to load beneficiaries.", error);
+  }
 }
 
 /* ==========================================================

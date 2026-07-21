@@ -18,7 +18,7 @@ try {
         'member_beneficiaries',
         'member_contact',
         'member_education',
-        'member_experience',
+        'member_employment',
         'member_profiles',
         'members'
     ];
@@ -34,8 +34,6 @@ try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
     echo "All specified tables have been cleared successfully.";
-
 } catch (PDOException $e) {
     echo "Error during cleanup: " . $e->getMessage();
 }
-?>

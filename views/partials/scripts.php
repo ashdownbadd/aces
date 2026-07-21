@@ -12,7 +12,7 @@ $route = $_GET['route'] ?? '';
 
 <?php endif; ?>
 
-<?php if ($route === 'add_member'): ?>
+<?php if (in_array($route, ['add_member', 'member_edit'])): ?>
 
     <script src="assets/js/core/form.js"></script>
     <script src="assets/js/core/validation.js"></script>

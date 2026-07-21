@@ -459,7 +459,7 @@ input[type="file"]::file-selector-button:hover {
 ========================================================== */
 
 .form-section {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7);
 }
 
 .form-section__title {

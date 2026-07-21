@@ -11,11 +11,8 @@ if (!defined('ALLOW_ACCESS')) {
     <?php
 
     c('page_header', [
-
         'title' => 'Loan Portfolio',
-
         'description' => 'Manage cooperative loan accounts, monitor portfolio performance, and access borrower statements.'
-
     ]);
 
     ?>
@@ -25,162 +22,184 @@ if (!defined('ALLOW_ACCESS')) {
     <div class="page__actions">
 
         <a
-            href="<?= url('dashboard') ?>"
-            class="btn btn--secondary">
-            ← Back to Dashboard
+            href="<?= url('create_loan') ?>"
+            class="btn btn--primary">
+
+            <i class="fas fa-plus"></i>
+
+            New Loan
+
         </a>
+
+        <?php if ((int) ($_SESSION['role_id'] ?? 0) === 1): ?>
+
+            <a
+                href="<?= url('pending_loans_queue') ?>"
+                class="btn btn--warning">
+
+                <i class="fas fa-clock"></i>
+
+                Pending Queue
+
+            </a>
+
+        <?php endif; ?>
 
     </div>
 
     <section class="section">
 
-        <div class="section__header">
-
-            <div>
-
-                <h2 class="section__title">
-
-                    Portfolio Overview
-
-                </h2>
-
-                <p class="section__description">
-
-                    Current financial position of all approved loans.
-
-                </p>
-
-            </div>
-
-        </div>
-
         <div class="section__body">
 
-            <div class="stats">
+            <div class="stats-grid">
 
-                <div class="stats__card stats__card--primary">
+                <div class="stat-card stat-card--primary">
 
-                    <div class="stats__content">
+                    <div class="stat-card__header">
 
-                        <span class="stats__label">
+                        <div class="stat-card__heading">
 
-                            Total Disbursed
+                            <p class="stat-card__title">
+                                Total Disbursed
+                            </p>
 
-                        </span>
+                        </div>
 
-                        <span class="stats__value">
+                        <div class="stat-card__icon">
+
+                            <i class="fas fa-hand-holding-dollar"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div class="stat-card__body">
+
+                        <h3 class="stat-card__value">
 
                             ₱<?= number_format($totalDisbursed, 2) ?>
 
-                        </span>
+                        </h3>
 
-                        <span class="stats__description">
+                        <p class="stat-card__subtitle">
 
                             Released loan principal
 
-                        </span>
-
-                    </div>
-
-                    <div class="stats__icon">
-
-                        <i class="fas fa-hand-holding-dollar"></i>
+                        </p>
 
                     </div>
 
                 </div>
 
-                <div class="stats__card stats__card--success">
+                <div class="stat-card stat-card--success">
 
-                    <div class="stats__content">
+                    <div class="stat-card__header">
 
-                        <span class="stats__label">
+                        <div class="stat-card__heading">
 
-                            Projected Revenue
+                            <p class="stat-card__title">
+                                Projected Revenue
+                            </p>
 
-                        </span>
+                        </div>
 
-                        <span class="stats__value">
+                        <div class="stat-card__icon">
+
+                            <i class="fas fa-chart-line"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div class="stat-card__body">
+
+                        <h3 class="stat-card__value">
 
                             ₱<?= number_format($projectedRevenue, 2) ?>
 
-                        </span>
+                        </h3>
 
-                        <span class="stats__description">
+                        <p class="stat-card__subtitle">
 
                             Expected interest income
 
-                        </span>
-
-                    </div>
-
-                    <div class="stats__icon">
-
-                        <i class="fas fa-chart-line"></i>
+                        </p>
 
                     </div>
 
                 </div>
 
-                <div class="stats__card stats__card--info">
+                <div class="stat-card stat-card--info">
 
-                    <div class="stats__content">
+                    <div class="stat-card__header">
 
-                        <span class="stats__label">
+                        <div class="stat-card__heading">
 
-                            Collected
+                            <p class="stat-card__title">
+                                Collected
+                            </p>
 
-                        </span>
+                        </div>
 
-                        <span class="stats__value">
+                        <div class="stat-card__icon">
+
+                            <i class="fas fa-money-bill-wave"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div class="stat-card__body">
+
+                        <h3 class="stat-card__value">
 
                             ₱<?= number_format($collectedToDate, 2) ?>
 
-                        </span>
+                        </h3>
 
-                        <span class="stats__description">
+                        <p class="stat-card__subtitle">
 
                             Payments received
 
-                        </span>
-
-                    </div>
-
-                    <div class="stats__icon">
-
-                        <i class="fas fa-money-bill-wave"></i>
+                        </p>
 
                     </div>
 
                 </div>
 
-                <div class="stats__card stats__card--danger">
+                <div class="stat-card stat-card--danger">
 
-                    <div class="stats__content">
+                    <div class="stat-card__header">
 
-                        <span class="stats__label">
+                        <div class="stat-card__heading">
 
-                            Portfolio At Risk
+                            <p class="stat-card__title">
+                                Portfolio At Risk
+                            </p>
 
-                        </span>
+                        </div>
 
-                        <span class="stats__value">
+                        <div class="stat-card__icon">
 
-                            ₱<?= number_format($portfolioAtRisk, 2) ?>
+                            <i class="fas fa-triangle-exclamation"></i>
 
-                        </span>
-
-                        <span class="stats__description">
-
-                            Outstanding overdue balance
-
-                        </span>
+                        </div>
 
                     </div>
 
-                    <div class="stats__icon">
+                    <div class="stat-card__body">
 
-                        <i class="fas fa-triangle-exclamation"></i>
+                        <h3 class="stat-card__value">
+
+                            ₱<?= number_format($portfolioAtRisk, 2) ?>
+
+                        </h3>
+
+                        <p class="stat-card__subtitle">
+
+                            Outstanding overdue balance
+
+                        </p>
 
                     </div>
 
@@ -194,239 +213,170 @@ if (!defined('ALLOW_ACCESS')) {
 
     <section class="section">
 
-        <div class="section__header">
+        <div class="section__body">
 
-            <div>
+            <div class="table">
 
-                <h2 class="section__title">
+                <div class="table__caption">
 
-                    Loan Portfolio
+                    <div class="table__caption-title">
 
-                </h2>
+                        Loan Accounts
 
-                <p class="section__description">
+                    </div>
 
-                    Active cooperative loan accounts.
+                </div>
 
-                </p>
+                <div class="table__scroll">
 
-            </div>
+                    <table>
 
-            <div class="loan-toolbar">
+                        <thead>
 
-                <div class="loan-toolbar__actions">
+                            <tr>
 
-                    <a
-                        href="<?= url('create_loan') ?>"
-                        class="btn btn--primary">
-                        <i class="fas fa-plus"></i>
+                                <th>Borrower</th>
+                                <th>Loan Type</th>
+                                <th>Amortization</th>
+                                <th>Principal</th>
+                                <th>Term</th>
+                                <th>Status</th>
 
-                        New Loan
-                    </a>
+                            </tr>
 
-                    <?php if ((int) ($_SESSION['role_id'] ?? 0) === 1): ?>
+                        </thead>
 
-                        <a
-                            href="<?= url('pending_loans_queue') ?>"
-                            class="btn btn--warning">
-                            <i class="fas fa-clock"></i>
+                        <tbody>
 
-                            Pending Queue
-                        </a>
+                            <?php if (empty($loans)): ?>
 
-                    <?php endif; ?>
+                                <tr>
+
+                                    <td
+                                        colspan="6"
+                                        class="table__empty">
+
+                                        No approved loan accounts found.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php else: ?>
+
+                                <?php foreach ($loans as $loan): ?>
+
+                                    <?php
+
+                                    $amortization = $loan['amortization_type'];
+
+                                    if ($loan['loan_type'] === 'Micro-Finance Loan') {
+
+                                        $amortization .=
+                                            ' • '
+                                            . $loan['payment_frequency'];
+                                    }
+
+                                    $status = strtolower($loan['soa_status']);
+
+                                    $statusClass = match ($status) {
+
+                                        'fully paid' => 'badge badge--success',
+
+                                        'active' => 'badge badge--primary',
+
+                                        'overdue' => 'badge badge--danger',
+
+                                        default => 'badge badge--secondary'
+                                    };
+
+                                    ?>
+
+                                    <tr
+                                        onclick="window.location='<?= url('view_loan', ['id' => $loan['id']]) ?>'"
+                                        style="cursor: pointer;">
+
+                                        <td>
+
+                                            <strong>
+
+                                                <?= htmlspecialchars(
+                                                    $loan['last_name']
+                                                        . ', '
+                                                        . $loan['first_name']
+                                                ) ?>
+
+                                            </strong>
+
+                                            <br>
+
+                                            <small class="text-muted">
+
+                                                <?= htmlspecialchars($loan['member_number']) ?>
+
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+
+                                            <?= htmlspecialchars(
+                                                $loan['loan_type']
+                                            ) ?>
+
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge--secondary">
+
+                                                <?= htmlspecialchars(
+                                                    $amortization
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+                                        <td class="table__number">
+
+                                            ₱<?= number_format($loan['principal'], 2) ?>
+
+                                        </td>
+
+                                        <td>
+
+                                            <?= (int) $loan['terms'] ?>
+
+                                            Months
+
+                                        </td>
+
+                                        <td>
+
+                                            <span class="<?= $statusClass ?>">
+
+                                                <?= htmlspecialchars(
+                                                    $loan['soa_status']
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                <?php endforeach; ?>
+
+                            <?php endif; ?>
+
+                        </tbody>
+
+                    </table>
 
                 </div>
 
             </div>
-
-        </div>
-
-        <div class="section__body">
-
-            <table class="table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Borrower</th>
-
-                        <th>Loan Type</th>
-
-                        <th>Amortization</th>
-
-                        <th>Principal</th>
-
-                        <th>Term</th>
-
-                        <th>Status</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    <?php if (empty($loans)): ?>
-
-                        <tr>
-
-                            <td colspan="7" class="table__empty">
-
-                                No approved loan accounts found.
-
-                            </td>
-
-                        </tr>
-
-                    <?php else: ?>
-
-                        <?php foreach ($loans as $loan): ?>
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="loan-table__member">
-
-                                        <strong>
-
-                                            <?= htmlspecialchars(
-                                                $loan['last_name']
-                                                    . ', '
-                                                    . $loan['first_name']
-                                            ) ?>
-
-                                        </strong>
-
-                                        <small>
-
-                                            <?= htmlspecialchars(
-                                                $loan['member_number']
-                                            ) ?>
-
-                                        </small>
-
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <?= htmlspecialchars(
-                                        $loan['loan_type']
-                                    ) ?>
-
-                                </td>
-
-                                <td>
-
-                                    <?php
-                                    $amortization = $loan['amortization_type'];
-
-                                    if (
-                                        $loan['loan_type']
-                                        === 'Micro-Finance Loan'
-                                    ) {
-
-                                        $amortization .=
-                                            ' (' .
-                                            $loan['payment_frequency'] .
-                                            ')';
-                                    }
-                                    ?>
-
-                                    <span class="badge">
-
-                                        <?= htmlspecialchars(
-                                            $amortization
-                                        ) ?>
-
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <span class="loan-table__amount">
-
-                                        ₱<?= number_format(
-                                                $loan['principal'],
-                                                2
-                                            ) ?>
-
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <?= (int) $loan['terms'] ?>
-
-                                    Months
-
-                                </td>
-
-                                <td>
-
-                                    <?php
-
-                                    $status =
-                                        strtolower(
-                                            $loan['soa_status']
-                                        );
-
-                                    $class =
-                                        $status === 'fully paid'
-                                        ? 'loan-status--paid'
-                                        : 'loan-status--active';
-
-                                    ?>
-
-                                    <span
-                                        class="loan-status <?= $class ?>">
-
-                                        <?= htmlspecialchars(
-                                            $loan['soa_status']
-                                        ) ?>
-
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div class="loan-table__actions">
-
-                                        <a
-                                            href="<?= url(
-                                                        'view_loan&id='
-                                                            . $loan['id']
-                                                    ) ?>"
-                                            class="btn btn--success">
-
-                                            <i class="fas fa-eye"></i>
-
-                                            View
-
-                                        </a>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        <?php endforeach; ?>
-
-                    <?php endif; ?>
-
-                </tbody>
-
-            </table>
 
         </div>
 

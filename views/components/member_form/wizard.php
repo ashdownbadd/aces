@@ -33,6 +33,15 @@ $formAction = $isEdit
         id="beneficiariesJson"
         name="beneficiaries">
 
+    <input
+        type="hidden"
+        id="existingBeneficiaries"
+        value="<?= htmlspecialchars(
+                    json_encode($member['beneficiaries'] ?? []),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>">
+
     <?php c('member_form/step_header'); ?>
 
     <?php c('member_form/step_progress'); ?>
@@ -46,7 +55,12 @@ $formAction = $isEdit
                 <section
                     class="member-step <?= $index === 0 ? 'is-active' : '' ?>">
 
-                    <?php c("member_form/step_{$step}"); ?>
+                    <?php c(
+                        "member_form/step_{$step}",
+                        [
+                            'member' => $member ?? []
+                        ]
+                    ); ?>
 
                 </section>
 

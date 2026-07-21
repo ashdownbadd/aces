@@ -68,7 +68,12 @@ $grandTotalDue =
         </a>
 
         <a
-            href="<?= url('print_soa&id=' . $loanData['id']) ?>"
+            href="<?= url(
+                        'print_soa',
+                        [
+                            'id' => $loanData['id']
+                        ]
+                    ) ?>"
             target="_blank"
             class="btn btn--primary">
 
