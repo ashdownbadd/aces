@@ -6,15 +6,11 @@
 
             <h2 class="card__title">
 
+                <i class="fas fa-chart-pie"></i>
+
                 Loan Summary
 
             </h2>
-
-            <p class="card__subtitle">
-
-                Review the computed loan values.
-
-            </p>
 
         </div>
 

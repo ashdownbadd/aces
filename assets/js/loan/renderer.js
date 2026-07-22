@@ -46,20 +46,26 @@
    * ==========================================================
    */
 
-  Loan.renderEmptySchedule = function () {
-    const tbody = Loan.$("loan_preview_body");
+  Loan.renderEmptySchedule = () => {
+    Loan.$("#loan_preview_body").innerHTML = `
+        <tr>
+            <td colspan="6" class="table__empty">
 
-    if (!tbody) {
-      return;
-    }
+                <div class="table__empty-icon">
+                    <i class="fas fa-table"></i>
+                </div>
 
-    tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="table__empty">
-                    Complete the loan details above to generate a live repayment schedule.
-                </td>
-            </tr>
-        `;
+                <div class="table__empty-title">
+                    No Projection Yet
+                </div>
+
+                <div class="table__empty-description">
+                    Fill out the loan information to generate the repayment schedule.
+                </div>
+
+            </td>
+        </tr>
+    `;
   };
 
   /* ==========================================================
@@ -67,36 +73,31 @@
    * ==========================================================
    */
 
-  Loan.renderSchedule = function (schedule) {
-    const tbody = Loan.$("loan_preview_body");
-
-    if (!tbody) {
-      return;
-    }
-
-    if (!schedule.length) {
-      Loan.renderEmptySchedule();
-
-      return;
-    }
-
-    tbody.innerHTML = "";
-
-    const rows = schedule
+  Loan.renderSchedule = () => {
+    const rows = Loan.state.schedule
       .map(
-        (row) => `
-            <tr>
-                <td>${row.paymentNo}</td>
-                <td>${Loan.formatDate(row.dueDate)}</td>
-                <td>${Loan.peso(row.principal)}</td>
-                <td>${Loan.peso(row.interest)}</td>
-                <td>${Loan.peso(row.payment)}</td>
-                <td>${Loan.peso(row.balance)}</td>
-            </tr>
-        `,
+        (payment, index) => `
+
+        <tr>
+
+            <td>${index + 1}</td>
+
+            <td>${payment.payment_date}</td>
+
+            <td class="table__number">${Loan.peso(payment.principal)}</td>
+
+            <td class="table__number">${Loan.peso(payment.interest)}</td>
+
+            <td class="table__number">${Loan.peso(payment.payment)}</td>
+
+            <td class="table__number">${Loan.peso(payment.balance)}</td>
+
+        </tr>
+
+    `,
       )
       .join("");
 
-    tbody.innerHTML = rows;
+    Loan.$("#loan_preview_body").innerHTML = rows;
   };
 })();

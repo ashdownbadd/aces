@@ -12,12 +12,6 @@
 
             </h2>
 
-            <p class="card__subtitle">
-
-                Select the cooperative member and configure the basic details of the loan.
-
-            </p>
-
         </div>
 
     </div>
@@ -138,7 +132,7 @@
                     id="interest_rate"
                     name="interest_rate"
                     step="0.01"
-                    placeholder="5"
+                    placeholder="0%"
                     required>
 
             </div>
@@ -149,7 +143,7 @@
                     class="form-label"
                     for="terms">
 
-                    Loan Term (Months)
+                    Loan Term
 
                 </label>
 

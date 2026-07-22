@@ -1,4 +1,4 @@
-<section class="card">
+<div class="card">
 
     <div class="card__header">
 
@@ -6,7 +6,7 @@
 
             <h2 class="card__title">
 
-                <i class="fas fa-credit-card"></i>
+                <i class="fas fa-calendar-check"></i>
 
                 Repayment Details
 
@@ -14,7 +14,7 @@
 
             <p class="card__subtitle">
 
-                Configure how this loan will be repaid and secured.
+                Configure how the borrower will repay the loan.
 
             </p>
 
@@ -24,40 +24,43 @@
 
     <div class="card__body">
 
-        <div class="form-grid form-grid--3">
+        <div class="form-grid form-grid--2">
 
             <div class="form-group">
 
                 <label
                     class="form-label"
-                    for="collateral">
+                    for="payment_frequency">
 
-                    Collateral
+                    Payment Frequency
 
                 </label>
 
                 <select
                     class="form-control"
-                    id="collateral"
-                    name="collateral"
-                    required>
+                    id="payment_frequency"
+                    name="payment_frequency">
 
-                    <option value="Post-Dated Check">
+                    <option value="Monthly">Monthly</option>
 
-                        Post-Dated Check
-
+                    <option value="Semi-Monthly">
+                        Semi-Monthly
                     </option>
 
-                    <option value="Real Property">
-
-                        Real Property
-
+                    <option value="Bi-Weekly">
+                        Bi-Weekly
                     </option>
 
-                    <option value="Chattels / Movable Assets">
+                    <option value="Weekly">
+                        Weekly
+                    </option>
 
-                        Chattels / Movable Assets
+                    <option value="Daily">
+                        Daily
+                    </option>
 
+                    <option value="Manual">
+                        Manual
                     </option>
 
                 </select>
@@ -77,64 +80,18 @@
                 <select
                     class="form-control"
                     id="amortization_type"
-                    name="amortization_type"
-                    required>
+                    name="amortization_type">
 
-                    <option value="Straight-line">
-
-                        Straight-line
-
+                    <option value="Straight Line">
+                        Straight Line
                     </option>
 
                     <option value="Diminishing Balance">
-
                         Diminishing Balance
-
                     </option>
 
                     <option value="Manual">
-
                         Manual
-
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div
-                id="frequency_panel"
-                class="form-group loan-hidden">
-
-                <label
-                    class="form-label"
-                    for="payment_frequency">
-
-                    Payment Frequency
-
-                </label>
-
-                <select
-                    class="form-control"
-                    id="payment_frequency"
-                    name="payment_frequency">
-
-                    <option value="Monthly">
-
-                        Monthly
-
-                    </option>
-
-                    <option value="Bi-Monthly">
-
-                        Bi-Monthly
-
-                    </option>
-
-                    <option value="Weekly">
-
-                        Weekly
-
                     </option>
 
                 </select>
@@ -143,6 +100,90 @@
 
         </div>
 
+        <div
+            id="manual_interest_container"
+            style="display:none;">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="manual_interest">
+
+                        Manual Interest Amount
+
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="manual_interest"
+                        name="manual_interest"
+                        step="0.01">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="microfinance_options"
+            style="display:none;">
+
+            <div class="form-grid form-grid--2">
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="collection_day">
+
+                        Collection Day
+
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="collection_day"
+                        name="collection_day">
+
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="grace_period">
+
+                        Grace Period (Days)
+
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="grace_period"
+                        name="grace_period"
+                        value="0">
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-</section>
+</div>

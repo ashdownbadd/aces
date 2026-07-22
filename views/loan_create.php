@@ -39,7 +39,7 @@ if (!defined('ALLOW_ACCESS')) {
         enctype="multipart/form-data"
         class="form">
 
-        <div class="page__content">
+        <div class="form">
 
             <?php
 

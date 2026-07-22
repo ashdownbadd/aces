@@ -6,6 +6,8 @@
 
             <h2 class="card__title">
 
+                <i class="fas fa-wallet"></i>
+
                 Estimated Payment
 
             </h2>
@@ -46,7 +48,7 @@
                         class="stats__description"
                         id="lbl_payment_frequency">
 
-                        Per Month
+                        Monthly Payment
 
                     </span>
 

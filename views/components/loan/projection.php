@@ -1,6 +1,4 @@
-<section
-    id="loan_preview_panel"
-    class="card">
+<div class="card">
 
     <div class="card__header">
 
@@ -8,15 +6,15 @@
 
             <h2 class="card__title">
 
-                <i class="fas fa-calendar-days"></i>
+                <i class="fas fa-table"></i>
 
-                Loan Amortization Preview
+                Repayment Schedule
 
             </h2>
 
             <p class="card__subtitle">
 
-                Review the projected repayment schedule before creating the loan.
+                Automatically generated repayment schedule.
 
             </p>
 
@@ -26,50 +24,72 @@
 
     <div class="card__body">
 
-        <div class="table-responsive">
+        <div class="table table--sticky table--compact">
 
-            <table class="table">
+            <div
+                class="table__scroll"
+                style="max-height: 480px; overflow-y: auto;">
 
-                <thead>
+                <table>
 
-                    <tr>
+                    <thead>
 
-                        <th>#</th>
+                        <tr>
 
-                        <th>Due Date</th>
+                            <th>#</th>
 
-                        <th>Principal</th>
+                            <th>Due Date</th>
 
-                        <th>Interest</th>
+                            <th class="table__number">Principal</th>
 
-                        <th>Total Payment</th>
+                            <th class="table__number">Interest</th>
 
-                        <th>Remaining Balance</th>
+                            <th class="table__number">Payment</th>
 
-                    </tr>
+                            <th class="table__number">Balance</th>
 
-                </thead>
+                        </tr>
 
-                <tbody id="loan_preview_body">
+                    </thead>
 
-                    <tr>
+                    <tbody id="loan_preview_body">
 
-                        <td
-                            colspan="6"
-                            class="table__empty">
+                        <tr>
 
-                            Complete the loan details above to generate a live repayment schedule.
+                            <td
+                                colspan="6"
+                                class="table__empty">
 
-                        </td>
+                                <div class="table__empty-icon">
 
-                    </tr>
+                                    <i class="fas fa-table"></i>
 
-                </tbody>
+                                </div>
 
-            </table>
+                                <div class="table__empty-title">
+
+                                    No Projection Yet
+
+                                </div>
+
+                                <div class="table__empty-description">
+
+                                    Fill out the loan information to generate the repayment schedule.
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
     </div>
 
-</section>
+</div>

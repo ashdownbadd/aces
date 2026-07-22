@@ -34,68 +34,13 @@
    * ==========================================================
    */
 
-  Loan.handleLoanType = function () {
-    const loanType = Loan.$("loan_type");
+  Loan.handleLoanType = () => {
+    const type = Loan.$("#loan_type").value;
 
-    const rateInput = Loan.$("interest_rate");
+    Loan.$("#microfinance_options").style.display =
+      type === "Micro-Finance Loan" ? "block" : "none";
 
-    const frequencyPanel = Loan.$("frequency_panel");
-
-    const amortization = Loan.$("amortization_type");
-
-    if (!loanType || !rateInput || !frequencyPanel || !amortization) {
-      return;
-    }
-
-    if (loanType.value === "Micro-Finance Loan") {
-      rateInput.value = "5.00";
-
-      isInterestManuallyEdited = false;
-
-      Loan.show(frequencyPanel);
-
-      amortization.value = "Straight-line";
-
-      amortization.disabled = true;
-
-      amortization.removeAttribute("name");
-
-      let hidden = Loan.$("hidden_amort_type");
-
-      if (!hidden) {
-        hidden = document.createElement("input");
-
-        hidden.type = "hidden";
-
-        hidden.id = "hidden_amort_type";
-
-        hidden.name = "amortization_type";
-
-        amortization.parentNode.appendChild(hidden);
-      }
-
-      hidden.value = "Straight-line";
-    } else {
-      if (!isInterestManuallyEdited) {
-        rateInput.value = "2.00";
-      }
-
-      Loan.hide(frequencyPanel);
-
-      amortization.disabled = false;
-
-      amortization.name = "amortization_type";
-
-      const hidden = Loan.$("hidden_amort_type");
-
-      if (hidden) {
-        hidden.remove();
-      }
-    }
-
-    Loan.handleAmortization();
-
-    Loan.calculate();
+    Loan.handleCollateral();
   };
 
   /* ==========================================================
@@ -112,20 +57,11 @@
    * ==========================================================
    */
 
-  Loan.handleAmortization = function () {
-    const panel = Loan.$("manual_payment_panel");
+  Loan.handleAmortization = () => {
+    const type = Loan.$("#amortization_type").value;
 
-    const amortization = Loan.$("amortization_type");
-
-    if (!panel || !amortization) {
-      return;
-    }
-
-    if (amortization.value === "Manual") {
-      Loan.show(panel);
-    } else {
-      Loan.hide(panel);
-    }
+    Loan.$("#manual_interest_container").style.display =
+      type === "Manual" ? "block" : "none";
   };
 
   /* ==========================================================
@@ -208,9 +144,9 @@
   Loan.init = function () {
     Loan.handleLoanType();
 
-    Loan.handleCollateral();
-
     Loan.handleAmortization();
+
+    Loan.handleCollateral();
 
     Loan.attachEvents();
 

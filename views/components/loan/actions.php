@@ -1,25 +1,17 @@
-<div class="card">
+<button
+    type="submit"
+    class="btn btn--success btn--lg">
 
-    <div class="card__footer">
+    <i class="fas fa-hand-holding-dollar"></i>
 
-        <a
-            href="<?= url('amortization_dashboard') ?>"
-            class="btn btn--secondary">
+    Create Loan
 
-            Cancel
+</button>
 
-        </a>
+<a
+    href="<?= url('amortization_dashboard') ?>"
+    class="btn btn--secondary">
 
-        <button
-            type="submit"
-            class="btn btn--success btn--lg">
+    Cancel
 
-            <i class="fas fa-hand-holding-dollar"></i>
-
-            Create Loan
-
-        </button>
-
-    </div>
-
-</div>
+</a>
