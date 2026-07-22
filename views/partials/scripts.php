@@ -24,6 +24,11 @@ $route = $_GET['route'] ?? '';
 
 <?php if (in_array($route, ['create_loan'])): ?>
 
-    <script src="assets/js/pages/loan-create.js"></script>
+    <script src="assets/js/loan/helpers.js"></script>
+    <script src="assets/js/loan/calculator.js"></script>
+    <script src="assets/js/loan/amortization.js"></script>
+    <script src="assets/js/loan/renderer.js"></script>
+    <script src="assets/js/loan/events.js"></script>
+    <script src="assets/js/loan/loan-create.js"></script>
 
 <?php endif; ?>

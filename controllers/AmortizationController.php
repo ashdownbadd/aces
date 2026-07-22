@@ -667,7 +667,8 @@ function handleProcessLoanApproval(PDO $pdo): void
                     'payment_frequency'  => $loan['payment_frequency'],
                     'amortization_type'  => $loan['amortization_type'],
                     'start_date'         => $loan['start_date'],
-                    'manual_payment'     => (float) $loan['manual_payment']
+                    'manual_payment' => (float) $loan['manual_payment'],
+                    'loan_type' => $loan['loan_type']
 
                 ]);
 

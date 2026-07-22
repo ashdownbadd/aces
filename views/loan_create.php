@@ -168,7 +168,7 @@ if (!defined('ALLOW_ACCESS')) {
                                 name="principal"
                                 step="0.01"
                                 required
-                                oninput="calculateLiveDeductions()">
+                                oninput="calculateLoan()">
 
                         </div>
 
@@ -209,7 +209,7 @@ if (!defined('ALLOW_ACCESS')) {
                                 id="terms"
                                 name="terms"
                                 required
-                                oninput="calculateLiveDeductions()">
+                                oninput="calculateLoan()">
 
                         </div>
 
@@ -332,7 +332,7 @@ if (!defined('ALLOW_ACCESS')) {
 
                                 </option>
 
-                                <option value="Diminishing balance">
+                                <option value="Diminishing Balance">
 
                                     Diminishing Balance
 
@@ -693,6 +693,120 @@ if (!defined('ALLOW_ACCESS')) {
                             </div>
 
                         </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =======================================================
+     LOAN AMORTIZATION PREVIEW
+======================================================= -->
+
+            <section
+                id="loan_preview_panel"
+                class="card">
+
+                <div class="card__header">
+
+                    <div>
+
+                        <h2 class="card__title">
+
+                            <i class="fas fa-calendar-days"></i>
+
+                            Loan Amortization Preview
+
+                        </h2>
+
+                        <p class="card__subtitle">
+
+                            Review the projected repayment schedule before creating the loan.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="card__body">
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card stat-card--success">
+
+                            <div class="stat-card__body">
+
+                                <p class="stat-card__title">
+
+                                    Estimated Payment
+
+                                </p>
+
+                                <h3
+                                    id="lbl_estimated_payment"
+                                    class="stat-card__value">
+
+                                    ₱0.00
+
+                                </h3>
+
+                                <p
+                                    id="lbl_payment_frequency"
+                                    class="stat-card__subtitle">
+
+                                    Per Payment
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table class="table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>#</th>
+
+                                    <th>Due Date</th>
+
+                                    <th>Principal</th>
+
+                                    <th>Interest</th>
+
+                                    <th>Total Payment</th>
+
+                                    <th>Remaining Balance</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="loan_preview_body">
+
+                                <tr>
+
+                                    <td
+                                        colspan="6"
+                                        class="table__empty">
+
+                                        Complete the loan details above to generate a live repayment schedule.
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
 
                     </div>
 

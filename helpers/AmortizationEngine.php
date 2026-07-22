@@ -4,14 +4,16 @@ if (!defined('ALLOW_ACCESS')) {
     die('Direct access to this file is prohibited.');
 }
 
-class AmortizationEngine {
-    
-    public static function calculateDeductions($principal, $terms) {
+class AmortizationEngine
+{
+
+    public static function calculateDeductions($principal, $terms)
+    {
         $processingFee = $principal * 0.02;
         $insurance = ($principal / 1000) * 1.2 * $terms;
         $notarialFee = 400.00;
         $netProceeds = $principal - $processingFee - $insurance - $notarialFee;
-        
+
         return [
             'processingFee' => $processingFee,
             'insurance'     => $insurance,
@@ -20,7 +22,8 @@ class AmortizationEngine {
         ];
     }
 
-    public static function generateSchedule($params) {
+    public static function generateSchedule($params)
+    {
         $principal = floatval($params['principal']);
         $rate = floatval($params['interest_rate']) / 100; // convert % to decimal
         $terms = intval($params['terms']);
@@ -41,7 +44,7 @@ class AmortizationEngine {
 
             $ratePerPeriod = $rate / $multiplier;
             $totalPeriods = $terms * $multiplier;
-            
+
             $principalPerPeriod = $principal / $totalPeriods;
             $interestPerPeriod = $principal * $ratePerPeriod;
 
@@ -66,7 +69,7 @@ class AmortizationEngine {
 
         // 2. STANDARD MODES (Straight-line, Diminishing, Manual)
         $currentBalance = $principal;
-        $monthlyRate = $rate; 
+        $monthlyRate = $rate;
         $fixedPrincipal = $principal / $terms;
 
         for ($i = 1; $i <= $terms; $i++) {
@@ -76,13 +79,11 @@ class AmortizationEngine {
             if ($amortType === 'Straight-line') {
                 $pPortion = $fixedPrincipal;
                 $iPortion = $principal * $monthlyRate;
-            } 
-            elseif ($amortType === 'Diminishing balance') {
+            } elseif ($amortType === 'Diminishing Balance') {
                 $pPortion = $fixedPrincipal;
                 $iPortion = $currentBalance * $monthlyRate;
                 $currentBalance -= $fixedPrincipal;
-            } 
-            elseif ($amortType === 'Manual') {
+            } elseif ($amortType === 'Manual') {
                 $iPortion = $currentBalance * $monthlyRate;
                 $pPortion = $manualPayment - $iPortion;
                 if ($pPortion < 0) $pPortion = 0;
@@ -101,16 +102,17 @@ class AmortizationEngine {
         return $schedule;
     }
 
-    public static function calculateMonthsOverdue($dueDateStr) {
+    public static function calculateMonthsOverdue($dueDateStr)
+    {
         $today = new DateTime('now');
         $dueDate = new DateTime($dueDateStr);
-        
+
         if ($dueDate >= $today) return 0;
-        
+
         $diffYear = intval($today->format('Y')) - intval($dueDate->format('Y'));
         $diffMonth = intval($today->format('m')) - intval($dueDate->format('m'));
         $months = ($diffYear * 12) + $diffMonth;
-        
+
         return max(1, $months);
     }
 }
