@@ -8,80 +8,95 @@
 window.ACES = window.ACES || {};
 ACES.loan = ACES.loan || {};
 
-const Loan = ACES.loan;
+(() => {
+  const Loan = ACES.loan;
 
-/* ==========================================================
- * DOM
- * ==========================================================
- */
+  /* ==========================================================
+   * State
+   * ==========================================================
+   */
 
-Loan.$ = (id) => document.getElementById(id);
+  Loan.state = {
+    loan: null,
 
-Loan.show = (element) => {
-  if (!element) return;
+    deductions: null,
 
-  element.classList.remove("loan-hidden");
-};
+    schedule: [],
+  };
 
-Loan.hide = (element) => {
-  if (!element) return;
+  /* ==========================================================
+   * DOM
+   * ==========================================================
+   */
 
-  element.classList.add("loan-hidden");
-};
+  Loan.$ = (id) => document.getElementById(id);
 
-/* ==========================================================
- * Formatting
- * ==========================================================
- */
+  Loan.show = (element) => {
+    if (!element) return;
 
-Loan.peso = (value) => {
-  return `₱${Number(value || 0).toLocaleString("en-PH", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
-};
+    element.classList.remove("loan-hidden");
+  };
 
-Loan.round = (value, decimals = 2) => {
-  return Number(Number(value).toFixed(decimals));
-};
+  Loan.hide = (element) => {
+    if (!element) return;
 
-Loan.formatDate = (date) => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    return "";
-  }
+    element.classList.add("loan-hidden");
+  };
 
-  return date.toLocaleDateString("en-PH", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-  });
-};
+  /* ==========================================================
+   * Formatting
+   * ==========================================================
+   */
 
-/* ==========================================================
- * Dates
- * ==========================================================
- */
+  Loan.peso = (value) => {
+    return `₱${Number(value || 0).toLocaleString("en-PH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
 
-Loan.addMonths = (date, months) => {
-  const d = new Date(date);
+  Loan.round = (value, decimals = 2) => {
+    return Number(Number(value).toFixed(decimals));
+  };
 
-  d.setMonth(d.getMonth() + months);
+  Loan.formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return "";
+    }
 
-  return d;
-};
+    return date.toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
+  };
 
-Loan.addWeeks = (date, weeks) => {
-  const d = new Date(date);
+  /* ==========================================================
+   * Dates
+   * ==========================================================
+   */
 
-  d.setDate(d.getDate() + weeks * 7);
+  Loan.addMonths = (date, months) => {
+    const d = new Date(date);
 
-  return d;
-};
+    d.setMonth(d.getMonth() + months);
 
-Loan.addDays = (date, days) => {
-  const d = new Date(date);
+    return d;
+  };
 
-  d.setDate(d.getDate() + days);
+  Loan.addWeeks = (date, weeks) => {
+    const d = new Date(date);
 
-  return d;
-};
+    d.setDate(d.getDate() + weeks * 7);
+
+    return d;
+  };
+
+  Loan.addDays = (date, days) => {
+    const d = new Date(date);
+
+    d.setDate(d.getDate() + days);
+
+    return d;
+  };
+};)();

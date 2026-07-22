@@ -16,17 +16,17 @@
    */
 
   Loan.calculate = function () {
-    const loan = Loan.getLoanInputs();
+    Loan.state.loan = Loan.getLoanInputs();
 
-    const deductions = Loan.calculateDeductions(loan);
+    Loan.state.deductions = Loan.calculateDeductions(Loan.state.loan);
 
-    const schedule = Loan.generateSchedule(loan);
+    Loan.state.schedule = Loan.generateSchedule(Loan.state.loan);
 
-    Loan.renderSummary(deductions);
+    Loan.renderSummary(Loan.state.deductions);
 
-    Loan.renderEstimatedPayment(schedule);
+    Loan.renderEstimatedPayment(Loan.state.schedule);
 
-    Loan.renderSchedule(schedule);
+    Loan.renderSchedule(Loan.state.schedule);
   };
 
   /* ==========================================================
