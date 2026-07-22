@@ -45,28 +45,6 @@
   transition: background var(--transition);
 }
 
-.card:hover {
-  transform: translateY(-2px);
-
-  border-color: var(--rim);
-
-  box-shadow: var(--shadow-md);
-}
-
-.card:hover::before {
-  background: var(--gold);
-}
-
-/* ==========================================================
-   HOVER
-========================================================== */
-
-.card:hover {
-  box-shadow: var(--shadow-md);
-
-  transition: var(--transition);
-}
-
 /* ==========================================================
    HEADER
 ========================================================== */
@@ -125,17 +103,11 @@
 
 .card__footer {
   display: flex;
-
-  justify-content: flex-end;
-
+  justify-content: space-between;
   align-items: center;
-
   gap: var(--space-3);
-
   padding: var(--space-5);
-
   border-top: 1px solid var(--border);
-
   background: var(--surface-alt);
 }
 

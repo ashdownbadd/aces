@@ -30,9 +30,9 @@
 
   align-items: flex-start;
 
-  gap: var(--space-4);
+  gap: var(--space-5);
 
-  padding: var(--space-5);
+  padding: var(--space-6);
 
   background: var(--surface);
 
@@ -43,12 +43,6 @@
   box-shadow: var(--shadow-sm);
 
   transition: var(--transition);
-}
-
-.stats__card:hover {
-  transform: translateY(-3px);
-
-  box-shadow: var(--shadow-md);
 }
 
 /* ==========================================================

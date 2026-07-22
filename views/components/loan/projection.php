@@ -92,4 +92,10 @@
 
     </div>
 
+    <div class="card__footer">
+
+        <?php c('loan/actions'); ?>
+
+    </div>
+
 </div>

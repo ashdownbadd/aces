@@ -59,8 +59,6 @@ if (!defined('ALLOW_ACCESS')) {
 
             <?php c('loan/projection'); ?>
 
-            <?php c('loan/actions'); ?>
-
         </div>
 
     </form>

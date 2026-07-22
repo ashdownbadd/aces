@@ -1,4 +1,4 @@
-<div class="card card--gold">
+<div class="card">
 
     <div class="card__header">
 
