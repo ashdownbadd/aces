@@ -99,4 +99,4 @@ ACES.loan = ACES.loan || {};
 
     return d;
   };
-};)();
+})();

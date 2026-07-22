@@ -1,11 +1,25 @@
-<div class="loan-actions">
+<div class="card">
 
-    <button
-        type="submit"
-        class="btn btn--success btn--block">
+    <div class="card__footer">
 
-        Establish Account & Commit Amortization Schedule
+        <a
+            href="<?= url('amortization_dashboard') ?>"
+            class="btn btn--secondary">
 
-    </button>
+            Cancel
+
+        </a>
+
+        <button
+            type="submit"
+            class="btn btn--success btn--lg">
+
+            <i class="fas fa-hand-holding-dollar"></i>
+
+            Create Loan
+
+        </button>
+
+    </div>
 
 </div>

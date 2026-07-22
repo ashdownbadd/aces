@@ -1,61 +1,75 @@
-<div
-    id="deductions_panel"
-    class="loan-projection">
+<section
+    id="loan_preview_panel"
+    class="card">
 
-    <h4 class="loan-projection__title">
+    <div class="card__header">
 
-        Computed Capital Deductions
+        <div>
 
-    </h4>
+            <h2 class="card__title">
 
-    <p>
+                <i class="fas fa-calendar-days"></i>
 
-        Processing Fee (2%)
+                Loan Amortization Preview
 
-        <strong id="lbl_processing">
+            </h2>
 
-            ₱0.00
+            <p class="card__subtitle">
 
-        </strong>
+                Review the projected repayment schedule before creating the loan.
 
-    </p>
+            </p>
 
-    <p>
+        </div>
 
-        Mutual Insurance
+    </div>
 
-        <strong id="lbl_insurance">
+    <div class="card__body">
 
-            ₱0.00
+        <div class="table-responsive">
 
-        </strong>
+            <table class="table">
 
-    </p>
+                <thead>
 
-    <p>
+                    <tr>
 
-        Notarial Fee
+                        <th>#</th>
 
-        <strong id="lbl_notarial">
+                        <th>Due Date</th>
 
-            ₱0.00
+                        <th>Principal</th>
 
-        </strong>
+                        <th>Interest</th>
 
-    </p>
+                        <th>Total Payment</th>
 
-    <hr>
+                        <th>Remaining Balance</th>
 
-    <p class="loan-projection__net">
+                    </tr>
 
-        Projected Net Loan
+                </thead>
 
-        <strong id="lbl_net">
+                <tbody id="loan_preview_body">
 
-            ₱0.00
+                    <tr>
 
-        </strong>
+                        <td
+                            colspan="6"
+                            class="table__empty">
 
-    </p>
+                            Complete the loan details above to generate a live repayment schedule.
 
-</div>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>

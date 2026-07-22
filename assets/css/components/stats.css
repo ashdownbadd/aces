@@ -178,6 +178,44 @@
 }
 
 /* ==========================================================
+   HERO STAT
+========================================================== */
+
+.stats__card--hero {
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+
+  min-height: 220px;
+}
+
+.stats__card--hero .stats__content {
+  align-items: center;
+}
+
+.stats__card--hero .stats__label {
+  font-size: var(--text-md);
+}
+
+.stats__card--hero .stats__value {
+  margin: var(--space-3) 0;
+
+  font-size: clamp(2.75rem, 5vw, 4.25rem);
+
+  line-height: 1;
+}
+
+.stats__card--hero .stats__description {
+  font-size: var(--text-md);
+}
+
+.stats__card--hero .stats__icon {
+  display: none;
+}
+
+/* ==========================================================
    RESPONSIVE
 ========================================================== */
 

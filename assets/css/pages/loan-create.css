@@ -1,0 +1,19 @@
+/* ==========================================================
+   CREATE LOAN
+========================================================== */
+
+.loan-grid--header {
+  display: grid;
+
+  grid-template-columns: 2fr 1fr;
+
+  gap: var(--space-6);
+}
+
+.loan-grid--details {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: var(--space-6);
+}

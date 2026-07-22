@@ -13,14 +13,16 @@
    * ==========================================================
    */
 
-  Loan.renderSummary = function (deductions) {
-    Loan.$("lbl_processing").textContent = Loan.peso(deductions.processing);
+  Loan.renderSummary = () => {
+    const loan = Loan.state.loan;
 
-    Loan.$("lbl_insurance").textContent = Loan.peso(deductions.insurance);
+    Loan.$("#lbl_principal").textContent = Loan.peso(loan.principal);
 
-    Loan.$("lbl_notarial").textContent = Loan.peso(deductions.notarial);
+    Loan.$("#lbl_interest").textContent = Loan.peso(loan.totalInterest);
 
-    Loan.$("lbl_net").textContent = Loan.peso(deductions.net);
+    Loan.$("#lbl_total").textContent = Loan.peso(loan.totalRepayment);
+
+    Loan.$("#lbl_payments").textContent = loan.numberOfPayments;
   };
 
   /* ==========================================================
@@ -28,26 +30,15 @@
    * ==========================================================
    */
 
-  Loan.renderEstimatedPayment = function (schedule) {
-    const paymentLabel = Loan.$("lbl_estimated_payment");
+  Loan.renderEstimatedPayment = () => {
+    const loan = Loan.state.loan;
 
-    const frequencyLabel = Loan.$("lbl_payment_frequency");
+    Loan.$("#lbl_estimated_payment").textContent = Loan.peso(
+      loan.paymentAmount,
+    );
 
-    if (!paymentLabel || !frequencyLabel) {
-      return;
-    }
-
-    if (!schedule.length) {
-      paymentLabel.textContent = Loan.peso(0);
-
-      frequencyLabel.textContent = "Per Payment";
-
-      return;
-    }
-
-    paymentLabel.textContent = Loan.peso(schedule[0].payment);
-
-    frequencyLabel.textContent = "Per Payment";
+    Loan.$("#lbl_payment_frequency").textContent =
+      "Per " + loan.paymentFrequency;
   };
 
   /* ==========================================================
