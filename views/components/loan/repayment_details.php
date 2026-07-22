@@ -6,15 +6,15 @@
 
             <h2 class="card__title">
 
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-calendar-days"></i>
 
-                Repayment Details
+                Schedule
 
             </h2>
 
             <p class="card__subtitle">
 
-                Configure how the borrower will repay the loan.
+                Configure how this loan will be repaid.
 
             </p>
 
@@ -25,6 +25,45 @@
     <div class="card__body">
 
         <div class="form-grid form-grid--2">
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="terms">
+
+                    Loan Term
+
+                </label>
+
+                <input
+                    class="form-control"
+                    type="number"
+                    id="terms"
+                    name="terms"
+                    placeholder="12"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="start_date">
+
+                    Loan Start Date
+
+                </label>
+
+                <input
+                    class="form-control"
+                    type="date"
+                    id="start_date"
+                    name="start_date"
+                    required>
+
+            </div>
 
             <div class="form-group">
 
@@ -42,26 +81,11 @@
                     name="payment_frequency">
 
                     <option value="Monthly">Monthly</option>
-
-                    <option value="Semi-Monthly">
-                        Semi-Monthly
-                    </option>
-
-                    <option value="Bi-Weekly">
-                        Bi-Weekly
-                    </option>
-
-                    <option value="Weekly">
-                        Weekly
-                    </option>
-
-                    <option value="Daily">
-                        Daily
-                    </option>
-
-                    <option value="Manual">
-                        Manual
-                    </option>
+                    <option value="Semi-Monthly">Semi-Monthly</option>
+                    <option value="Bi-Weekly">Bi-Weekly</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Daily">Daily</option>
+                    <option value="Manual">Manual</option>
 
                 </select>
 

@@ -1,64 +1,38 @@
-<div class="card">
-
-    <div class="card__header">
-
-        <div>
-
-            <h2 class="card__title">
-
-                <i class="fas fa-wallet"></i>
-
-                Estimated Payment
-
-            </h2>
-
-            <p class="card__subtitle">
-
-                Expected payment for each repayment period.
-
-            </p>
-
-        </div>
-
-    </div>
+<div class="card card--compact">
 
     <div class="card__body">
 
-        <div class="stats">
+        <div class="stats__card stats__card--gold stats__card--hero">
 
-            <div class="stats__card stats__card--gold stats__card--hero">
+            <div class="stats__content">
 
-                <div class="stats__content">
+                <span class="stats__label">
 
-                    <span class="stats__label">
+                    Estimated Payment
 
-                        Estimated Payment
+                </span>
 
-                    </span>
+                <strong
+                    class="stats__value"
+                    id="lbl_estimated_payment">
 
-                    <strong
-                        class="stats__value"
-                        id="lbl_estimated_payment">
+                    ₱0.00
 
-                        ₱0.00
+                </strong>
 
-                    </strong>
+                <span
+                    class="stats__description"
+                    id="lbl_payment_frequency">
 
-                    <span
-                        class="stats__description"
-                        id="lbl_payment_frequency">
+                    Monthly Payment
 
-                        Monthly Payment
+                </span>
 
-                    </span>
+            </div>
 
-                </div>
+            <div class="stats__icon">
 
-                <div class="stats__icon">
-
-                    <i class="fas fa-money-check-dollar"></i>
-
-                </div>
+                <i class="fas fa-money-check-dollar"></i>
 
             </div>
 

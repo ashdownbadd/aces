@@ -134,6 +134,16 @@
 
       Loan.calculate();
     });
+
+    Loan.$("member_id")?.addEventListener("change", (e) => {
+      const option = e.target.selectedOptions[0];
+
+      Loan.$("loanMemberName").textContent =
+        option?.dataset.name || "No member selected";
+
+      Loan.$("loanMemberNumber").textContent =
+        option?.dataset.number || "Select a borrower to continue.";
+    });
   };
 
   /* ==========================================================
@@ -149,6 +159,8 @@
     Loan.handleCollateral();
 
     Loan.attachEvents();
+
+    Loan.$("member_id")?.dispatchEvent(new Event("change"));
 
     Loan.calculate();
   };

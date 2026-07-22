@@ -1,66 +1,33 @@
-<?php
+<form
+    action="<?= url('create_loan') ?>"
+    method="POST"
+    enctype="multipart/form-data"
+    class="form">
 
-if (!defined('ALLOW_ACCESS')) {
-    exit('Direct access to this file is prohibited.');
-}
+    <section class="loan-top-grid">
 
-?>
+        <?php
 
-<div class="page">
+        c('loan/borrower_information', [
+            'members' => $members
+        ]);
 
-    <?php
+        ?>
 
-    c('page_header', [
-        'title' => 'Create Loan',
-        'description' => 'Create a new cooperative loan account and automatically generate its amortization schedule.'
-    ]);
+        <?php c('loan/repayment_details'); ?>
 
-    ?>
+    </section>
 
-    <?php c('flash_messages'); ?>
+    <section class="loan-summary-grid">
 
-    <div class="page__actions">
+        <?php c('loan/summary'); ?>
 
-        <a
-            href="<?= url('amortization_dashboard') ?>"
-            class="btn btn--secondary">
+        <?php c('loan/estimated_payment'); ?>
 
-            <i class="fas fa-arrow-left"></i>
+    </section>
 
-            Back to Loans
+    <?php c('loan/real_property_panel'); ?>
 
-        </a>
+    <?php c('loan/projection'); ?>
 
-    </div>
-
-    <form
-        action="<?= url('create_loan') ?>"
-        method="POST"
-        enctype="multipart/form-data"
-        class="form">
-
-        <div class="form">
-
-            <?php
-
-            c('loan/borrower_information', [
-                'members' => $members
-            ]);
-
-            ?>
-
-            <?php c('loan/repayment_details'); ?>
-
-            <?php c('loan/real_property_panel'); ?>
-
-            <?php c('loan/summary'); ?>
-
-            <?php c('loan/estimated_payment'); ?>
-
-            <?php c('loan/projection'); ?>
-
-        </div>
-
-    </form>
-
-</div>
+</form>
