@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initializeBeneficiaries();
 
+  initializeMembershipClassification();
+
   initializeReview();
 
   initializeSubmission();
@@ -429,6 +431,12 @@ function initializeReview() {
 
     document.getElementById("reviewMarital").textContent =
       getValue("marital_status");
+
+    document.getElementById("reviewShareCapital").textContent =
+      Formatter.currency(getValue("initial_share_capital"));
+
+    document.getElementById("reviewMembership").textContent =
+      getValue("membership_preview");
   }
 
   /* ======================================================
@@ -619,4 +627,29 @@ function initializeSubmission() {
       BeneficiaryList.getData(),
     );
   });
+}
+
+function initializeMembershipClassification() {
+  const shareCapital = document.getElementById("initial_share_capital");
+  const membership = document.getElementById("membership_preview");
+
+  if (!shareCapital || !membership) {
+    return;
+  }
+
+  function updateMembership() {
+    const amount = parseFloat(shareCapital.value.replace(/[^\d.]/g, "")) || 0;
+
+    membership.value = amount >= 21000 ? "Regular" : "Associate";
+  }
+
+  shareCapital.addEventListener("input", () => {
+    const digits = Formatter.currencyDigits(shareCapital.value);
+
+    shareCapital.value = Formatter.currencyInput(digits);
+
+    updateMembership();
+  });
+
+  updateMembership();
 }

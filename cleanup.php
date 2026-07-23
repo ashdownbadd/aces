@@ -19,6 +19,7 @@ try {
         'member_contact',
         'member_education',
         'member_employment',
+        'member_onboarding',
         'member_profiles',
         'members'
     ];

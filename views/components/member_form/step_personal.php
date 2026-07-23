@@ -110,17 +110,23 @@ $profile = $member['profile'] ?? [];
 
         <?php
 
-        c('form/select', [
-            'label' => 'Membership',
-            'name' => 'membership_type',
-            'value' => $member['membership_type'] ?? '',
+        c('form/input', [
+            'label' => 'Initial Share Capital',
+            'name' => 'initial_share_capital',
+            'id' => 'initial_share_capital',
+            'value' => '',
             'required' => true,
-            'help' => 'Select the cooperative membership type.',
-            'options' => [
-                '' => 'Select Membership',
-                'Regular' => 'Regular',
-                'Associate' => 'Associate'
-            ]
+            'placeholder' => '₱0.00',
+            'help' => 'Minimum ₱21,000 for Regular Membership.'
+        ]);
+
+        c('form/input', [
+            'label' => 'Membership Classification',
+            'name' => 'membership_preview',
+            'id' => 'membership_preview',
+            'value' => 'Associate',
+            'readonly' => true,
+            'help' => 'Automatically determined from the Initial Share Capital.'
         ]);
 
         ?>

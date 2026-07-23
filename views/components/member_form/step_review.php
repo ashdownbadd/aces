@@ -14,6 +14,51 @@ if (!defined('ALLOW_ACCESS')) {
 
     <div class="review-grid">
 
+        <div class="review-card">
+
+            <div class="review-card__header">
+
+                <div class="review-card__title">
+
+                    <i class="fas fa-piggy-bank"></i>
+
+                    <h3>Initial Investment</h3>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn--ghost btn--sm"
+                    data-review-step="0">
+
+                    Edit
+
+                </button>
+
+            </div>
+
+            <dl class="review-list">
+
+                <div class="review-list__item">
+
+                    <dt>Initial Share Capital</dt>
+
+                    <dd id="reviewShareCapital">-</dd>
+
+                </div>
+
+                <div class="review-list__item">
+
+                    <dt>Membership Classification</dt>
+
+                    <dd id="reviewMembership">Associate</dd>
+
+                </div>
+
+            </dl>
+
+        </div>
+
         <!-- ==========================================================
              PERSONAL INFORMATION
         =========================================================== -->

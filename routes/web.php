@@ -86,6 +86,14 @@ switch ($route) {
         $content = handleMemberProfile($pdo);
         break;
 
+    case 'member_initial_capital':
+        $content = handleMemberInitialCapital($pdo);
+        break;
+
+    case 'submit_initial_capital':
+        handleSubmitInitialCapital($pdo);
+        break;
+
     /*
     |--------------------------------------------------------------------------
     | Ledger

@@ -796,9 +796,7 @@ function handleApproveVoucher(PDO $pdo): void
         !isset($_SESSION['role_id']) ||
         (int) $_SESSION['role_id'] !== 1
     ) {
-
-        $_SESSION['error_message'] =
-            "Access denied.";
+        $_SESSION['error_message'] = "Access denied.";
 
         header("Location:index.php?route=ledger");
         exit;
@@ -809,31 +807,372 @@ function handleApproveVoucher(PDO $pdo): void
         exit;
     }
 
-    $voucher_id = (int) ($_POST['voucher_id'] ?? 0);
+    $voucherId = (int) ($_POST['voucher_id'] ?? 0);
 
     try {
 
+        $pdo->beginTransaction();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Approve Voucher
+        |--------------------------------------------------------------------------
+        */
+
         $stmt = $pdo->prepare("
             UPDATE journal_vouchers
-            SET status='approved'
-            WHERE id=?
+            SET status = 'approved'
+            WHERE id = ?
         ");
 
-        $stmt->execute([$voucher_id]);
+        $stmt->execute([$voucherId]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get Ledger Entry
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            SELECT
+                member_id,
+                entry_type
+            FROM ledger_entries
+            WHERE voucher_id = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$voucherId]);
+
+        $ledgerEntry = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Activate Member if Initial Share Capital
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $ledgerEntry &&
+            $ledgerEntry['entry_type'] === 'initial_share_capital'
+        ) {
+
+            // Complete onboarding
+
+            $stmt = $pdo->prepare("
+                UPDATE member_onboarding
+                SET
+                    status = 'completed',
+                    completed_by = ?,
+                    completed_at = NOW()
+                WHERE member_id = ?
+            ");
+
+            $stmt->execute([
+                $_SESSION['user_id'],
+                $ledgerEntry['member_id']
+            ]);
+
+            // Activate member
+
+            $stmt = $pdo->prepare("
+                UPDATE members
+                SET status = 'active'
+                WHERE id = ?
+            ");
+
+            $stmt->execute([
+                $ledgerEntry['member_id']
+            ]);
+        }
+
+        $pdo->commit();
 
         logSystemActivity(
             $pdo,
             'VOUCHER_APPROVAL',
-            "Approved journal voucher #{$voucher_id}"
+            "Approved journal voucher #{$voucherId}"
         );
 
         $_SESSION['success_message'] =
             "Voucher approved successfully.";
-
-        header("Location:index.php?route=pending_approvals");
-        exit;
     } catch (PDOException $e) {
 
-        die("Database error: " . $e->getMessage());
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        die($e->getMessage());
+    }
+
+    header("Location:index.php?route=pending_approvals");
+    exit;
+}
+
+function handleMemberInitialCapital(PDO $pdo): string
+{
+    checkAuthenticated($pdo);
+
+    $memberId = (int) ($_GET['id'] ?? 0);
+
+    $stmt = $pdo->prepare("
+    SELECT
+
+        m.id AS member_id,
+
+        mo.id AS onboarding_id,
+
+        m.member_number,
+        m.first_name,
+        m.last_name,
+        m.status,
+
+        mo.initial_share_capital,
+        mo.membership_type,
+        mo.status
+
+    FROM member_onboarding mo
+
+    INNER JOIN members m
+        ON m.id = mo.member_id
+
+    WHERE
+        mo.member_id = ?
+
+    LIMIT 1
+");
+
+    $stmt->execute([$memberId]);
+
+    $onboarding = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$onboarding) {
+
+        redirectError(
+            'members',
+            'Member onboarding record not found.'
+        );
+    }
+
+    return render(
+        'member_onboarding',
+        [
+            'onboarding' => $onboarding
+        ]
+    );
+}
+
+function handleSubmitInitialCapital(PDO $pdo): void
+{
+    checkAuthenticated($pdo);
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        redirectError(
+            'members',
+            'Invalid request.'
+        );
+    }
+
+    $memberId = (int) ($_POST['member_id'] ?? 0);
+
+    $voucherNumber = trim(
+        $_POST['voucher_number'] ?? ''
+    );
+
+    $transactionDate = trim(
+        $_POST['transaction_date'] ?? date('Y-m-d')
+    );
+
+    $remarks = trim(
+        $_POST['remarks'] ?? 'Initial Share Capital'
+    );
+
+    if ($voucherNumber === '') {
+        redirectError(
+            'member_initial_capital',
+            'Voucher number is required.',
+            [
+                'id' => $memberId
+            ]
+        );
+    }
+
+    try {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get Onboarding Record
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM member_onboarding
+            WHERE member_id = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$memberId]);
+
+        $onboardingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$onboardingRecord) {
+            redirectError(
+                'members',
+                'Onboarding record not found.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation #1 - Member must still be pending
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            SELECT status
+            FROM members
+            WHERE id = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$memberId]);
+
+        $memberStatus = $stmt->fetchColumn();
+
+        if ($memberStatus !== 'pending') {
+            redirectError(
+                'members',
+                'This member is already active.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation #2 - Prevent duplicate Initial Share Capital
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM ledger_entries
+            WHERE member_id = ?
+              AND entry_type = 'initial_share_capital'
+            LIMIT 1
+        ");
+
+        $stmt->execute([$memberId]);
+
+        if ($stmt->fetch()) {
+            redirectError(
+                'member_initial_capital',
+                'Initial Share Capital has already been submitted.',
+                [
+                    'id' => $memberId
+                ]
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation #3 - Voucher number must be unique
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            SELECT id
+            FROM journal_vouchers
+            WHERE reference_number = ?
+            LIMIT 1
+        ");
+
+        $stmt->execute([$voucherNumber]);
+
+        if ($stmt->fetch()) {
+            redirectError(
+                'member_initial_capital',
+                'Voucher number already exists.',
+                [
+                    'id' => $memberId
+                ]
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save Records
+        |--------------------------------------------------------------------------
+        */
+
+        $pdo->beginTransaction();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Journal Voucher
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            INSERT INTO journal_vouchers
+            (
+                reference_number,
+                transaction_date,
+                particulars,
+                created_by,
+                status
+            )
+            VALUES
+            (?, ?, ?, ?, 'pending')
+        ");
+
+        $stmt->execute([
+            $voucherNumber,
+            $transactionDate,
+            $remarks,
+            $_SESSION['user_id']
+        ]);
+
+        $voucherId = (int) $pdo->lastInsertId();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ledger Entry
+        |--------------------------------------------------------------------------
+        */
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ledger_entries
+            (
+                voucher_id,
+                member_id,
+                entry_type,
+                debit,
+                credit
+            )
+            VALUES
+            (?, ?, ?, 0, ?)
+        ");
+
+        $stmt->execute([
+            $voucherId,
+            $memberId,
+            'initial_share_capital',
+            $onboardingRecord['initial_share_capital']
+        ]);
+
+        $pdo->commit();
+
+        redirectSuccess(
+            'pending_approvals',
+            'Initial Share Capital submitted for approval.'
+        );
+    } catch (PDOException $e) {
+
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        die($e->getMessage());
     }
 }

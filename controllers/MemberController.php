@@ -816,6 +816,39 @@ WHERE member_id = ?
     }
 }
 
+function createMemberOnboarding(
+    PDO $pdo,
+    int $memberId,
+    float $initialShareCapital,
+    string $membershipType,
+    int $createdBy
+): void {
+
+    $stmt = $pdo->prepare("
+        INSERT INTO member_onboarding
+        (
+            member_id,
+            initial_share_capital,
+            membership_type,
+            created_by
+        )
+        VALUES
+        (?, ?, ?, ?)
+    ");
+
+    $stmt->execute([
+
+        $memberId,
+
+        $initialShareCapital,
+
+        $membershipType,
+
+        $createdBy
+
+    ]);
+}
+
 function handleCreateCoopMember(PDO $pdo): string
 {
     checkAuthenticated($pdo);
@@ -829,7 +862,16 @@ function handleCreateCoopMember(PDO $pdo): string
     $middle_name     = trim($_POST['middle_name'] ?? '');
     $last_name       = trim($_POST['last_name'] ?? '');
     $date_of_birth   = trim($_POST['date_of_birth'] ?? '');
-    $membership_type = trim($_POST['membership_type'] ?? 'Regular');
+    $initialShareCapital = (float) preg_replace(
+        '/[^\d.]/',
+        '',
+        $_POST['initial_share_capital'] ?? '0'
+    );
+
+    $membership_type =
+        $initialShareCapital >= 21000
+        ? 'Regular'
+        : 'Associate';
 
     $beneficiaries = json_decode(
         $_POST['beneficiaries'] ?? '[]',
@@ -879,7 +921,7 @@ function handleCreateCoopMember(PDO $pdo): string
     ?,
     ?,
     ?,
-    'active',
+    'pending',
     CURDATE()
 )
         ");
@@ -1053,6 +1095,26 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
         ]);
 
+        /*
+|--------------------------------------------------------------------------
+| Member Onboarding
+|--------------------------------------------------------------------------
+*/
+
+        createMemberOnboarding(
+
+            $pdo,
+
+            $member_id,
+
+            $initialShareCapital,
+
+            $membership_type,
+
+            (int) $_SESSION['user_id']
+
+        );
+
         foreach ($beneficiaries as $beneficiary) {
 
             if (empty(trim($beneficiary['full_name'] ?? ''))) {
@@ -1099,8 +1161,11 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         $pdo->commit();
 
         redirectSuccess(
-            'members',
-            "Member successfully registered. Member ID: {$formatted_member_no}"
+            'member_initial_capital',
+            "Member successfully registered.",
+            [
+                'id' => $member_id
+            ]
         );
     } catch (PDOException $e) {
 
