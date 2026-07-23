@@ -26,9 +26,7 @@
 
         <div class="table table--sticky table--compact">
 
-            <div
-                class="table__scroll"
-                style="max-height: 480px; overflow-y: auto;">
+            <div class="table__scroll table__scroll--projection">
 
                 <table>
 

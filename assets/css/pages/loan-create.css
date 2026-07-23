@@ -48,6 +48,19 @@
   transition: var(--transition);
 }
 
+.loan-member {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.loan-member--updating {
+  opacity: 0.55;
+  transform: scale(0.99);
+}
+
 .loan-member:hover {
   border-color: rgba(217, 142, 22, 0.35);
 

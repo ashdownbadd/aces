@@ -248,6 +248,54 @@
 }
 
 /* ==========================================================
+   LOAN PROJECTION
+========================================================== */
+
+.table__scroll--projection {
+  max-height: 480px;
+
+  overflow-y: auto;
+}
+
+.table__scroll--projection tbody tr {
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.table__scroll--projection tbody tr:hover {
+  background: rgba(217, 142, 22, 0.05);
+}
+
+.table__scroll--projection tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+.table--sticky thead th {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 5;
+
+  background: var(--surface);
+
+  border-bottom: 2px solid var(--border);
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================
+   TABLE ANIMATION
+========================================================== */
+
+.table__body--updating {
+  opacity: 0.45;
+
+  transition: opacity 0.18s ease;
+}
+
+/* ==========================================================
    RESPONSIVE
 ========================================================== */
 

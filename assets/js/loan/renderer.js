@@ -21,6 +21,19 @@
   Loan.renderSummary = function () {
     const loan = Loan.state.loan;
 
+    [
+      "lbl_principal",
+      "lbl_interest",
+      "lbl_total",
+      "lbl_estimated_payment",
+    ].forEach((id) => {
+      const el = Loan.$(id);
+
+      if (el) {
+        el.classList.add("stats__value--updating");
+      }
+    });
+
     if (!loan || !loan.summary) {
       return;
     }
@@ -42,6 +55,21 @@
       "lbl_payment_frequency",
       Loan.getPaymentFrequencyLabel(loan.paymentFrequency),
     );
+
+    requestAnimationFrame(() => {
+      [
+        "lbl_principal",
+        "lbl_interest",
+        "lbl_total",
+        "lbl_estimated_payment",
+      ].forEach((id) => {
+        const el = Loan.$(id);
+
+        if (el) {
+          el.classList.remove("stats__value--updating");
+        }
+      });
+    });
   };
 
   /* ======================================================
@@ -50,6 +78,7 @@
 
   Loan.renderProjection = function () {
     const tbody = Loan.$("loan_preview_body");
+    tbody.classList.add("table__body--updating");
 
     if (!tbody) {
       return;
@@ -59,12 +88,34 @@
 
     if (!schedule.length) {
       tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="table__empty">
-                        No Projection Yet
-                    </td>
-                </tr>
-            `;
+<tr>
+
+    <td
+        colspan="6"
+        class="table__empty">
+
+        <div class="table__empty-icon">
+
+            <i class="fas fa-calendar-alt"></i>
+
+        </div>
+
+        <div class="table__empty-title">
+
+            No Repayment Schedule
+
+        </div>
+
+        <div class="table__empty-description">
+
+            Complete the loan information to generate the repayment schedule.
+
+        </div>
+
+    </td>
+
+</tr>
+`;
 
       return;
     }
@@ -75,31 +126,51 @@
 
             <tr>
 
-                <td>${row.paymentNo}</td>
+    <td>
 
-<td>${Loan.date(row.dueDate)}</td>
+        <strong>${row.paymentNo}</strong>
 
-<td class="table__number">
-    ${Loan.money(row.principal)}
-</td>
+    </td>
 
-<td class="table__number">
-    ${Loan.money(row.interest)}
-</td>
+    <td>
 
-<td class="table__number">
-    ${Loan.money(row.payment)}
-</td>
+        ${Loan.date(row.dueDate)}
 
-<td class="table__number">
-    ${Loan.money(row.endingBalance)}
-</td>
+    </td>
 
-            </tr>
+    <td class="table__number">
+
+        ${Loan.money(row.principal)}
+
+    </td>
+
+    <td class="table__number">
+
+        ${Loan.money(row.interest)}
+
+    </td>
+
+    <td class="table__number">
+
+        <strong>${Loan.money(row.payment)}</strong>
+
+    </td>
+
+    <td class="table__number">
+
+        ${Loan.money(row.endingBalance)}
+
+    </td>
+
+</tr>
 
         `,
       )
       .join("");
+
+    requestAnimationFrame(() => {
+      tbody.classList.remove("table__body--updating");
+    });
   };
 
   /* ======================================================

@@ -92,6 +92,12 @@
     const name = Loan.$("loanMemberName");
     const number = Loan.$("loanMemberNumber");
 
+    const preview = Loan.$("loanMemberPreview");
+
+    if (preview) {
+      preview.classList.add("loan-member--updating");
+    }
+
     const badgeContainer = Loan.$("loanMemberBadges");
     const badge = Loan.$("loanMemberBadge");
     const status = Loan.$("loanMemberStatus");
@@ -144,6 +150,12 @@
       default:
         badge.classList.add("loan-member__badge--secondary");
         break;
+    }
+
+    if (preview) {
+      requestAnimationFrame(() => {
+        preview.classList.remove("loan-member--updating");
+      });
     }
   };
 })();
