@@ -482,11 +482,28 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* ==========================================================
-   FORM ACTIONS
+   INPUT GROUP
 ========================================================== */
 
-.form-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.input-group {
+  position: relative;
+}
+
+.input-group .form-control {
+  padding-right: 3rem;
+}
+
+.input-group__suffix {
+  position: absolute;
+
+  top: 50%;
+  right: 1rem;
+
+  transform: translateY(-50%);
+
+  color: var(--text-light);
+
+  font-weight: var(--fw-semibold);
+
+  pointer-events: none;
 }

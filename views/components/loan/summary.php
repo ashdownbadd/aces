@@ -104,34 +104,6 @@
 
             </div>
 
-            <div class="stats__card stats__card--gold">
-
-                <div class="stats__content">
-
-                    <span class="stats__label">
-
-                        Total Payments
-
-                    </span>
-
-                    <strong
-                        class="stats__value"
-                        id="lbl_payments">
-
-                        0
-
-                    </strong>
-
-                </div>
-
-                <div class="stats__icon">
-
-                    <i class="fas fa-calendar-check"></i>
-
-                </div>
-
-            </div>
-
         </div>
 
     </div>

@@ -77,23 +77,23 @@
 
                 <td>${row.paymentNo}</td>
 
-                <td>${Loan.date(row.dueDate)}</td>
+<td>${Loan.date(row.dueDate)}</td>
 
-                <td class="table__number">
-                    ${Loan.money(row.principal)}
-                </td>
+<td class="table__number">
+    ${Loan.money(row.principal)}
+</td>
 
-                <td class="table__number">
-                    ${Loan.money(row.interest)}
-                </td>
+<td class="table__number">
+    ${Loan.money(row.interest)}
+</td>
 
-                <td class="table__number">
-                    ${Loan.money(row.payment)}
-                </td>
+<td class="table__number">
+    ${Loan.money(row.payment)}
+</td>
 
-                <td class="table__number">
-                    ${Loan.money(row.endingBalance)}
-                </td>
+<td class="table__number">
+    ${Loan.money(row.endingBalance)}
+</td>
 
             </tr>
 

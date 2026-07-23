@@ -123,14 +123,20 @@
 
                 </label>
 
-                <input
-                    class="form-control"
-                    type="number"
-                    id="interest_rate"
-                    name="interest_rate"
-                    step="0.01"
-                    placeholder="0.00"
-                    required>
+                <div class="input-group">
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="interest_rate"
+                        name="interest_rate"
+                        step="0.01"
+                        placeholder="0.00"
+                        required>
+
+                    <span class="input-group__suffix">%</span>
+
+                </div>
 
             </div>
 
