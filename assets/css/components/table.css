@@ -146,6 +146,7 @@
   white-space: nowrap;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .table__center {

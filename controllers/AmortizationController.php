@@ -278,14 +278,15 @@ function handleCreateLoan(PDO $pdo): string
     }
 
     $stmt = $pdo->query("
-        SELECT
-            id,
-            member_number,
-            first_name,
-            last_name
-        FROM members
-        ORDER BY last_name ASC
-    ");
+    SELECT
+        id,
+        member_number,
+        first_name,
+        last_name,
+        status
+    FROM members
+    ORDER BY last_name ASC
+");
 
     return render(
         'loan_create',

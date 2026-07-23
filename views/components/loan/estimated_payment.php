@@ -8,7 +8,7 @@
 
                 <span class="stats__label">
 
-                    Estimated Payment
+                    Estimated Monthly Payment
 
                 </span>
 
@@ -24,7 +24,7 @@
                     class="stats__description"
                     id="lbl_payment_frequency">
 
-                    Monthly Payment
+                    Select loan details to calculate
 
                 </span>
 
@@ -32,7 +32,7 @@
 
             <div class="stats__icon">
 
-                <i class="fas fa-money-check-dollar"></i>
+                <i class="fas fa-wallet"></i>
 
             </div>
 

@@ -62,11 +62,11 @@
 ========================================================== */
 
 .stats__label {
-  color: var(--text-light);
-
-  font-size: var(--text-sm);
-
-  font-weight: var(--fw-medium);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* ==========================================================
@@ -75,12 +75,11 @@
 
 .stats__value {
   color: var(--text);
-
   font-size: var(--text-3xl);
-
   font-weight: var(--fw-bold);
-
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 /* ==========================================================
@@ -177,12 +176,14 @@
 
 .stats__card--hero {
   justify-content: center;
-
   align-items: center;
-
   text-align: center;
-
-  min-height: 220px;
+  min-height: 240px;
+  padding: var(--space-8);
+  background:
+    linear-gradient(135deg, rgba(217, 142, 22, 0.08), rgba(217, 142, 22, 0.02)),
+    var(--surface);
+  border: 1px solid rgba(217, 142, 22, 0.25);
 }
 
 .stats__card--hero .stats__content {
@@ -194,15 +195,20 @@
 }
 
 .stats__card--hero .stats__value {
-  margin: var(--space-3) 0;
-
-  font-size: clamp(2.75rem, 5vw, 4.25rem);
-
+  margin: var(--space-4) 0;
+  font-size: clamp(3rem, 6vw, 4.75rem);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
 }
 
 .stats__card--hero .stats__description {
-  font-size: var(--text-md);
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .stats__card--hero .stats__icon {

@@ -485,25 +485,46 @@ input[type="file"]::file-selector-button:hover {
    INPUT GROUP
 ========================================================== */
 
+/* ==========================================================
+   INPUT GROUP
+========================================================== */
+
 .input-group {
   position: relative;
+
+  display: flex;
+
+  align-items: center;
 }
 
 .input-group .form-control {
+  padding-left: 3rem;
   padding-right: 3rem;
 }
 
+.input-group__prefix,
 .input-group__suffix {
   position: absolute;
 
   top: 50%;
-  right: 1rem;
 
   transform: translateY(-50%);
 
   color: var(--text-light);
 
+  font-size: var(--text-sm);
+
   font-weight: var(--fw-semibold);
 
   pointer-events: none;
+
+  user-select: none;
+}
+
+.input-group__prefix {
+  left: 1rem;
+}
+
+.input-group__suffix {
+  right: 1rem;
 }

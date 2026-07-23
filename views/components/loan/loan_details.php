@@ -102,14 +102,20 @@
 
                 </label>
 
-                <input
-                    class="form-control"
-                    type="number"
-                    id="principal"
-                    name="principal"
-                    step="0.01"
-                    placeholder="₱10,000.00"
-                    required>
+                <div class="input-group">
+
+                    <span class="input-group__prefix">₱</span>
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="principal"
+                        name="principal"
+                        step="0.01"
+                        placeholder="10,000.00"
+                        required>
+
+                </div>
 
             </div>
 
@@ -131,7 +137,8 @@
                         id="interest_rate"
                         name="interest_rate"
                         step="0.01"
-                        placeholder="0.00"
+                        min="0"
+                        placeholder="2.00"
                         required>
 
                     <span class="input-group__suffix">%</span>

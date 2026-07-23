@@ -51,7 +51,8 @@
                     <option
                         value="<?= (int) $member['id'] ?>"
                         data-name="<?= htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) ?>"
-                        data-number="<?= htmlspecialchars($member['member_number']) ?>">
+                        data-number="<?= htmlspecialchars($member['member_number']) ?>"
+                        data-status="<?= htmlspecialchars($member['status'] ?? '') ?>">
 
                         <?= htmlspecialchars(
                             $member['last_name']
@@ -90,13 +91,36 @@
 
                 </strong>
 
-                <span
-                    class="loan-member__number"
-                    id="loanMemberNumber">
+                <span class="loan-member__number">
 
-                    Select a borrower to continue.
+                    Member #
+
+                    <span id="loanMemberNumber">
+
+                        Select a borrower
+
+                    </span>
 
                 </span>
+
+                <div
+                    class="loan-member__badges"
+                    id="loanMemberBadges"
+                    hidden>
+
+                    <span
+                        class="loan-member__badge"
+                        id="loanMemberBadge">
+
+                        <i class="fas fa-circle"></i>
+
+                        <span id="loanMemberStatus">
+                            Active
+                        </span>
+
+                    </span>
+
+                </div>
 
             </div>
 
