@@ -40,10 +40,33 @@
    * Loan Refresh
    * ====================================================== */
 
+  Loan.isReady = function (loan) {
+    return (
+      loan.memberId &&
+      loan.loanType &&
+      loan.paymentFrequency &&
+      loan.amortizationType &&
+      loan.principal > 0 &&
+      loan.interestRate > 0 &&
+      loan.terms > 0 &&
+      loan.startDate
+    );
+  };
+
   Loan.refresh = function () {
     const loan = Loan.collect();
 
     Loan.state.loan = loan;
+
+    if (!Loan.isReady(loan)) {
+      Loan.state.schedule = [];
+
+      loan.summary = Loan.buildSummary([]);
+
+      Loan.render();
+
+      return;
+    }
 
     Loan.state.schedule = Loan.generateSchedule(loan);
 

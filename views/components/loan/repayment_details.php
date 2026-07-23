@@ -75,17 +75,35 @@
 
                 </label>
 
-                <select id="payment_frequency" name="payment_frequency">
+                <select
+                    class="form-control"
+                    id="payment_frequency"
+                    name="payment_frequency"
+                    required>
 
-                    <option value="monthly">Monthly</option>
+                    <option value="" selected disabled>
+                        -- Select Payment Frequency --
+                    </option>
 
-                    <option value="semi_monthly">Semi-Monthly</option>
+                    <option value="monthly">
+                        Monthly
+                    </option>
 
-                    <option value="bi_weekly">Bi-Weekly</option>
+                    <option value="semi_monthly">
+                        Semi-Monthly
+                    </option>
 
-                    <option value="weekly">Weekly</option>
+                    <option value="bi_weekly">
+                        Bi-Weekly
+                    </option>
 
-                    <option value="daily">Daily</option>
+                    <option value="weekly">
+                        Weekly
+                    </option>
+
+                    <option value="daily">
+                        Daily
+                    </option>
 
                 </select>
 
@@ -101,7 +119,15 @@
 
                 </label>
 
-                <select id="amortization_type" name="amortization_type">
+                <select
+                    class="form-control"
+                    id="amortization_type"
+                    name="amortization_type"
+                    required>
+
+                    <option value="" selected disabled>
+                        -- Select Amortization Method --
+                    </option>
 
                     <option value="straight_line">
                         Straight Line

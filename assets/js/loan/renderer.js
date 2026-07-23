@@ -8,163 +8,123 @@
 (() => {
   const Loan = ACES.loan;
 
-  /* ======================================================
-   * Render Everything
-   * ====================================================== */
-
   Loan.render = function () {
     Loan.renderSummary();
 
-    Loan.renderEstimatedPayment();
-
-    Loan.renderSchedule();
+    Loan.renderProjection();
   };
 
   /* ======================================================
-   * Loan Summary
+   * Summary
    * ====================================================== */
 
   Loan.renderSummary = function () {
     const loan = Loan.state.loan;
 
-    Loan.text("lbl_principal", Loan.money(loan.principal));
-
-    Loan.text("lbl_interest", Loan.money(loan.totalInterest));
-
-    Loan.text("lbl_total", Loan.money(loan.totalRepayment));
-
-    Loan.text("lbl_payments", loan.numberOfPayments);
-  };
-
-  /* ======================================================
-   * Estimated Payment
-   * ====================================================== */
-
-  Loan.renderEstimatedPayment = function () {
-    const loan = Loan.state.loan;
-
-    Loan.text("lbl_estimated_payment", Loan.money(loan.paymentAmount));
-
-    let label = "Monthly Payment";
-
-    switch (loan.paymentFrequency) {
-      case "Weekly":
-        label = "Weekly Payment";
-
-        break;
-
-      case "Bi-Monthly":
-        label = "Bi-Monthly Payment";
-
-        break;
+    if (!loan || !loan.summary) {
+      return;
     }
 
-    Loan.text("lbl_payment_frequency", label);
-  };
+    Loan.setText("lbl_principal", Loan.money(loan.principal));
 
-  /* ======================================================
-   * Empty Schedule
-   * ====================================================== */
+    Loan.setText("lbl_interest", Loan.money(loan.summary.totalInterest));
 
-  Loan.renderEmptySchedule = function () {
-    Loan.html(
-      "loan_preview_body",
+    Loan.setText("lbl_total", Loan.money(loan.summary.totalRepayment));
 
-      `
-            <tr>
+    Loan.setText("lbl_payments", loan.summary.paymentCount);
 
-                <td colspan="6" class="table__empty">
+    Loan.setText(
+      "lbl_estimated_payment",
+      Loan.money(loan.summary.firstPayment),
+    );
 
-                    <div class="table__empty-icon">
-
-                        <i class="fas fa-calendar"></i>
-
-                    </div>
-
-                    <div class="table__empty-title">
-
-                        No Projection Yet
-
-                    </div>
-
-                    <div class="table__empty-description">
-
-                        Fill out the loan information to generate the repayment schedule.
-
-                    </div>
-
-                </td>
-
-            </tr>
-            `,
+    Loan.setText(
+      "lbl_payment_frequency",
+      Loan.getPaymentFrequencyLabel(loan.paymentFrequency),
     );
   };
 
   /* ======================================================
-   * Schedule
+   * Projection Table
    * ====================================================== */
 
-  Loan.renderSchedule = function () {
+  Loan.renderProjection = function () {
+    const tbody = Loan.$("loan_preview_body");
+
+    if (!tbody) {
+      return;
+    }
+
     const schedule = Loan.state.schedule;
 
     if (!schedule.length) {
-      Loan.renderEmptySchedule();
+      tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="table__empty">
+                        No Projection Yet
+                    </td>
+                </tr>
+            `;
 
       return;
     }
 
-    let html = "";
-
-    schedule.forEach((row) => {
-      html += `
+    tbody.innerHTML = schedule
+      .map(
+        (row) => `
 
             <tr>
 
-                <td>
+                <td>${row.paymentNo}</td>
 
-                    ${row.paymentNo}
-
-                </td>
-
-                <td>
-
-                    ${Loan.formatDate(row.dueDate)}
-
-                </td>
+                <td>${Loan.date(row.dueDate)}</td>
 
                 <td class="table__number">
-
                     ${Loan.money(row.principal)}
-
                 </td>
 
                 <td class="table__number">
-
                     ${Loan.money(row.interest)}
-
                 </td>
 
                 <td class="table__number">
-
                     ${Loan.money(row.payment)}
-
                 </td>
 
                 <td class="table__number">
-
-                    ${Loan.money(row.balance)}
-
+                    ${Loan.money(row.endingBalance)}
                 </td>
 
             </tr>
 
-            `;
-    });
+        `,
+      )
+      .join("");
+  };
 
-    Loan.html(
-      "loan_preview_body",
+  /* ======================================================
+   * Frequency Label
+   * ====================================================== */
 
-      html,
-    );
+  Loan.getPaymentFrequencyLabel = function (frequency) {
+    switch (frequency) {
+      case "monthly":
+        return "Monthly Payment";
+
+      case "semi_monthly":
+        return "Semi-Monthly Payment";
+
+      case "bi_weekly":
+        return "Bi-Weekly Payment";
+
+      case "weekly":
+        return "Weekly Payment";
+
+      case "daily":
+        return "Daily Payment";
+
+      default:
+        return "";
+    }
   };
 })();

@@ -9,181 +9,100 @@
   const Loan = ACES.loan;
 
   /* ======================================================
-   * Main Refresh Pipeline
-   * ======================================================
-   */
+   * Initialize Events
+   * ====================================================== */
 
-  Loan.refresh = function () {
-    let loan = Loan.collect();
-
-    loan = Loan.calculateSummary(loan);
-
-    Loan.state.loan = loan;
-
-    Loan.state.deductions = Loan.calculateDeductions(loan);
-
-    Loan.state.schedule = Loan.generateSchedule(loan);
-
-    Loan.render();
-  };
-
-  /* ======================================================
-   * Loan Type
-   * ======================================================
-   */
-
-  Loan.handleLoanType = function () {
-    const type = Loan.value("loan_type");
-
-    const micro = Loan.$("microfinance_options");
-
-    if (micro) {
-      micro.style.display = type === "Micro-Finance Loan" ? "block" : "none";
-    }
-
-    Loan.refresh();
-  };
-
-  /* ======================================================
-   * Collateral
-   * ======================================================
-   */
-
-  Loan.handleCollateral = function () {
-    const collateral = Loan.value("collateral");
-
-    const fields = Loan.$("real_property_fields");
-
-    if (fields) {
-      fields.style.display = collateral === "Real Property" ? "block" : "none";
-    }
-
-    Loan.refresh();
-  };
-
-  /* ======================================================
-   * Amortization
-   * ======================================================
-   */
-
-  Loan.handleAmortization = function () {
-    const type = Loan.value("amortization_type");
-
-    const manual = Loan.$("manual_interest_container");
-
-    if (manual) {
-      manual.style.display = type === "Manual" ? "block" : "none";
-    }
-
-    Loan.refresh();
-  };
-
-  /* ======================================================
-   * Member Information
-   * ======================================================
-   */
-
-  Loan.updateMember = function () {
-    const select = Loan.$("member_id");
-
-    if (!select) return;
-
-    const option = select.selectedOptions[0];
-
-    Loan.text(
-      "loanMemberName",
-
-      option?.dataset.name || "No member selected",
-    );
-
-    Loan.text(
-      "loanMemberNumber",
-
-      option?.dataset.number || "Select a borrower",
-    );
-  };
-
-  /* ======================================================
-   * Attach Events
-   * ======================================================
-   */
-
-  Loan.attachEvents = function () {
-    [
+  Loan.initializeEvents = function () {
+    const fields = [
+      "member_id",
+      "loan_type",
+      "collateral",
       "principal",
-
       "interest_rate",
-
       "terms",
-
       "start_date",
-
       "payment_frequency",
+      "amortization_type",
+      "manual_interest",
+    ];
 
-      "manual_payment",
-    ].forEach((id) => {
+    fields.forEach((id) => {
       const element = Loan.$(id);
 
-      if (!element) return;
+      if (!element) {
+        return;
+      }
 
-      element.addEventListener(
-        "input",
+      const handler = () => {
+        if (id === "amortization_type") {
+          Loan.toggleManualInterest();
+        }
 
-        Loan.refresh,
-      );
-
-      element.addEventListener(
-        "change",
-
-        Loan.refresh,
-      );
-    });
-
-    Loan.$("loan_type")?.addEventListener(
-      "change",
-
-      Loan.handleLoanType,
-    );
-
-    Loan.$("collateral")?.addEventListener(
-      "change",
-
-      Loan.handleCollateral,
-    );
-
-    Loan.$("amortization_type")?.addEventListener(
-      "change",
-
-      Loan.handleAmortization,
-    );
-
-    Loan.$("member_id")?.addEventListener(
-      "change",
-
-      () => {
-        Loan.updateMember();
+        if (id === "member_id") {
+          Loan.updateBorrowerPreview();
+        }
 
         Loan.refresh();
-      },
-    );
+      };
+
+      element.addEventListener("input", handler);
+      element.addEventListener("change", handler);
+    });
+
+    Loan.toggleManualInterest();
+
+    Loan.updateBorrowerPreview();
+
+    Loan.refresh();
   };
 
   /* ======================================================
-   * Init
-   * ======================================================
-   */
+   * Manual Interest Visibility
+   * ====================================================== */
 
-  Loan.init = function () {
-    Loan.attachEvents();
+  Loan.toggleManualInterest = function () {
+    const wrapper = Loan.$("manual_interest_container");
 
-    Loan.handleLoanType();
+    if (!wrapper) {
+      return;
+    }
 
-    Loan.handleCollateral();
+    const isManual = Loan.value("amortization_type") === "manual";
 
-    Loan.handleAmortization();
+    if (isManual) {
+      Loan.show(wrapper);
+    } else {
+      Loan.hide(wrapper);
+    }
+  };
 
-    Loan.updateMember();
+  /* ======================================================
+   * Borrower Preview
+   * ====================================================== */
 
-    Loan.refresh();
+  Loan.updateBorrowerPreview = function () {
+    const select = Loan.$("member_id");
+
+    if (!select) {
+      return;
+    }
+
+    const option = select.options[select.selectedIndex];
+
+    const name = Loan.$("loanMemberName");
+
+    const number = Loan.$("loanMemberNumber");
+
+    if (!option || !option.value) {
+      name.textContent = "No member selected";
+
+      number.textContent = "Select a borrower to continue.";
+
+      return;
+    }
+
+    name.textContent = option.dataset.name;
+
+    number.textContent = option.dataset.number;
   };
 })();

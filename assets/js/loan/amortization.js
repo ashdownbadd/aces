@@ -8,19 +8,23 @@
 (() => {
   const Loan = ACES.loan;
 
+  /* ======================================================
+   * Public Entry
+   * ====================================================== */
+
   Loan.generateSchedule = function (loan) {
     if (loan.principal <= 0 || loan.terms <= 0 || !loan.startDate) {
       return [];
     }
 
     switch (loan.amortizationType) {
-      case "Straight Line":
+      case "straight_line":
         return Loan.generateStraightLine(loan);
 
-      case "Diminishing Balance":
+      case "diminishing_balance":
         return Loan.generateDiminishingBalance(loan);
 
-      case "Manual":
+      case "manual":
         return Loan.generateManual(loan);
 
       default:
@@ -29,39 +33,83 @@
   };
 
   /* ======================================================
-   * Straight-Line
+   * Helpers
+   * ====================================================== */
+
+  Loan.getNumberOfPayments = function (loan) {
+    let periods = loan.terms;
+
+    if (loan.loanType === "Micro-Finance Loan") {
+      switch (loan.paymentFrequency) {
+        case "weekly":
+          periods *= 4;
+          break;
+
+        case "semi_monthly":
+          periods *= 2;
+          break;
+
+        case "bi_weekly":
+          periods *= 2;
+          break;
+
+        case "daily":
+          periods *= 30;
+          break;
+      }
+    }
+
+    return periods;
+  };
+
+  Loan.nextDueDate = function (date, frequency) {
+    const due = new Date(date);
+
+    switch (frequency) {
+      case "daily":
+        due.setDate(due.getDate() + 1);
+        break;
+
+      case "weekly":
+        due.setDate(due.getDate() + 7);
+        break;
+
+      case "bi_weekly":
+        due.setDate(due.getDate() + 14);
+        break;
+
+      case "semi_monthly":
+        due.setDate(due.getDate() + 15);
+        break;
+
+      default:
+        due.setMonth(due.getMonth() + 1);
+    }
+
+    return due;
+  };
+
+  /* ======================================================
+   * Straight Line
    * ====================================================== */
 
   Loan.generateStraightLine = function (loan) {
     const schedule = [];
 
-    let balance = loan.principal;
-
-    const periods = loan.numberOfPayments;
+    const periods = Loan.getNumberOfPayments(loan);
 
     const principalPerPeriod = loan.principal / periods;
 
-    const interestPerPeriod = loan.totalInterest / periods;
+    const interestPerPeriod = loan.principal * (loan.interestRate / 100);
 
     const payment = principalPerPeriod + interestPerPeriod;
 
-    const dueDate = new Date(loan.startDate);
+    let balance = loan.principal;
+
+    let dueDate = new Date(loan.startDate);
 
     for (let i = 1; i <= periods; i++) {
-      switch (loan.paymentFrequency) {
-        case "Weekly":
-          dueDate.setDate(dueDate.getDate() + 7);
-
-          break;
-
-        case "Bi-Monthly":
-          dueDate.setDate(dueDate.getDate() + 15);
-
-          break;
-
-        default:
-          dueDate.setMonth(dueDate.getMonth() + 1);
-      }
+      dueDate = Loan.nextDueDate(dueDate, loan.paymentFrequency);
 
       balance -= principalPerPeriod;
 
@@ -70,13 +118,15 @@
 
         dueDate: new Date(dueDate),
 
+        beginningBalance: Loan.round(balance + principalPerPeriod),
+
         principal: Loan.round(principalPerPeriod),
 
         interest: Loan.round(interestPerPeriod),
 
         payment: Loan.round(payment),
 
-        balance: Loan.round(Math.max(balance, 0)),
+        endingBalance: Loan.round(Math.max(balance, 0)),
       });
     }
 
@@ -90,38 +140,27 @@
   Loan.generateDiminishingBalance = function (loan) {
     const schedule = [];
 
+    const periods = Loan.getNumberOfPayments(loan);
+
+    const principalPerPeriod = loan.principal / periods;
+
     let balance = loan.principal;
 
-    const dueDate = new Date(loan.startDate);
+    let dueDate = new Date(loan.startDate);
 
-    const principalPerPeriod = loan.principal / loan.numberOfPayments;
-
-    for (let i = 1; i <= loan.numberOfPayments; i++) {
-      switch (loan.paymentFrequency) {
-        case "Weekly":
-          dueDate.setDate(dueDate.getDate() + 7);
-
-          break;
-
-        case "Bi-Monthly":
-          dueDate.setDate(dueDate.getDate() + 15);
-
-          break;
-
-        default:
-          dueDate.setMonth(dueDate.getMonth() + 1);
-      }
+    for (let i = 1; i <= periods; i++) {
+      dueDate = Loan.nextDueDate(dueDate, loan.paymentFrequency);
 
       const interest = balance * (loan.interestRate / 100);
 
       const payment = principalPerPeriod + interest;
 
-      balance -= principalPerPeriod;
-
       schedule.push({
         paymentNo: i,
 
         dueDate: new Date(dueDate),
+
+        beginningBalance: Loan.round(balance),
 
         principal: Loan.round(principalPerPeriod),
 
@@ -129,8 +168,10 @@
 
         payment: Loan.round(payment),
 
-        balance: Loan.round(Math.max(balance, 0)),
+        endingBalance: Loan.round(Math.max(balance - principalPerPeriod, 0)),
       });
+
+      balance -= principalPerPeriod;
     }
 
     return schedule;
@@ -140,58 +181,7 @@
    * Manual
    * ====================================================== */
 
-  Loan.generateManual = function (loan) {
-    const schedule = [];
-
-    let balance = loan.principal;
-
-    const dueDate = new Date(loan.startDate);
-
-    for (let i = 1; i <= loan.numberOfPayments; i++) {
-      switch (loan.paymentFrequency) {
-        case "Weekly":
-          dueDate.setDate(dueDate.getDate() + 7);
-
-          break;
-
-        case "Bi-Monthly":
-          dueDate.setDate(dueDate.getDate() + 15);
-
-          break;
-
-        default:
-          dueDate.setMonth(dueDate.getMonth() + 1);
-      }
-
-      const interest = balance * (loan.interestRate / 100);
-
-      let principal = loan.manualPayment - interest;
-
-      if (principal < 0) {
-        principal = 0;
-      }
-
-      balance -= principal;
-
-      schedule.push({
-        paymentNo: i,
-
-        dueDate: new Date(dueDate),
-
-        principal: Loan.round(principal),
-
-        interest: Loan.round(interest),
-
-        payment: Loan.round(loan.manualPayment),
-
-        balance: Loan.round(Math.max(balance, 0)),
-      });
-
-      if (balance <= 0) {
-        break;
-      }
-    }
-
-    return schedule;
+  Loan.generateManual = function () {
+    return [];
   };
 })();

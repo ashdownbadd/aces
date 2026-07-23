@@ -41,6 +41,9 @@
                     id="loan_type"
                     name="loan_type"
                     required>
+                    <option value="" selected disabled>
+                        -- Select Loan Type --
+                    </option>
 
                     <option value="Bridge Financing">Bridge Financing</option>
                     <option value="Investment Loan">Investment Loan</option>
