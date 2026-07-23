@@ -8,66 +8,71 @@
 (() => {
   const Loan = ACES.loan;
 
-  /* ==========================================================
-   * Loan Inputs
-   * ==========================================================
-   */
+  /* ======================================================
+   * Collect Form Data
+   * ====================================================== */
 
-  Loan.getLoanInputs = function () {
+  Loan.collect = function () {
     return {
-      memberId: Loan.$("member_id")?.value || "",
+      memberId: Loan.value("member_id"),
 
-      loanType: Loan.$("loan_type")?.value || "",
+      loanType: Loan.value("loan_type"),
 
-      principal: parseFloat(Loan.$("principal")?.value) || 0,
+      collateral: Loan.value("collateral"),
 
-      interestRate: parseFloat(Loan.$("interest_rate")?.value) || 0,
+      principal: Loan.number("principal"),
 
-      terms: parseInt(Loan.$("terms")?.value) || 0,
+      interestRate: Loan.number("interest_rate"),
 
-      startDate: Loan.$("start_date")?.value || "",
+      terms: Loan.integer("terms"),
 
-      paymentFrequency: Loan.$("payment_frequency")?.value || "Monthly",
+      startDate: Loan.value("start_date"),
 
-      amortizationType: Loan.$("amortization_type")?.value || "Straight-line",
+      paymentFrequency: Loan.value("payment_frequency"),
 
-      collateral: Loan.$("collateral")?.value || "",
+      amortizationType: Loan.value("amortization_type"),
 
-      manualPayment: parseFloat(Loan.$("manual_payment")?.value) || 0,
+      manualInterest: Loan.number("manual_interest"),
     };
   };
 
-  /* ==========================================================
+  /* ======================================================
+   * Loan Refresh
+   * ====================================================== */
+
+  Loan.refresh = function () {
+    const loan = Loan.collect();
+
+    Loan.state.loan = loan;
+
+    Loan.state.schedule = Loan.generateSchedule(loan);
+
+    loan.summary = Loan.buildSummary(Loan.state.schedule);
+
+    Loan.state.deductions = Loan.calculateDeductions(loan);
+
+    Loan.render();
+  };
+
+  /* ======================================================
    * Loan Deductions
-   * ==========================================================
-   */
+   * ====================================================== */
 
   Loan.calculateDeductions = function (loan) {
-    if (loan.principal <= 0 || loan.terms <= 0) {
-      return {
-        processing: 0,
-        insurance: 0,
-        notarial: 400,
-        net: 0,
-      };
-    }
-
     const processing = loan.principal * 0.02;
 
     const insurance = (loan.principal / 1000) * 1.2 * loan.terms;
 
     const notarial = 400;
 
-    const net = loan.principal - processing - insurance - notarial;
-
     return {
-      processing,
+      processing: Loan.round(processing),
 
-      insurance,
+      insurance: Loan.round(insurance),
 
       notarial,
 
-      net,
+      net: Loan.round(loan.principal - processing - insurance - notarial),
     };
   };
 })();

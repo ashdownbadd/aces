@@ -75,17 +75,17 @@
 
                 </label>
 
-                <select
-                    class="form-control"
-                    id="payment_frequency"
-                    name="payment_frequency">
+                <select id="payment_frequency" name="payment_frequency">
 
-                    <option value="Monthly">Monthly</option>
-                    <option value="Semi-Monthly">Semi-Monthly</option>
-                    <option value="Bi-Weekly">Bi-Weekly</option>
-                    <option value="Weekly">Weekly</option>
-                    <option value="Daily">Daily</option>
-                    <option value="Manual">Manual</option>
+                    <option value="monthly">Monthly</option>
+
+                    <option value="semi_monthly">Semi-Monthly</option>
+
+                    <option value="bi_weekly">Bi-Weekly</option>
+
+                    <option value="weekly">Weekly</option>
+
+                    <option value="daily">Daily</option>
 
                 </select>
 
@@ -101,20 +101,17 @@
 
                 </label>
 
-                <select
-                    class="form-control"
-                    id="amortization_type"
-                    name="amortization_type">
+                <select id="amortization_type" name="amortization_type">
 
-                    <option value="Straight Line">
+                    <option value="straight_line">
                         Straight Line
                     </option>
 
-                    <option value="Diminishing Balance">
+                    <option value="diminishing_balance">
                         Diminishing Balance
                     </option>
 
-                    <option value="Manual">
+                    <option value="manual">
                         Manual
                     </option>
 

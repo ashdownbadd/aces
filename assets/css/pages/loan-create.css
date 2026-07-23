@@ -14,9 +14,12 @@
 
 .loan-summary-grid {
   display: grid;
+
   grid-template-columns: minmax(0, 2fr) 360px;
+
   gap: var(--space-6);
-  align-items: start;
+
+  align-items: stretch;
 }
 
 /* ==========================================================
@@ -39,10 +42,6 @@
   border-radius: var(--radius-lg);
 
   background: var(--surface-alt);
-
-  .loan-member {
-    margin-top: var(--space-5);
-  }
 }
 
 .loan-member__avatar {
@@ -85,6 +84,22 @@
   color: var(--text-muted);
 
   font-size: var(--text-sm);
+}
+
+.loan-top-grid {
+  align-items: stretch;
+}
+
+.loan-top-grid > .card {
+  height: 100%;
+}
+
+.loan-real-property {
+  margin-top: var(--space-6);
+
+  padding-top: var(--space-6);
+
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 992px) {

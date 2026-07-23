@@ -6,88 +6,128 @@
  */
 
 window.ACES = window.ACES || {};
+
 ACES.loan = ACES.loan || {};
 
 (() => {
   const Loan = ACES.loan;
 
-  /* ==========================================================
-   * State
-   * ==========================================================
-   */
+  /* ======================================================
+   * Application State
+   * ====================================================== */
 
   Loan.state = {
     loan: null,
 
-    deductions: null,
-
     schedule: [],
+
+    deductions: {},
   };
 
-  /* ==========================================================
-   * DOM
-   * ==========================================================
-   */
+  /* ======================================================
+   * DOM Helpers
+   * ====================================================== */
 
   Loan.$ = (id) => document.getElementById(id);
 
-  Loan.show = (element) => {
-    if (!element) return;
+  Loan.value = (id) => {
+    const element = Loan.$(id);
 
-    element.classList.remove("loan-hidden");
+    return element ? element.value : "";
   };
 
-  Loan.hide = (element) => {
-    if (!element) return;
+  Loan.number = (id) => {
+    const value = parseFloat(Loan.value(id));
 
-    element.classList.add("loan-hidden");
+    return isNaN(value) ? 0 : value;
   };
 
-  /* ==========================================================
+  Loan.integer = (id) => {
+    const value = parseInt(Loan.value(id));
+
+    return isNaN(value) ? 0 : value;
+  };
+
+  Loan.setText = (id, text) => {
+    const element = Loan.$(id);
+
+    if (!element) return;
+
+    element.textContent = text;
+  };
+
+  Loan.setHTML = (id, html) => {
+    const element = Loan.$(id);
+
+    if (!element) return;
+
+    element.innerHTML = html;
+  };
+
+  Loan.show = (id) => {
+    const element = typeof id === "string" ? Loan.$(id) : id;
+
+    if (!element) return;
+
+    element.style.display = "";
+  };
+
+  Loan.hide = (id) => {
+    const element = typeof id === "string" ? Loan.$(id) : id;
+
+    if (!element) return;
+
+    element.style.display = "none";
+  };
+
+  /* ======================================================
    * Formatting
-   * ==========================================================
-   */
+   * ====================================================== */
 
-  Loan.peso = (value) => {
-    return `₱${Number(value || 0).toLocaleString("en-PH", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  Loan.money = (value) => {
+    return Number(value || 0).toLocaleString(
+      "en-PH",
+
+      {
+        style: "currency",
+
+        currency: "PHP",
+
+        minimumFractionDigits: 2,
+
+        maximumFractionDigits: 2,
+      },
+    );
   };
 
-  Loan.round = (value, decimals = 2) => {
-    return Number(Number(value).toFixed(decimals));
+  Loan.round = (value) => {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
   };
 
-  Loan.formatDate = (date) => {
-    if (!(date instanceof Date) || isNaN(date)) {
-      return "";
-    }
+  Loan.date = (date) => {
+    if (!date) return "";
 
-    return date.toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    });
+    return new Date(date).toLocaleDateString(
+      "en-PH",
+
+      {
+        year: "numeric",
+
+        month: "short",
+
+        day: "numeric",
+      },
+    );
   };
 
-  /* ==========================================================
-   * Dates
-   * ==========================================================
-   */
+  /* ======================================================
+   * Date Helpers
+   * ====================================================== */
 
   Loan.addMonths = (date, months) => {
     const d = new Date(date);
 
     d.setMonth(d.getMonth() + months);
-
-    return d;
-  };
-
-  Loan.addWeeks = (date, weeks) => {
-    const d = new Date(date);
-
-    d.setDate(d.getDate() + weeks * 7);
 
     return d;
   };
@@ -98,5 +138,33 @@ ACES.loan = ACES.loan || {};
     d.setDate(d.getDate() + days);
 
     return d;
+  };
+
+  /* ======================================================
+   * Summary Builder
+   * ====================================================== */
+
+  Loan.buildSummary = (schedule) => {
+    let totalInterest = 0;
+
+    let totalRepayment = 0;
+
+    schedule.forEach((payment) => {
+      totalInterest += payment.interest;
+
+      totalRepayment += payment.payment;
+    });
+
+    return {
+      totalInterest: Loan.round(totalInterest),
+
+      totalRepayment: Loan.round(totalRepayment),
+
+      paymentCount: schedule.length,
+
+      firstPayment: schedule.length ? schedule[0].payment : 0,
+
+      lastPayment: schedule.length ? schedule[schedule.length - 1].payment : 0,
+    };
   };
 })();

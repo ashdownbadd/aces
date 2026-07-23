@@ -871,16 +871,17 @@ function handleCreateCoopMember(PDO $pdo): string
     date_of_membership
 )
             VALUES
-            (
-                'TEMP',
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                'active',
-                CURDATE()
-            )
+(
+    'TEMP',
+    ?,
+    ?,
+    ?,
+    ?,
+    ?,
+    ?,
+    'active',
+    CURDATE()
+)
         ");
 
         $stmtM->execute([
