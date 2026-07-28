@@ -13,116 +13,155 @@ if (!function_exists('display_value')) {
 
 ?>
 
-<div class="container container--lg">
+<div class="page member-profile-page">
 
-    <div class="member-toolbar">
+    <div class="container container--lg">
 
         <?php
 
-        c('button', [
-
-            'href' => url('members'),
-
-            'text' => 'Members',
-
-            'icon' => 'fas fa-arrow-left',
-
-            'type' => 'secondary'
-
+        c('page_header', [
+            'title' => 'Member Profile',
+            'description' => 'View financial information, activity, and supporting records for this member.'
         ]);
 
         ?>
 
         <?php
 
-        c('button', [
-
-            'href' => 'index.php?route=member_edit&id=' . ($member['id'] ?? ''),
-
-            'text' => 'Edit Member',
-
-            'icon' => 'fas fa-pen',
-
-            'type' => 'primary'
-
+        c('member/hero', [
+            'member' => $member
         ]);
 
         ?>
+
+        <section class="member-workspace">
+
+            <!-- ==========================================================
+             Financial Health
+        =========================================================== -->
+
+            <section class="member-workspace__section">
+
+                <header class="workspace-section">
+
+                    <h2 class="workspace-section__title">
+                        Financial Health
+                    </h2>
+
+                    <p class="workspace-section__description">
+                        Monitor the member's current financial position.
+                    </p>
+
+                </header>
+
+                <?php
+
+                c('member/financial_summary', [
+                    'member' => $member
+                ]);
+
+                ?>
+
+            </section>
+
+            <!-- ==========================================================
+             Overview
+        =========================================================== -->
+
+            <section class="member-workspace__section">
+
+                <header class="workspace-section">
+
+                    <h2 class="workspace-section__title">
+                        Overview
+                    </h2>
+
+                    <p class="workspace-section__description">
+                        Recent activity and essential member information.
+                    </p>
+
+                </header>
+
+                <div class="member-workspace__content">
+
+                    <div class="member-workspace__main">
+
+                        <?php
+
+                        c('member/recent_transactions', [
+                            'member' => $member
+                        ]);
+
+                        ?>
+
+                    </div>
+
+                    <aside class="member-workspace__sidebar">
+
+                        <?php
+
+                        c('member/member_information', [
+                            'member' => $member
+                        ]);
+
+                        ?>
+
+                    </aside>
+
+                </div>
+
+            </section>
+
+            <!-- ==========================================================
+             Supporting Records
+        =========================================================== -->
+
+            <section class="member-workspace__section">
+
+                <header class="workspace-section">
+
+                    <h2 class="workspace-section__title">
+                        Supporting Records
+                    </h2>
+
+                    <p class="workspace-section__description">
+                        Employment, educational background and beneficiary records.
+                    </p>
+
+                </header>
+
+                <div class="member-workspace__records">
+
+                    <?php
+
+                    c('member/employment_history', [
+                        'member' => $member
+                    ]);
+
+                    ?>
+
+                    <?php
+
+                    c('member/educational_background', [
+                        'member' => $member
+                    ]);
+
+                    ?>
+
+                    <?php
+
+                    c('member/beneficiaries', [
+                        'member' => $member
+                    ]);
+
+                    ?>
+
+                </div>
+
+            </section>
+
+        </section>
 
     </div>
-
-    <?php
-
-    c('member/hero', [
-
-        'member' => $member
-
-    ]);
-
-    ?>
-
-    <?php
-
-    c('member/financial_summary', [
-
-        'member' => $member
-
-    ]);
-
-    ?>
-
-    <section class="member-sections">
-
-        <?php
-
-        c('member/personal_information', [
-
-            'member' => $member
-
-        ]);
-
-        ?>
-
-        <?php
-
-        c('member/contact_information', [
-
-            'member' => $member
-
-        ]);
-
-        ?>
-
-        <?php
-
-        c('member/beneficiaries', [
-
-            'member' => $member
-
-        ]);
-
-        ?>
-
-        <?php
-
-        c('member/employment_history', [
-
-            'member' => $member
-
-        ]);
-
-        ?>
-
-        <?php
-
-        c('member/educational_background', [
-
-            'member' => $member
-
-        ]);
-
-        ?>
-
-    </section>
 
 </div>

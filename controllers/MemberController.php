@@ -388,34 +388,15 @@ function getMemberDetails(PDO $pdo, int $member_id): array
             $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Share Capital
-    |--------------------------------------------------------------------------
-    */
-
-    $stmtLedger = $pdo->prepare("
-        SELECT
-            COALESCE(
-                SUM(le.credit)
-                -
-                SUM(le.debit),
-                0
-            )
-        FROM ledger_entries le
-
-        INNER JOIN journal_vouchers jv
-            ON le.voucher_id = jv.id
-
-        WHERE
-            le.member_id = ?
-            AND jv.status = 'approved'
-    ");
-
-    $stmtLedger->execute([$member_id]);
+    $member['financial_summary'] =
+        getMemberFinancialSummary(
+            $pdo,
+            $member_id
+        );
 
     $member['ledger_balance'] =
-        (float) $stmtLedger->fetchColumn();
+        $member['financial_summary']['share_capital'];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -449,8 +430,74 @@ function getMemberDetails(PDO $pdo, int $member_id): array
     $member['active_loan'] =
         $stmtLoan->fetch(PDO::FETCH_ASSOC) ?: null;
 
+    $member['financial_summary']['loan_balance'] =
+        (float) ($member['active_loan']['remaining_balance'] ?? 0);
+
+    $member['financial_summary']['net_position'] =
+        $member['financial_summary']['share_capital']
+        -
+        $member['financial_summary']['loan_balance'];
+
+    $member['recent_transactions'] =
+        getMemberRecentTransactions(
+            $pdo,
+            $member_id
+        );
+
     return $member;
 }
+
+function getMemberFinancialSummary(PDO $pdo, int $memberId): array
+{
+    $stmt = $pdo->prepare("
+        SELECT
+            COALESCE(SUM(
+                CASE
+                    WHEN jv.status = 'approved'
+                    THEN le.credit
+                    ELSE 0
+                END
+            ), 0)
+            -
+            COALESCE(SUM(
+                CASE
+                    WHEN jv.status = 'approved'
+                    THEN le.debit
+                    ELSE 0
+                END
+            ), 0) AS share_capital
+
+        FROM ledger_entries le
+
+        INNER JOIN journal_vouchers jv
+            ON jv.id = le.voucher_id
+
+        WHERE le.member_id = ?
+    ");
+
+    $stmt->execute([$memberId]);
+
+    $shareCapital = (float) $stmt->fetchColumn();
+
+    return [
+
+        'share_capital' => $shareCapital,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Future Modules
+        |--------------------------------------------------------------------------
+        */
+
+        'savings_balance' => null,
+
+        'loan_balance' => null,
+
+        'net_position' => $shareCapital
+
+    ];
+}
+
 
 function handleMemberProfile(PDO $pdo): string
 {
@@ -473,12 +520,9 @@ function handleMemberProfile(PDO $pdo): string
         );
     } catch (PDOException $e) {
 
-        error_log($e->getMessage());
-
-        redirectError(
-            'members',
-            'Unable to load member profile.'
-        );
+        echo '<pre>';
+        print_r($e->getMessage());
+        exit;
     }
 }
 
@@ -1179,4 +1223,37 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         echo $e->getMessage();
         exit;
     }
+}
+
+
+function getMemberRecentTransactions(PDO $pdo, int $memberId): array
+{
+    $stmt = $pdo->prepare("
+        SELECT
+            jv.reference_number,
+            jv.transaction_date,
+            jv.particulars,
+            le.entry_type,
+            le.debit,
+            le.credit
+
+        FROM ledger_entries le
+
+        INNER JOIN journal_vouchers jv
+            ON jv.id = le.voucher_id
+
+        WHERE
+            le.member_id = ?
+            AND jv.status = 'approved'
+
+        ORDER BY
+            jv.transaction_date DESC,
+            le.id DESC
+
+        LIMIT 10
+    ");
+
+    $stmt->execute([$memberId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

@@ -1,40 +1,21 @@
 <?php
-// cleanup_all_tables.php
-require_once __DIR__ . '/config/db.php';
 
-try {
-    // 1. Disable foreign key checks to bypass dependency blocks
-    $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+declare(strict_types=1);
 
-    // 2. Truncate all specified tables
-    $tables = [
-        'activity_logs',
-        'ledger_entries',
-        'payment_ledger',
-        'loan_schedules',
-        'loans',
-        'journal_vouchers',
-        'member_addresses',
-        'member_beneficiaries',
-        'member_contact',
-        'member_education',
-        'member_employment',
-        'member_onboarding',
-        'member_profiles',
-        'members'
-    ];
+require __DIR__ . '/auditor/bootstrap.php';
 
-    foreach ($tables as $table) {
-        $pdo->exec("TRUNCATE TABLE $table");
-    }
+$config = require AUDITOR_ROOT . '/config.php';
 
-    // 3. Reset the Auto-Increment for members
-    $pdo->exec("ALTER TABLE members AUTO_INCREMENT = 1");
+$console = new Console();
 
-    // 4. Re-enable foreign key checks
-    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+$scanner = new Scanner($config);
 
-    echo "All specified tables have been cleared successfully.";
-} catch (PDOException $e) {
-    echo "Error during cleanup: " . $e->getMessage();
-}
+$dependencyAnalyzer = new DependencyAnalyzer();
+
+$auditor = new Auditor(
+    $console,
+    $scanner,
+    $dependencyAnalyzer
+);
+
+$auditor->run();

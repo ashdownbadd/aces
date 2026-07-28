@@ -4,62 +4,85 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$education = $member['education'] ?? [];
+
+ob_start();
+
 ?>
 
-<section class="member-section">
+<?php if (empty($education)): ?>
 
-    <h2 class="member-section__title">
+    <div class="member-empty">
 
-        Educational Background
+        No educational records available.
 
-    </h2>
+    </div>
 
-    <?php if (empty($member['education'])): ?>
+<?php else: ?>
 
-        <p class="member-empty">
+    <?php foreach ($education as $record): ?>
 
-            No educational records found.
+        <div class="member-record">
 
-        </p>
+            <div class="member-record__content">
 
-    <?php else: ?>
+                <h3 class="member-record__title">
 
-        <div class="member-list">
+                    <?= display_value($record['course'] ?? null, 'Unknown Course'); ?>
 
-            <?php foreach ($member['education'] as $education): ?>
+                </h3>
 
-                <div class="member-list__item">
+                <p class="member-record__subtitle">
 
-                    <div>
+                    <?= display_value($record['school'] ?? null, 'Unknown School'); ?>
 
-                        <strong>
+                </p>
 
-                            <?= display_value($education['course'] ?? null); ?>
+                <?php if (!empty($record['degree'])): ?>
 
-                        </strong>
+                    <div class="member-record__meta">
 
-                        <br>
-
-                        <span>
-
-                            <?= display_value($education['school'] ?? null); ?>
-
-                        </span>
+                        <?= display_value($record['degree']); ?>
 
                     </div>
 
-                    <span>
+                <?php endif; ?>
 
-                        <?= display_value($education['year_graduated'] ?? 'Present'); ?>
+            </div>
 
-                    </span>
+            <div class="member-record__value">
+
+                <span class="member-record__label">
+
+                    Graduated
+
+                </span>
+
+                <div class="member-record__amount">
+
+                    <?= display_value(
+                        $record['year_graduated'] ?? null,
+                        'Present'
+                    ); ?>
 
                 </div>
 
-            <?php endforeach; ?>
+            </div>
 
         </div>
 
-    <?php endif; ?>
+    <?php endforeach; ?>
 
-</section>
+<?php endif;
+
+$body = ob_get_clean();
+
+c('card', [
+
+    'title' => 'Educational Background',
+
+    'subtitle' => 'Academic qualifications and educational history.',
+
+    'body' => $body
+
+]);

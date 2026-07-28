@@ -1,10 +1,166 @@
 /* ==========================================================
-   MEMBER LIST
+   MEMBER TOOLBAR
+========================================================== */
+
+.member-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+
+  margin-bottom: var(--space-6);
+}
+
+.member-toolbar__back,
+.member-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ==========================================================
+   MEMBER WORKSPACE
+========================================================== */
+
+.member-workspace {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-8);
+}
+
+.member-workspace__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.member-workspace__section:not(:first-child) {
+  padding-top: var(--space-2);
+}
+
+.member-workspace__content {
+  display: grid;
+
+  grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
+
+  gap: var(--space-6);
+
+  align-items: start;
+}
+
+.member-workspace__main,
+.member-workspace__sidebar {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+/* ==========================================================
+   WORKSPACE SECTION
+========================================================== */
+
+.workspace-section {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-1);
+
+  margin-bottom: var(--space-5);
+}
+
+.workspace-section__title {
+  margin: 0;
+
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--fw-bold);
+
+  color: var(--text);
+
+  line-height: 1.2;
+}
+
+.workspace-section__description {
+  margin: 0;
+
+  max-width: 42rem;
+
+  color: var(--text-light);
+
+  font-size: var(--text-sm);
+
+  line-height: 1.6;
+}
+
+/* ==========================================================
+   TRANSACTION FEED
+========================================================== */
+
+.transaction-feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-feed__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: var(--space-5);
+
+  padding: var(--space-5) 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.transaction-feed__item:last-child {
+  border-bottom: none;
+}
+
+.transaction-feed__content {
+  flex: 1;
+}
+
+.transaction-feed__title {
+  margin: 0;
+
+  font-size: var(--text-md);
+  font-weight: var(--fw-semibold);
+}
+
+.transaction-feed__meta,
+.transaction-feed__date {
+  margin-top: var(--space-1);
+
+  color: var(--text-muted);
+
+  font-size: var(--text-sm);
+}
+
+.transaction-feed__value {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+
+  font-variant-numeric: tabular-nums;
+}
+
+.transaction-feed__value--credit {
+  color: var(--success);
+}
+
+.transaction-feed__value--debit {
+  color: var(--danger);
+}
+
+/* ==========================================================
+   MEMBER RECORD LISTS
 ========================================================== */
 
 .member-list {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-4);
 }
 
@@ -12,7 +168,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  gap: var(--space-4);
+
   padding: var(--space-4) 0;
+
   border-bottom: 1px solid var(--border);
 }
 
@@ -21,61 +181,161 @@
 }
 
 .member-list__item strong {
+  display: block;
+
   font-weight: var(--fw-semibold);
+
+  color: var(--text);
 }
 
 .member-list__item span {
   color: var(--text-muted);
 }
 
-.member-empty {
+.member-list__meta {
   color: var(--text-muted);
+
+  font-size: var(--text-sm);
+
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   EMPTY STATES
+========================================================== */
+
+.member-empty {
+  padding: var(--space-6);
+
+  text-align: center;
+
+  color: var(--text-muted);
+
   font-style: italic;
 }
 
-.member-list__meta {
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-  text-align: right;
-}
-
 /* ==========================================================
-   MEMBER OVERVIEW
+   RESPONSIVE
 ========================================================== */
 
-.member-overview {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
-  margin-bottom: var(--space-8);
-}
-
 @media (max-width: 992px) {
-  .member-overview {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .member-overview {
+  .member-workspace__content {
     grid-template-columns: 1fr;
   }
-}
 
-/* ==========================================================
-   MEMBER TOOLBAR
-========================================================== */
-
-.member-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-}
-
-@media (max-width: 992px) {
   .member-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+@media (max-width: 768px) {
+  .member-toolbar__actions {
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+  }
+
+  .workspace-section {
+    margin-bottom: var(--space-4);
+  }
+
+  .workspace-section__title {
+    font-size: var(--text-lg);
+  }
+
+  .transaction-feed__item,
+  .member-list__item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .member-list__meta {
+    text-align: left;
+  }
+}
+
+/* ==========================================================
+   MEMBER RECORD
+========================================================== */
+
+.member-record {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+
+  padding: var(--space-5) 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.member-record:last-child {
+  border-bottom: none;
+}
+
+.member-record__content {
+  flex: 1;
+}
+
+.member-record__title {
+  margin: 0;
+
+  font-size: var(--text-md);
+  font-weight: var(--fw-semibold);
+
+  color: var(--text);
+}
+
+.member-record__subtitle {
+  margin-top: var(--space-1);
+
+  color: var(--text-muted);
+}
+
+.member-record__meta {
+  margin-top: var(--space-2);
+
+  font-size: var(--text-sm);
+
+  color: var(--text-light);
+}
+
+.member-record__value {
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+.member-record__label {
+  display: block;
+
+  margin-bottom: var(--space-1);
+
+  font-size: var(--text-xs);
+
+  color: var(--text-light);
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.member-record__amount {
+  font-size: var(--text-lg);
+
+  font-weight: var(--fw-bold);
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================
+   SUPPORTING RECORDS
+========================================================== */
+
+.member-workspace__records {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }

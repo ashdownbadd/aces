@@ -6,69 +6,75 @@ if (!defined('ALLOW_ACCESS')) {
 
 $employment = $member['employment'] ?? [];
 
+ob_start();
+
 ?>
 
-<section class="member-section">
+<?php if (empty($employment)): ?>
 
-    <h2 class="member-section__title">
+    <div class="member-empty">
 
-        Employment Information
+        No employment information available.
 
-    </h2>
+    </div>
 
-    <?php if (empty($employment)): ?>
+<?php else: ?>
 
-        <p class="member-empty">
+    <div class="member-record">
 
-            No employment information found.
+        <div class="member-record__content">
 
-        </p>
+            <h3 class="member-record__title">
 
-    <?php else: ?>
+                <?= display_value($employment['occupation']); ?>
 
-        <div class="member-list">
+            </h3>
 
-            <div class="member-list__item">
+            <p class="member-record__subtitle">
 
-                <div>
+                <?= display_value($employment['employer_name']); ?>
 
-                    <strong>
+            </p>
 
-                        <?= display_value($employment['occupation']); ?>
+            <div class="member-record__meta">
 
-                    </strong>
-
-                    <br>
-
-                    <span>
-
-                        <?= display_value($employment['employer_name']); ?>
-
-                    </span>
-
-                    <br>
-
-                    <small>
-
-                        <?= display_value($employment['employment_status']); ?>
-
-                    </small>
-
-                </div>
-
-                <div class="member-list__meta">
-
-                    ₱<?= number_format(
-                            (float) ($employment['monthly_income'] ?? 0),
-                            2
-                        ); ?>
-
-                </div>
+                <?= display_value($employment['employment_status']); ?>
 
             </div>
 
         </div>
 
-    <?php endif; ?>
+        <div class="member-record__value">
 
-</section>
+            <span class="member-record__label">
+
+                Monthly Income
+
+            </span>
+
+            <div class="member-record__amount">
+
+                $<?= number_format(
+                        (float) ($employment['monthly_income'] ?? 0),
+                        2
+                    ); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<?php endif;
+
+$body = ob_get_clean();
+
+c('card', [
+
+    'title' => 'Employment',
+
+    'subtitle' => 'Current employment information.',
+
+    'body' => $body
+
+]);

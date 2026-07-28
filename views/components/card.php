@@ -1,22 +1,49 @@
 <?php
 
+if (!defined('ALLOW_ACCESS')) {
+    exit('Direct access to this file is prohibited.');
+}
+
 $title = $title ?? '';
+$subtitle = $subtitle ?? '';
 $body = $body ?? '';
 $footer = $footer ?? '';
 
+$class = trim($class ?? '');
+
+$classes = trim('card ' . $class);
+
 ?>
 
-<div class="card">
+<div class="<?= htmlspecialchars($classes); ?>">
 
-    <?php if ($title): ?>
+    <?php if ($title || $subtitle): ?>
 
         <div class="card__header">
 
-            <h3 class="card__title">
+            <div class="card__heading">
 
-                <?= htmlspecialchars($title) ?>
+                <?php if ($title): ?>
 
-            </h3>
+                    <h3 class="card__title">
+
+                        <?= htmlspecialchars($title); ?>
+
+                    </h3>
+
+                <?php endif; ?>
+
+                <?php if ($subtitle): ?>
+
+                    <p class="card__subtitle">
+
+                        <?= htmlspecialchars($subtitle); ?>
+
+                    </p>
+
+                <?php endif; ?>
+
+            </div>
 
         </div>
 
@@ -24,7 +51,7 @@ $footer = $footer ?? '';
 
     <div class="card__body">
 
-        <?= $body ?>
+        <?= $body; ?>
 
     </div>
 
@@ -32,7 +59,7 @@ $footer = $footer ?? '';
 
         <div class="card__footer">
 
-            <?= $footer ?>
+            <?= $footer; ?>
 
         </div>
 

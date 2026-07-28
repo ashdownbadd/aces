@@ -4,53 +4,76 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
+$beneficiaries = $member['beneficiaries'] ?? [];
+
+ob_start();
+
 ?>
 
-<section class="member-section">
+<?php if (empty($beneficiaries)): ?>
 
-    <h2 class="member-section__title">
+    <div class="member-empty">
 
-        Beneficiaries
+        No beneficiaries registered.
 
-    </h2>
+    </div>
 
-    <?php if (empty($member['beneficiaries'])): ?>
+<?php else: ?>
 
-        <p class="member-empty">
+    <div class="member-list">
 
-            No beneficiaries registered.
+        <?php foreach ($beneficiaries as $beneficiary): ?>
 
-        </p>
+            <article class="member-list__item">
 
-    <?php else: ?>
+                <div class="member-list__avatar">
 
-        <div class="member-list">
+                    <?= strtoupper(substr(
+                        display_value($beneficiary['full_name'], 'U'),
+                        0,
+                        1
+                    )); ?>
 
-            <?php foreach ($member['beneficiaries'] as $beneficiary): ?>
+                </div>
 
-                <div class="member-list__item">
+                <div class="member-list__content">
 
-                    <strong>
+                    <h4 class="member-list__title">
 
                         <?= display_value(
                             $beneficiary['full_name'],
                             'Unnamed Beneficiary'
                         ); ?>
 
-                    </strong>
+                    </h4>
 
-                    <span>
+                    <span class="badge badge--secondary">
 
-                        <?= display_value($beneficiary['relationship']); ?>
+                        <?= display_value(
+                            $beneficiary['relationship'],
+                            'Relationship Not Specified'
+                        ); ?>
 
                     </span>
 
                 </div>
 
-            <?php endforeach; ?>
+            </article>
 
-        </div>
+        <?php endforeach; ?>
 
-    <?php endif; ?>
+    </div>
 
-</section>
+<?php endif;
+
+$body = ob_get_clean();
+
+c('card', [
+
+    'title' => 'Beneficiaries',
+
+    'subtitle' => 'Registered beneficiary records.',
+
+    'body' => $body
+
+]);

@@ -809,6 +809,31 @@ function handleApproveVoucher(PDO $pdo): void
 
     $voucherId = (int) ($_POST['voucher_id'] ?? 0);
 
+    /*
+|--------------------------------------------------------------------------
+| Prevent Double Approval
+|--------------------------------------------------------------------------
+*/
+
+    $stmt = $pdo->prepare("
+    SELECT status
+    FROM journal_vouchers
+    WHERE id = ?
+    LIMIT 1
+");
+
+    $stmt->execute([$voucherId]);
+
+    $currentStatus = $stmt->fetchColumn();
+
+    if ($currentStatus !== 'pending') {
+
+        redirectError(
+            'pending_approvals',
+            'This voucher has already been processed.'
+        );
+    }
+
     try {
 
         $pdo->beginTransaction();
@@ -903,7 +928,12 @@ function handleApproveVoucher(PDO $pdo): void
             $pdo->rollBack();
         }
 
-        die($e->getMessage());
+        error_log($e->getMessage());
+
+        redirectError(
+            'pending_approvals',
+            'Unable to approve the voucher.'
+        );
     }
 
     header("Location:index.php?route=pending_approvals");

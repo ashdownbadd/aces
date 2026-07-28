@@ -4,102 +4,180 @@ if (!defined('ALLOW_ACCESS')) {
     exit('Direct access to this file is prohibited.');
 }
 
-$shareCapital = $member['ledger_balance'] ?? 0;
+$financial = $member['financial_summary'] ?? [];
+
+$shareCapital = $financial['share_capital'] ?? 0;
+$savingsBalance = $financial['savings_balance'];
+$loanBalance = $financial['loan_balance'];
+$netPosition = $financial['net_position'] ?? $shareCapital;
 
 $hasLoan = !empty($member['active_loan']);
 
+ob_start();
+
 ?>
 
-<section class="member-summary">
+<div class="stats">
 
-    <h2 class="member-summary__title">
+    <!-- Share Capital -->
 
-        Financial Summary
+    <div class="stats__card stats__card--gold">
 
-    </h2>
+        <div class="stats__content">
 
-    <div class="member-summary__grid">
-
-        <div class="member-summary__item">
-
-            <span class="member-summary__label">
+            <span class="stats__label">
 
                 Share Capital
 
             </span>
 
-            <strong class="member-summary__value">
+            <span class="stats__value">
 
                 ₱<?= number_format($shareCapital, 2); ?>
 
-            </strong>
+            </span>
 
-            <span class="member-summary__meta">
+            <span class="stats__description">
 
                 Current Balance
 
             </span>
 
-            <a
-                class="member-summary__link"
-                href="<?= htmlspecialchars(url('ledger_statement&id=' . ($member['id'] ?? ''))); ?>">
-                View Ledger Statement →
-            </a>
-
         </div>
 
-        <div class="member-summary__item">
+        <div class="stats__icon">
 
-            <span class="member-summary__label">
-
-                Active Loan
-
-            </span>
-
-            <?php if ($hasLoan): ?>
-
-                <strong class="member-summary__value">
-
-                    ₱<?= number_format(
-                            $member['active_loan']['remaining_balance'] ?? 0,
-                            2
-                        ); ?>
-
-                </strong>
-
-                <span class="member-summary__meta">
-
-                    Due
-                    <?= display_value(
-                        $member['active_loan']['next_due_date'] ?? null
-                    ); ?>
-
-                </span>
-
-                <a
-                    class="member-summary__link"
-                    href="<?= htmlspecialchars(url('view_loan&id=' . ($member['active_loan']['id'] ?? ''))); ?>">
-                    View Loan →
-                </a>
-
-            <?php else: ?>
-
-                <strong class="member-summary__value">
-
-                    None
-
-                </strong>
-
-                <span class="member-summary__meta">
-
-                    No Active Loan
-
-                </span>
-
-            <?php endif; ?>
+            💰
 
         </div>
 
     </div>
 
-</section>
+    <!-- Savings -->
+
+    <div class="stats__card stats__card--primary">
+
+        <div class="stats__content">
+
+            <span class="stats__label">
+
+                Savings
+
+            </span>
+
+            <span class="stats__value">
+
+                <?= $savingsBalance === null
+                    ? 'Not Enrolled'
+                    : '₱' . number_format($savingsBalance, 2); ?>
+
+            </span>
+
+            <span class="stats__description">
+
+                Savings Module
+
+            </span>
+
+        </div>
+
+        <div class="stats__icon">
+
+            🏦
+
+        </div>
+
+    </div>
+
+    <!-- Active Loan -->
+
+    <div class="stats__card stats__card--warning">
+
+        <div class="stats__content">
+
+            <span class="stats__label">
+
+                Active Loan
+
+            </span>
+
+            <span class="stats__value">
+
+                <?= $hasLoan
+                    ? '₱' . number_format(
+                        $member['active_loan']['remaining_balance'] ?? 0,
+                        2
+                    )
+                    : '₱0.00'; ?>
+
+            </span>
+
+            <span class="stats__description">
+
+                <?= $hasLoan
+                    ? 'Due ' . display_value(
+                        $member['active_loan']['next_due_date'] ?? null
+                    )
+                    : 'No Active Loan'; ?>
+
+            </span>
+
+        </div>
+
+        <div class="stats__icon">
+
+            📄
+
+        </div>
+
+    </div>
+
+    <!-- Net Position -->
+
+    <div class="stats__card stats__card--success">
+
+        <div class="stats__content">
+
+            <span class="stats__label">
+
+                Net Position
+
+            </span>
+
+            <span class="stats__value">
+
+                ₱<?= number_format($netPosition, 2); ?>
+
+            </span>
+
+            <span class="stats__description">
+
+                Share Capital − Loans
+
+            </span>
+
+        </div>
+
+        <div class="stats__icon">
+
+            📈
+
+        </div>
+
+    </div>
+
+</div>
+
+<?php
+
+$body = ob_get_clean();
+
+c('card', [
+
+    'title' => 'Financial Summary',
+
+    'subtitle' => 'Member financial overview',
+
+    'body' => $body
+
+]);

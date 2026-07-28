@@ -28,6 +28,8 @@ $status = strtolower($member['status'] ?? 'inactive');
 $badgeType = match ($status) {
     'active'   => 'success',
     'inactive' => 'warning',
+    'pending'  => 'info',
+    'deceased' => 'danger',
     default    => 'danger'
 };
 
@@ -35,52 +37,117 @@ $badgeType = match ($status) {
 
 <section class="member-hero">
 
-    <div class="member-hero__card">
+    <div class="member-hero__avatar">
 
-        <div class="member-hero__avatar">
+        <?= htmlspecialchars($initials ?: '?'); ?>
 
-            <?= htmlspecialchars($initials ?: '?'); ?>
+    </div>
+
+    <div class="member-hero__content">
+
+        <div class="member-hero__top">
+
+            <div class="member-hero__identity">
+
+                <div class="member-hero__title">
+
+                    <h1 class="member-hero__name">
+
+                        <?= htmlspecialchars($fullName); ?>
+
+                    </h1>
+
+                    <?php
+
+                    c('badge', [
+                        'type' => $badgeType,
+                        'text' => ucfirst($status)
+                    ]);
+
+                    ?>
+
+                </div>
+
+                <p class="member-hero__membership">
+
+                    <?= display_value($member['membership_type']); ?> Member
+
+                </p>
+
+            </div>
+
+            <div class="member-hero__actions">
+
+                <?php
+
+                c('button', [
+                    'href' => 'index.php?route=member_edit&id=' . ($member['id'] ?? ''),
+                    'text' => 'Edit Member',
+                    'icon' => 'fas fa-pen',
+                    'type' => 'primary'
+                ]);
+
+                ?>
+
+            </div>
 
         </div>
 
-        <h1 class="member-hero__name">
+        <div class="member-hero__meta">
 
-            <?= htmlspecialchars($fullName); ?>
+            <div class="member-hero__meta-card">
 
-        </h1>
+                <i class="fas fa-id-card"></i>
 
-        <p class="member-hero__membership">
+                <span class="member-hero__meta-label">
 
-            <?= display_value($member['membership_type'] ?? null); ?>
+                    Member Number
 
-        </p>
+                </span>
 
-        <p class="member-hero__number">
+                <strong>
 
-            Member #<?= display_value($member['member_number'] ?? null); ?>
+                    #<?= display_value($member['member_number']); ?>
 
-        </p>
+                </strong>
 
-        <div class="member-hero__status">
+            </div>
 
-            <?php
+            <div class="member-hero__meta-card">
 
-            c('badge', [
+                <i class="fas fa-calendar-alt"></i>
 
-                'type' => $badgeType,
+                <span class="member-hero__meta-label">
 
-                'text' => ucfirst($status)
+                    Member Since
 
-            ]);
+                </span>
 
-            ?>
+                <strong>
 
-            <span class="member-hero__since">
+                    <?= display_value($member['date_of_membership']); ?>
 
-                Member since
-                <?= display_value($member['date_of_membership'] ?? null); ?>
+                </strong>
 
-            </span>
+            </div>
+
+            <div class="member-hero__meta-card">
+
+                <i class="fas fa-user-friends"></i>
+
+                <span class="member-hero__meta-label">
+
+                    Membership
+
+                </span>
+
+                <strong>
+
+                    <?= display_value($member['membership_type']); ?>
+
+                </strong>
+
+            </div>
 
         </div>
 
